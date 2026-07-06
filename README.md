@@ -43,7 +43,7 @@ IA/
 │   ├── results_table.csv              # Tabella dei risultati in formato CSV
 │   └── logo_unime_orizontale.png      # Logo dell'Ateneo per header e copertina
 ├── teoria/                            # Materiale di studio e dispense del corso
-└── venv/                              # Ambiente virtuale Python localizzato
+└── .venv/                             # Ambiente virtuale Python localizzato
 ```
 
 ---
@@ -69,10 +69,10 @@ Aprire il terminale e posizionarsi nella root del progetto:
 cd /home/massimo-mantineo/Scrivania/IA
 ```
 
-### 2. Attivare l'ambiente virtuale (`venv`)
+### 2. Attivare l'ambiente virtuale (`.venv`)
 Se l'ambiente virtuale non è attivo, attivarlo usando:
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ### 3. Installare le dipendenze

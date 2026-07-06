@@ -187,7 +187,7 @@ Ciascun cliente è descritto da attributi che possono essere suddivisi in tre ma
 La variabile target è \textbf{Churn}, che assume valore ``Yes'' se il cliente ha abbandonato la compagnia nell'ultimo mese, ``No'' in caso contrario.
 
 \subsection{Operazioni di Preprocessing e Risposte Metodologiche}
-La preparazione dei dati è uno step cruciale per garantire la convergenza degli algoritmi ed evitare errori di calcolo. Di seguito descriviamo in modo dettagliato le operazioni effettuate, focalizzandoci sui quesiti teorici emersi in sede d'esame.
+La preparazione dei dati è uno step cruciale per garantire la convergenza degli algoritmi ed evitare errori di calcolo. Di seguito descriviamo in modo dettagliato le operazioni effettuate.
 
 \subsubsection{Gestione dei valori mancanti ed Imputazione}
 Durante l'ispezione iniziale, la variabile \textit{TotalCharges} presentava $11$ righe con celle contenenti spazi vuoti (\texttt{" "}). 
@@ -410,7 +410,7 @@ Multi-Layer Perceptron (MLP) & Con Cluster & 0.9104 & 0.7360 & 0.9097 & 0.5829 &
 \end{table}
 
 \subsection{Analisi Critica dell'Overfitting e dell'Impatto del Clustering}
-L'ispezione della Tabella \ref{tab:classification_results} evidenzia risultati estremamente interessanti ai fini dell'esame orale:
+L'ispezione della Tabella \ref{tab:classification_results} evidenzia risultati estremamente interessanti ai fini dell'analisi:
 \begin{enumerate}
     \item \textbf{Logistic Regression e Decision Tree (Modelli stabili)}:\\
     Entrambi i modelli mostrano un comportamento ideale dal punto di vista della generalizzazione. La differenza tra le metriche di Training e Testing è minima (es. per la Regressione Logistica senza cluster, l'accuratezza passa da $0.8053$ a $0.8062$, e l'AUC da $0.8492$ a $0.8422$). \textbf{Non vi è alcun segno di overfitting}. Il Decision Tree beneficia dell'impostazione di \texttt{max\_depth=5} che ha bloccato la crescita incontrollata dei rami. L'aggiunta della feature del cluster non altera le performance di questi modelli, in quanto la barriera di decisione del cluster $k=2$ è già intrinsecamente ricavabile dalle feature originali.

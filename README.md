@@ -103,7 +103,7 @@ In alternativa, è possibile eseguire direttamente tutte le celle del notebook c
 | **MLP (Rete Neurale)** | Senza Cluster | 0.9143 | 0.7495 | 0.7813 | 0.4278 | 0.9656 | 0.7844 |
 | **MLP (Rete Neurale)** | Con Cluster | 0.9104 | 0.7360 | 0.9097 | **0.5829** | 0.9722 | 0.7846 |
 
-### Considerazioni d'esame principali:
+### Considerazioni principali:
 * **Logistic Regression & Decision Tree**: Modelli molto stabili, con differenze minime tra Train e Test (nessun segno di overfitting).
 * **Multi-Layer Perceptron (MLP)**: Forte presenza di overfitting (Train Accuracy ~91% vs. Test Accuracy ~74%). Tuttavia, l'aggiunta dell'informazione di clustering (Scenario B) ha consentito un incremento notevole della **Recall di Test (+15.5%)**, salendo a **0.5829**, rendendo il modello notevolmente più abile ad individuare i clienti a rischio di abbandono reale.
 

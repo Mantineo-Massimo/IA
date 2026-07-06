@@ -15,7 +15,7 @@ notebook_content = {
     "1. **Apprendimento Non Supervisionato (Clustering)**: Segmentazione dei clienti tramite l'algoritmo k-Means per individuare gruppi omogenei.\n",
     "2. **Apprendimento Supervisionato (Classificazione)**: Predizione del tasso di abbandono (*Churn Prediction*) tramite alberi di decisione (Decision Tree) e reti neurali artificiali (Multi-Layer Perceptron - MLP), confrontandoli con una baseline semplice (Regressione Logistica).\n",
     "\n",
-    "L'obiettivo scientifico è valutare se e in che misura le informazioni derivate dal clustering non supervisionato possano migliorare le prestazioni predittive dei modelli supervisionati. In conformità con le linee guida d'esame, analizziamo esplicitamente sia le metriche di training che quelle di testing per monitorare la presenza di **overfitting** o **underfitting**."
+    "L'obiettivo scientifico è valutare se e in che misura le informazioni derivate dal clustering non supervisionato possano migliorare le prestazioni predittive dei modelli supervisionati. Analizziamo esplicitamente sia le metriche di training che quelle di testing per monitorare la presenza di **overfitting** o **underfitting**."
    ]
   },
   {
@@ -93,7 +93,7 @@ notebook_content = {
     "### Ispezione e analisi delle variabili\n",
     "Verifichiamo la presenza di valori nulli. Gestiamo il caso della colonna `TotalCharges` che contiene spazi singoli per i clienti appena registrati. \n",
     "\n",
-    "**Nota per l'esame:** Le variabili numeriche continue sono `tenure` (mesi di permanenza), `MonthlyCharges` (costi mensili) e `TotalCharges` (costi totali). Le restanti variabili sono categoriche (es. `Contract`, `PaymentMethod`) o binarie (es. `gender`, `Partner`)."
+    "**Nota:** Le variabili numeriche continue sono `tenure` (mesi di permanenza), `MonthlyCharges` (costi mensili) e `TotalCharges` (costi totali). Le restanti variabili sono categoriche (es. `Contract`, `PaymentMethod`) o binarie (es. `gender`, `Partner`)."
    ]
   },
   {
@@ -294,7 +294,7 @@ notebook_content = {
     "## 5. Apprendimento Supervisionato: Churn Prediction e Analisi dell'Overfitting\n",
     "Suddividiamo il dataset in **Training** (80%) e **Test** (20%) in modo stratificato. \n",
     "\n",
-    "**Regola fondamentale per l'esame:** Lo splitting viene effettuato *prima* dello scaling per evitare **data leakage** (ovvero che la media e deviazione standard calcolate sul test set influenzino il training set, invalidando la valutazione). \n",
+    "**Regola fondamentale:** Lo splitting viene effettuato *prima* dello scaling per evitare **data leakage** (ovvero che la media e deviazione standard calcolate sul test set influenzino il training set, invalidando la valutazione). \n",
     "Addestriamo e confrontiamo i modelli (Logistic Regression, Decision Tree, MLP) nei due scenari, misurando le performance sia sul train set che sul test set per verificare la presenza di **overfitting** (prestazioni alte sul train, basse sul test) o **underfitting** (prestazioni basse su entrambi)."
    ]
   },
@@ -417,7 +417,7 @@ notebook_content = {
    "metadata": {},
    "source": [
     "## 7. Discussione dei Risultati e Conclusioni\n",
-    "Dall'analisi dei risultati train/test emergono considerazioni fondamentali per l'esame:\n",
+    "Dall'analisi dei risultati train/test emergono considerazioni fondamentali:\n",
     "1. **Logistic Regression & Decision Tree**: Non mostrano segni di overfitting (le metriche di training e testing differiscono di pochissimo). Il Decision Tree, grazie al vincolo `max_depth=5`, mantiene un'ottima generalizzazione pur rimanendo altamente interpretabile.\n",
     "2. **Multi-Layer Perceptron (MLP)**: Mostra un **forte overfitting** (la Train Accuracy è al $91.4\\%$ con un AUC di $0.965$, ma cala al $74.9\\%$ sul test set con AUC di $0.784$). Questo accade perché le reti neurali sono modelli molto flessibili che tendono ad assimilare il rumore del dataset se non regolarizzate a sufficienza. Tuttavia, l'aggiunta della feature di cluster aiuta significativamente a stabilizzare la **Recall sul test set** che passa da $0.4278$ a $0.5829$ ($+15.5\\%$ assoluto)."
    ]

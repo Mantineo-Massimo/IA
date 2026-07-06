@@ -1,0 +1,459 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+% Impostazione dei margini con geometry
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={Progetto 1: Segmentazione clienti e Churn Prediction},
+    pdfsubject={Laboratorio di Intelligenza Artificiale},
+]{hyperref}
+
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{microtype}
+\usepackage{titlesec}
+
+\setlength{\footskip}{50pt}
+
+% Impostazioni per i listing del codice Python
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=pythonstyle}
+
+% Impostazione di fancyhdr per header e footer
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{8pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    Lab IA\\
+    25/26
+    \vspace{8pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{8pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\begin{document}
+
+% Pagina di copertina
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1.5cm}
+    {\large Laboratorio di Intelligenza Artificiale\par}
+    \vspace{1.5cm}
+    {\Large \textbf{PROGETTO 1:}\\
+    Segmentazione Clienti e Churn Prediction\par}
+    \vspace{2.5cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2025/2026 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\begin{abstract}
+Il presente elaborato descrive lo sviluppo e i risultati di un progetto accademico focalizzato sull'integrazione di techniques di apprendimento non supervisionato (clustering) e supervisionato (classificazione) per l'analisi del comportamento della clientela in un'azienda di telecomunicazioni. Utilizzando il dataset pubblico \textit{Telco Customer Churn}, abbiamo dapprima segmentato i clienti tramite l'algoritmo $k$-Means, individuando due cluster principali caratterizzati da comportamenti e profili di spesa differenti. Successivamente, abbiamo sviluppato e confrontato tre modelli predittivi di classificazione per stimare la probabilità di abbandono (\textit{churn}) dei clienti: una baseline lineare (Regressione Logistica), un Albero di Decisione (Decision Tree) e una rete neurale artificiale (Multi-Layer Perceptron - MLP). I modelli sono stati valutati e confrontati in due scenari sperimentali: con e senza l'aggiunta del cluster ottimale come feature predittiva. I risultati mostrano che mentre la baseline e l'albero di decisione mantengono prestazioni stabili ($\approx 80.6\%$ di accuratezza), l'MLP trae un vantaggio qualitativo significativo dall'integrazione delle feature di clustering, registrando un incremento marcato del richiamo (\textit{Recall}) da $0.4278$ a $0.5829$ ($\approx +15.5\%$). L'elaborato si conclude con un'analisi critica circa l'interpretabilità dei modelli, i limiti sperimentali e le future direzioni di sviluppo.
+\end{abstract}
+\newpage
+
+% -------------------------------------------------------------
+\section{Descrizione del problema}
+\label{sec:descrizione_problema}
+Nel moderno panorama industriale e dei servizi, in particolare nel settore delle telecomunicazioni (Telco), la fidelizzazione del cliente è un fattore critico per la sostenibilità finanziaria. Acquisire un nuovo cliente comporta costi di marketing e infrastruttura notevolmente superiori rispetto al mantenimento di un cliente attivo. Per questa ragione, lo sviluppo di sistemi in grado di anticipare l'abbandono da parte del cliente, fenomeno noto come \textit{customer churn}, riveste un ruolo primario per la business intelligence aziendale.
+
+Questo progetto affronta il problema da una doppia prospettiva, combinando l'apprendimento non supervisionato e l'apprendimento supervisionato in una pipeline integrata.
+
+\subsection{Il Task Non Supervisionato (Clustering)}
+L'obiettivo dell'apprendimento non supervisionato è identificare pattern intrinseci o segmenti naturali nella clientela, senza disporre preventivamente di un'etichetta di classe. Questa operazione risponde alla domanda: \textit{``Esistono profili di clientela simili tra loro per comportamento, tipologia di contratto e consumi?''}. 
+
+La segmentazione dei clienti (\textit{Customer Segmentation}) viene qui affrontata tramite l'algoritmo $k$-Means, testando soluzioni con $2, 3$ e $4$ cluster. La scelta del numero ottimale di cluster viene supportata quantitativamente da:
+\begin{itemize}
+    \item \textbf{Inertia (Metodo del Gomito - Elbow Method)}: la somma dei quadrati delle distanze dei campioni dal centro del loro cluster più vicino. Rappresenta una misura di coerenza interna dei gruppi.
+    \item \textbf{Silhouette Score}: una metrica che misura quanto un elemento sia simile al proprio cluster (coesione) rispetto a quanto sia dissimile dagli altri cluster (separazione). Varia tra -1 e +1; valori vicini a +1 indicano un clustering ben definito.
+\end{itemize}
+
+\subsection{Il Task Supervisionato (Classificazione)}
+Il task supervisionato consiste nel risolvere un problema di classificazione binaria. L'obiettivo è addestrare un classificatore che, dato il profilo di un cliente (un vettore di feature che include dati anagrafici, servizi sottoscritti, parametri finanziari e, opzionalmente, il cluster di appartenenza), predica se il cliente abbandonerà l'operatore (classe $1$, \textit{Churn: Yes}) o rimarrà fedele (classe $0$, \textit{Churn: No}).
+
+\subsection{Le Metriche di Valutazione della Classificazione}
+Per valutare l'efficacia dei modelli di classificazione, ci avvaliamo delle metriche classiche definite nel programma del corso (in particolare nelle slide sulla classificazione):
+\begin{itemize}
+    \item \textbf{Accuracy (Accuratezza)}: Frazione delle predizioni corrette sul totale dei casi testati. Fornisce una misura della performance globale del modello:
+    \begin{equation}
+        \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+    \end{equation}
+    dove $TP$, $TN$, $FP$ e $FN$ sono rispettivamente i Veri Positivi, Veri Negativi, Falsi Positivi e Falsi Negativi ricavati dalla matrice di confusione.
+    \item \textbf{Recall (Richiamo o Sensibilità)}: Frazione dei clienti che abbandonano (reali positivi) correttamente individuati dal modello:
+    \begin{equation}
+        \text{Recall} = \frac{TP}{TP + FN}
+    \end{equation}
+    Nel contesto del churn prediction, la Recall è la metrica di business più rilevante. Un Falso Negativo (un cliente che sta per abbandonare ma che il modello classifica come fedele) rappresenta un cliente perso senza che l'azienda possa avviare azioni di fidelizzazione.
+    \item \textbf{AUC (Area Under the ROC Curve)}: L'area sotto la curva caratteristica del ricevitore (ROC), che descrive il trade-off tra il tasso di veri positivi (Recall) e il tasso di falsi positivi a varie soglie di classificazione. Un valore di AUC pari a $1.0$ indica un classificatore perfetto, mentre un valore pari a $0.5$ equivale ad una classificazione casuale. L'AUC è una metrica robusta nei confronti dello sbilanciamento delle classi.
+\end{itemize}
+
+% -------------------------------------------------------------
+\section{Dataset e preparazione dei dati}
+\label{sec:dataset_preparazione}
+Il dataset utilizzato è il \textit{Telco Customer Churn} (distribuito storicamente da IBM e reperibile su Kaggle). Il dataset originale contiene $7043$ osservazioni (clienti) e $21$ variabili complessive.
+
+\subsection{Struttura e Principali Variabili}
+Ciascun cliente è descritto da attributi che possono essere suddivisi in tre macro-categorie:
+\begin{enumerate}
+    \item \textbf{Variabili numeriche continue}: Mesi di permanenza (\textit{tenure}), costi mensili (\textit{MonthlyCharges}) e costi totali (\textit{TotalCharges}).
+    \item \textbf{Variabili categoriche qualitative}: Tipo di contratto (\textit{Contract}: mensile, annuale, biennale), metodo di pagamento (\textit{PaymentMethod}), tipo di connessione internet (\textit{InternetService}) e servizi accessori (linee multiple, sicurezza online, backup, protezione dei dispositivi, supporto tecnico, streaming TV e film).
+    \item \textbf{Variabili categoriche binarie}: Genere (\textit{gender}), presenza di partner (\textit{Partner}), presenza di familiari a carico (\textit{Dependents}), fatturazione elettronica (\textit{PaperlessBilling}) e fascia d'età anziana (\textit{SeniorCitizen}, codificata numericamente in $\{0, 1\}$).
+\end{enumerate}
+La variabile target è \textbf{Churn}, che assume valore ``Yes'' se il cliente ha abbandonato la compagnia nell'ultimo mese, ``No'' in caso contrario.
+
+\subsection{Operazioni di Preprocessing e Risposte Metodologiche}
+La preparazione dei dati è uno step cruciale per garantire la convergenza degli algoritmi ed evitare errori di calcolo. Di seguito descriviamo in modo dettagliato le operazioni effettuate, focalizzandoci sui quesiti teorici emersi in sede d'esame.
+
+\subsubsection{Gestione dei valori mancanti ed Imputazione}
+Durante l'ispezione iniziale, la variabile \textit{TotalCharges} presentava $11$ righe con celle contenenti spazi vuoti (\texttt{" "}). 
+\begin{itemize}
+    \item \textbf{Analisi logica di business}: Incrociando queste righe con la variabile \textit{tenure}, si è constatato che per tutti questi clienti la permanenza era pari a $0$ mesi (nuovi clienti appena contrattualizzati). Abbiamo pertanto imputato questi valori mancanti a \texttt{0.0} (poiché non hanno ancora ricevuto addebiti) e convertito la colonna in formato numerico a virgola mobile (\textit{float}).
+    \item \textbf{Che cos'è l'imputazione con mediana e come si calcola il valore mediano?}\\
+    L'imputazione con la mediana è una tecnica standard in cui i valori mancanti di una variabile quantitativa vengono sostituibili con la mediana della distribuzione della variabile stessa (calcolata sui dati non mancanti). 
+
+    Matematicamente, per calcolare il valore mediano:
+    1. Si ordinano gli $N$ valori della variabile in ordine non decrescente: $x_1 \leq x_2 \leq \dots \leq x_N$.
+    2. Se $N$ è dispari, la mediana è il valore centrale in posizione $\frac{N+1}{2}$:
+    \begin{equation}
+        \text{Mediana} = x_{\frac{N+1}{2}}
+    \end{equation}
+    3. Se $N$ è pari, la mediana è la media aritmetica dei due valori centrali in posizione $\frac{N}{2}$ e $\frac{N}{2}+1$:
+    \begin{equation}
+        \text{Mediana} = \frac{x_{\frac{N}{2}} + x_{\frac{N}{2}+1}}{2}
+    \end{equation}
+    \item \textbf{Perché si usa la mediana invece della media?}\\
+    La mediana è una misura di tendenza centrale estremamente \textbf{robusta nei confronti degli outlier} (valori anomali o estremi). A differenza della media aritmetica (che risente pesantemente di un singolo valore molto alto o basso), la mediana risente solo dell'ordinamento dei dati. Nel nostro caso specifico, tuttavia, abbiamo preferito l'imputazione costante a \texttt{0.0} perché supportata da una logica di business certa (tenure = 0 implica zero consumi), evitando di distorcere la realtà con la mediana generale del dataset ($\approx 1397.47\$$).
+\end{itemize}
+
+\subsubsection{Codifica delle variabili categoriche (One-Hot Encoding)}
+Le variabili categoriche qualitative non possono essere elaborate direttamente da modelli matematici come la Regressione Logistica o MLP. Abbiamo applicato il \textbf{One-Hot Encoding}:
+\begin{itemize}
+    \item \textbf{In cosa consiste?}\\
+    Consiste nel mappare una variabile qualitativa con $C$ categorie distinte in $C$ variabili binarie (dette *dummy*) aventi valore $1$ se l'osservazione appartiene alla categoria e $0$ altrimenti.
+    \item \textbf{Perché escludiamo una categoria (drop\_first=True)?}\\
+    Per evitare la trappola della multicollinearità (perfetta dipendenza lineare tra le feature). Se tenessimo tutte le $C$ colonne dummy, la loro somma darebbe sempre $1$, che è perfettamente allineata al termine di intercetta (bias) dei modelli lineari, rendendo la matrice delle feature non invertibile. Escludendo la prima colonna, questa funge da categoria di riferimento (baseline).
+    \item \textbf{Come verifichiamo la correttezza del One-Hot Encoding nel codice?}\\
+    Abbiamo utilizzato la funzione standard \texttt{pd.get\_dummies()} di pandas. Per verificare che abbia operato correttamente:
+    \begin{enumerate}
+        \item Si controlla lo shape del dataset post-encoding: se avevamo una colonna con $C$ classi, il numero totale di colonne deve aumentare esattamente di $C-1$. Nel nostro caso, il dataset è passato da 20 feature originarie a 30 colonne finali preelaborate.
+        \item Si ispeziona il dataset (\texttt{X\_encoded.head()}) verificando che le nuove colonne contengano solo valori appartenenti all'insieme $\{0, 1\}$ e che per ogni record non vi sia mai più di un singolo valore $1$ attivo tra le dummy di una stessa feature originaria.
+    \end{enumerate}
+\end{itemize}
+
+\subsubsection{Standardizzazione (Standard Scaling)}
+I modelli basati sulle distanze ($k$-Means) e sulle reti neurali (MLP) risentono fortemente delle differenze di scala tra le variabili.
+\begin{itemize}
+    \item \textbf{Come funziona lo Standard Scaling?}\\
+    La standardizzazione trasforma una variabile quantitativa continua in modo che abbia media $\mu = 0$ e deviazione standard $\sigma = 1$. Per ciascun valore $x_i$, si calcola il valore scalato $z_i$:
+    \begin{equation}
+        z_i = \frac{x_i - \mu}{\sigma}
+    \end{equation}
+    dove:
+    \begin{equation}
+        \mu = \frac{1}{N}\sum_{i=1}^{N} x_i \quad (\text{Media})
+    \end{equation}
+    \begin{equation}
+        \sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N} (x_i - \mu)^2} \quad (\text{Deviazione Standard})
+    \end{equation}
+    \item \textbf{Cos'è la deviazione standard?}\\
+    È una misura della dispersione dei dati attorno alla loro media aritmetica. Indica, in media, quanto i singoli valori si discostino dal valore centrale.
+    \item \textbf{Perché lo splitting in Train/Test si fa PRIMA dello scaling (Standardization)?}\\
+    Questa è una regola aurea del Machine Learning per evitare il \textbf{Data Leakage} (trapelamento di informazioni). Se calcolassimo la media $\mu$ e la deviazione standard $\sigma$ sull'intero dataset (prima dello split), le informazioni del Test Set (che dovrebbe essere rigorosamente invisibile e simulare dati futuri sconosciuti) influenzerebbero i valori scalati del Training Set. 
+
+    Pertanto:
+    1. Si effettua prima lo split del dataset.
+    2. Si calcolano media e deviazione standard (operazione di \texttt{fit}) \textbf{esclusivamente sul Training Set}.
+    3. Si applica la trasformazione (operazione di \texttt{transform}) sia sul Training Set che sul Test Set utilizzando i parametri calcolati sul Training Set.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../grafici/churn_distribution.png}
+        \caption{Distribuzione del Churn nel dataset.}
+        \label{fig:churn_dist}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../grafici/churn_vs_tenure.png}
+        \caption{Relazione tra mesi di permanenza (tenure) e Churn.}
+        \label{fig:churn_tenure}
+    \end{minipage}
+\end{figure}
+
+\subsection{Criticità: Sbilanciamento delle Classi}
+La variabile target \textit{Churn} presenta una forte asimmetria nella sua distribuzione. Nel dataset, il $73.4\%$ dei clienti appartiene alla classe $0$ (\textit{No Churn}) e solo il $26.6\%$ appartiene alla classe $1$ (\textit{Churn}). Questa proporzione indica la presenza di uno sbilanciamento di circa 3:1.
+Per contrastare questa criticità, lo split train-test è stato eseguito in modo stratificato, garantendo la parità delle proporzioni delle classi nei due set.
+
+% -------------------------------------------------------------
+\section{Metodologia}
+\label{sec:metodologia}
+La pipeline di analisi implementata prevede un flusso sequenziale suddiviso in tre macro-blocchi: pre-elaborazione, segmentazione non supervisionata e classificazione supervisionata nei due scenari.
+
+\subsection{L'architettura della Pipeline}
+L'architettura prevede il preprocessing delle feature (imputazione, codifica one-hot, scaling), l'applicazione di $k$-Means per generare la feature del cluster, l'aggiunta di questa feature dummy al dataset e l'addestramento dei classificatori.
+
+\subsection{I Modelli Scelti}
+
+\subsubsection{k-Means (Clustering)}
+L'algoritmo $k$-Means è un metodo di partizionamento dello spazio delle feature in $k$ gruppi disgiunti. L'algoritmo opera in modo iterativo partendo da $k$ centroidi posizionati casualmente. Ad ogni iterazione:
+\begin{enumerate}
+    \item Assegna ciascun punto al centroide più vicino (in base alla distanza euclidea).
+    \item Ricalcola la posizione di ciascun centroide come media geometrica dei punti ad esso assegnati.
+\end{enumerate}
+Il processo termina quando la posizione dei centroidi si stabilizza. La scelta del $k$ ottimale si basa sul Silhouette Score e sull'Inertia.
+
+\subsubsection{Regressione Logistica (Baseline)}
+Utilizzata come baseline semplice e interpretabile. Calcola una combinazione lineare delle feature di input e mappa il risultato nell'intervallo $[0, 1]$ tramite la funzione sigmoide:
+\begin{equation}
+    \sigma(t) = \frac{1}{1 + e^{-t}}
+\end{equation}
+Rappresenta la probabilità stimata che il cliente appartenga alla classe di abbandono.
+
+\subsubsection{Decision Tree (Modello Principale 1)}
+L'albero di decisione suddivide lo spazio delle feature in regioni rettangolari tramite regole logiche di split sequenziali (struttura a IF-THEN) che massimizzano la purità dei nodi figli (Indice di Gini). Abbiamo impostato una profondità massima del modello pari a $5$ (\texttt{max\_depth=5}) per limitare l'overfitting.
+
+\subsubsection{Multi-Layer Perceptron (Modello Principale 2)}
+Il Multi-Layer Perceptron (MLP) è una rete neurale artificiale feedforward composta da layer sequenziali di nodi (neuroni).
+\begin{itemize}
+    \item \textbf{Come viene addestrato?}\\
+    L'addestramento avviene in due fasi ripetute iterativamente:
+    1. \textbf{Forward Propagation}: I dati fluiscono dal layer di input attraverso i layer nascosti (hidden layers), dove ciascun neurone calcola la somma pesata degli input più il bias e applica una funzione di attivazione non lineare (nel nostro caso la funzione ReLU: $f(x) = \max(0, x)$). L'output finale viene calcolato nel layer di output.
+    2. \textbf{Backpropagation}: Si calcola l'errore tra la predizione e la classe reale tramite la funzione di perdita di cross-entropia. L'errore viene propagato a ritroso nella rete per calcolare i gradienti rispetto ai pesi e ai bias. I parametri vengono aggiornati tramite un ottimizzatore (Adam) basato sulla discesa del gradiente.
+    \item \textbf{E se uno non usa la funzione di attivazione Sigmoide nel layer di output?}\\
+    Per problemi di classificazione binaria, la funzione di attivazione del layer di output deve essere necessariamente la \textbf{Sigmoide}. Essa comprime l'output reale della rete in un intervallo chiuso $[0, 1]$, interpretabile come probabilità a posteriori del target: $P(Y=1|X)$. Se non usassimo la sigmoide, l'output della rete potrebbe assumere qualsiasi valore reale in $]-\infty, +\infty[$, impedendo una classificazione probabilistica diretta e l'uso della perdita di cross-entropia standard.
+    \item \textbf{Perché servono le attivazioni non lineari nei layer nascosti?}\\
+    Senza funzioni di attivazione non lineari (es. ReLU, Tanh) nei layer nascosti, la composizione di più layer lineari collasserebbe matematicamente in una singola trasformazione lineare. La rete neurale perderebbe così la capacità di apprendere relazioni complesse e non lineari, diventando equivalente ad un semplice modello di Regressione Logistica.
+\end{itemize}
+
+% -------------------------------------------------------------
+\section{Esperimenti}
+\label{sec:esperimenti}
+
+\subsection{Setup Sperimentale e Prevenzione dell'Overfitting}
+La verifica del comportamento dei modelli richiede un setup rigoroso basato sul monitoraggio dei fenomeni di \textbf{overfitting} e \textbf{underfitting}:
+\begin{itemize}
+    \item \textbf{Che cos'è l'Overfitting?}\\
+    Si verifica quando un modello apprende eccessivamente i dettagli e il rumore del Training Set, al punto da perdere capacità di generalizzazione su dati nuovi (Test Set). Si manifesta con performance altissime nel training e significativamente inferiori nel test.
+    \item \textbf{Che cos'è l'Underfitting?}\\
+    Si verifica quando il modello è troppo semplice per catturare la struttura logica dei dati. Si manifesta con performance scadenti sia sul Training Set che sul Test Set.
+    \item \textbf{Come verifichiamo la presenza di overfitting o underfitting?}\\
+    Addestriamo il modello sul Training Set (80\% del dataset, stratificato) e calcoliamo le metriche di Accuracy, Recall e AUC sia sul Training Set stesso che sul Test Set (20\% rimanente, tenuto separato). Un divario marcato tra le metriche di train e test indica overfitting; valori bassi in entrambi indicano underfitting.
+\end{itemize}
+
+\subsection{Caratterizzazione dei due Cluster ($k=2$)}
+A seguito del clustering non supervisionato k-Means con $k=2$ su tutti i dati preelaborati, abbiamo analizzato le caratteristiche dei due segmenti di clienti incrociandoli con le variabili non riscalate del dataset:
+\begin{enumerate}
+    \item \textbf{Cluster 0 (Dimensioni: 1526 clienti - ``Low-Spenders Fedeli'')}:
+    \begin{itemize}
+        \item Tenure media: $30.55$ mesi.
+        \item Spesa mensile media (\textit{MonthlyCharges}): $21.08\$$.
+        \item Costo totale medio (\textit{TotalCharges}): $662.60\$$.
+        \item Tasso di Churn reale: \textbf{7.40\%} (estremamente basso).
+        \item Contratti: Prevalenza di contratti a lungo termine (Biennali: $41.8\%$, Annuali: $23.9\%$, Mensili: $34.3\%$).
+        \item \textit{Profilo}: Clientela stabile che utilizza servizi di base (es. solo linea voce, senza internet veloce), caratterizzata da elevata fedeltà e contratti pluriennali.
+    \end{itemize}
+    \item \textbf{Cluster 1 (Dimensioni: 5517 clienti - ``High-Spenders Volatili'')}:
+    \begin{itemize}
+        \item Tenure media: $32.88$ mesi.
+        \item Spesa mensile media (\textit{MonthlyCharges}): $76.84\$$.
+        \item Costo totale medio (\textit{TotalCharges}): $2727.03\$$.
+        \item Tasso di Churn reale: \textbf{31.83\%} (molto alto).
+        \item Contratti: Forte prevalenza di contratti flessibili mensili (Mese-a-mese: $60.7\%$, Annuali: $20.1\%$, Biennali: $19.2\%$).
+        \item \textit{Profilo}: Clientela ad alto consumo tecnologico (servizi internet a banda larga, streaming, pacchetti dati), ma con un'altissima volatilità e legata a contratti senza vincoli temporali.
+    \end{itemize}
+\end{enumerate}
+
+% -------------------------------------------------------------
+\section{Risultati}
+\label{sec:risultati}
+
+\subsection{Risultati del Clustering k-Means}
+La Tabella \ref{tab:clustering_metrics} mostra i valori di Inertia e Silhouette Score per le diverse configurazioni di cluster testate.
+\begin{table}[H]
+\centering
+\caption{Metriche di valutazione del clustering k-Means.}
+\label{tab:clustering_metrics}
+\begin{tabular}{ccc}
+\toprule
+\textbf{Numero di Cluster ($k$)} & \textbf{Inertia} & \textbf{Silhouette Score} \\
+\midrule
+2 & 41817.82 & 0.2946 \\
+3 & 30802.81 & 0.2861 \\
+4 & 28228.08 & 0.2279 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Il valore di silhouette score massimo si registra per $k=2$ ($0.2946$). Per $k=3$ si ha $0.2861$, mentre per $k=4$ scende a $0.2279$. Abbiamo pertanto selezionato $k=2$ come partizione ottimale.
+
+La Figura \ref{fig:clustering_eval} mostra l'andamento dell'Inertia e del Silhouette Score al variare del numero di cluster $k$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../grafici/clustering_evaluation.png}
+    \caption{Valutazione del clustering k-Means tramite metodo del gomito (Inertia) e Silhouette Score.}
+    \label{fig:clustering_eval}
+\end{figure}
+
+\subsection{Risultati della Classificazione (Train vs. Test)}
+La Tabella \ref{tab:classification_results} riassume le performance di tutti i modelli sia sul Training Set che sul Test Set, nei due scenari.
+
+\begin{table}[H]
+\centering
+\caption{Confronto delle metriche di classificazione tra Train e Test.}
+\label{tab:classification_results}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{llcccccc}
+\toprule
+ & & \multicolumn{2}{c}{\textbf{Accuracy}} & \multicolumn{2}{c}{\textbf{Recall}} & \multicolumn{2}{c}{\textbf{AUC}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+\textbf{Modello} & \textbf{Feature Scenario} & \textbf{Train} & \textbf{Test} & \textbf{Train} & \textbf{Test} & \textbf{Train} & \textbf{Test} \\
+\midrule
+Logistic Regression & Senza Cluster & 0.8053 & 0.8062 & 0.5485 & 0.5588 & 0.8492 & 0.8422 \\
+Logistic Regression & Con Cluster & 0.8051 & 0.8055 & 0.5485 & 0.5588 & 0.8492 & 0.8423 \\
+\midrule
+Decision Tree & Senza Cluster & 0.8023 & 0.7942 & 0.5612 & 0.5401 & 0.8476 & 0.8267 \\
+Decision Tree & Con Cluster & 0.8023 & 0.7942 & 0.5612 & 0.5401 & 0.8476 & 0.8267 \\
+\midrule
+Multi-Layer Perceptron (MLP) & Senza Cluster & 0.9143 & 0.7495 & 0.7813 & 0.4278 & 0.9656 & 0.7844 \\
+Multi-Layer Perceptron (MLP) & Con Cluster & 0.9104 & 0.7360 & 0.9097 & 0.5829 & 0.9722 & 0.7846 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\subsection{Analisi Critica dell'Overfitting e dell'Impatto del Clustering}
+L'ispezione della Tabella \ref{tab:classification_results} evidenzia risultati estremamente interessanti ai fini dell'esame orale:
+\begin{enumerate}
+    \item \textbf{Logistic Regression e Decision Tree (Modelli stabili)}:\\
+    Entrambi i modelli mostrano un comportamento ideale dal punto di vista della generalizzazione. La differenza tra le metriche di Training e Testing è minima (es. per la Regressione Logistica senza cluster, l'accuratezza passa da $0.8053$ a $0.8062$, e l'AUC da $0.8492$ a $0.8422$). \textbf{Non vi è alcun segno di overfitting}. Il Decision Tree beneficia dell'impostazione di \texttt{max\_depth=5} che ha bloccato la crescita incontrollata dei rami. L'aggiunta della feature del cluster non altera le performance di questi modelli, in quanto la barriera di decisione del cluster $k=2$ è già intrinsecamente ricavabile dalle feature originali.
+    \item \textbf{Multi-Layer Perceptron - MLP (Forte Overfitting)}:\\
+    La rete MLP mostra un \textbf{evidente e forte overfitting}. Nel training set senza cluster, la rete raggiunge un'accuratezza del $91.43\%$, una Recall del $78.13\%$ e un AUC del $0.9656$. Tuttavia, quando valutata sul Test Set, l'accuratezza crolla al $74.95\%$, la Recall si dimezza al $42.78\%$ e l'AUC scende a $0.7844$. 
+    Le reti neurali MLP sono approssimatori molto complessi ed altamente parametrizzati; su dataset di medie dimensioni come questo ($\approx 5600$ campioni di training), tendono a memorizzare il rumore del dataset di training anziché astrarre pattern generali.
+    \item \textbf{Impatto del Clustering sull'MLP}:\\
+    L'aggiunta della feature di cluster nello Scenario B non risolve l'overfitting dell'MLP (la Train Accuracy rimane al $91.04\%$), ma agisce come una forte guida per l'attivazione dei neuroni. Sul Test Set, la \textbf{Recall dell'MLP con cluster compie un balzo notevole passando da $0.4278$ a $0.5829$ ($+15.51\%$ assoluto)}. Questo indica che l'informazione di partizione non supervisionata aiuta a compensare lo sbilanciamento delle classi, spingendo la rete neurale a individuare molti più clienti a rischio effettivo di abbandono, a costo di un lieve incremento di falsi positivi (lieve flessione dell'accuratezza a $0.7360$).
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../grafici/decision_tree_vis.png}
+    \caption{Albero di Decisione semplificato (max\_depth=3).}
+    \label{fig:decision_tree_vis}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../grafici/feature_importances.png}
+    \caption{Top 10 importanza delle feature per il Decision Tree nello Scenario B (con feature del cluster).}
+    \label{fig:feature_importances}
+\end{figure}
+
+% -------------------------------------------------------------
+\section{Discussione critica}
+\label{sec:discussione_critica}
+
+\subsection{Punti di Forza della Soluzione}
+L'integrazione di clustering e classificazione ha consentito di caratterizzare i segmenti di clientela in base ai loro profili commerciali reali, offrendo modelli predittivi stabili (baseline e albero) e fornendo un incremento prestazionale importante per la Recall dell'MLP attraverso la feature di clustering.
+
+\subsection{Limiti Sperimentali e Fonti di Errore}
+I cluster identificati presentano confini deboli nello spazio originario (Silhouette Score di $0.2946$), a indicare comportamenti di clientela sfumati. Inoltre, la rete MLP risente fortemente di overfitting su questo dataset, suggerendo la necessità di inserire tecniche di regolarizzazione (L2 aumentata, dropout) o Early Stopping.
+
+\subsection{Interpretazione e Confronto: Decision Tree vs. MLP}
+Il Decision Tree mantiene una totale trasparenza decisionale (struttura a IF-THEN basata principalmente sul tipo di contratto mensile e sulla tenure standardizzata), facilmente spiegabile. L'MLP, pur fornendo un'ottima Recall nello Scenario B, agisce come una scatola nera (black box) dove le relazioni tra i pesi dei nodi rimangono non interpretabili per un operatore di business.
+
+\subsection{Miglioramenti Futuri}
+Proponiamo l'applicazione di algoritmi di bilanciamento delle classi (SMOTE o pesatura della perdita tramite class weight) per innalzare la Recall senza degradare l'accuratezza, e l'utilizzo di modelli ensemble come il Random Forest.
+
+% -------------------------------------------------------------
+\section{Conclusioni}
+\label{sec:conclusioni}
+Il progetto ha dimostrato l'utilità dell'integrazione tra apprendimento non supervisionato e supervisionato. Il clustering ha identificato segmenti commerciali ben caratterizzati (low-spenders stabili vs. high-spenders volatili). La feature derivata ha consentito di mitigare l'effetto dello sbilanciamento sul Multi-Layer Perceptron (MLP), incrementando del $+15.5\%$ il richiamo dei clienti a rischio di abbandono sul Test Set, a fronte di un evidente overfitting del modello neurale che evidenzia la necessità di regolarizzazioni future.
+
+\end{document}

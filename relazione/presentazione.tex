@@ -1,0 +1,237 @@
+\documentclass[aspectratio=169,xcolor=table]{beamer}
+
+% --- Pacchetti ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+
+% --- Configurazione Tema (Madrid elegante con colore personalizzato) ---
+\usetheme{Madrid}
+\definecolor{unimeblue}{RGB}{12, 35, 64} % Blu scuro istituzionale
+\usecolortheme[named=unimeblue]{structure}
+
+% --- Informazioni ---
+\title[Lab IA - Progetto 1]{Progetto 1: Segmentazione Clienti e Churn Prediction}
+\subtitle{Spiegazione Semplificata del Progetto}
+\author[Massimo Mantineo]{Massimo Mantineo\\{\small Matricola: 541924}}
+\institute[Unime MIFT]{
+  Università degli Studi di Messina\\
+  Corso di Laurea in Informatica
+}
+\date[A.A. 2025/2026]{Laboratorio di Intelligenza Artificiale\\A.A. 2025/2026}
+
+% Logo nel titolo
+\titlegraphic{\includegraphics[width=3cm]{logo_unime_orizontale.png}}
+
+\begin{document}
+
+% Slide 1: Titolo
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Slide 2: Obiettivi e Dataset
+\begin{frame}{1. Di cosa tratta il Progetto?}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{L'obiettivo:}
+      \begin{itemize}
+        \item Capire quali clienti stanno per abbandonare la compagnia telefonica (\textbf{Churn Prediction}).
+        \item Aiutare l'azienda a intervenire prima che il cliente se ne vada.
+      \end{itemize}
+      \vspace{0.4cm}
+      \textbf{Il problema principale dei dati:}
+      \begin{itemize}
+        \item Le classi sono \textbf{sbilanciate} (3:1).
+        \item Ci sono molti clienti fedeli (73.4\%) e pochi che abbandonano (26.6\%).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{../grafici/churn_distribution.png}
+      \begin{center}\scriptsize Grafico: La maggior parte dei clienti non abbandona (No Churn).\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 3: Preprocessing dei Dati
+\begin{frame}{2. Come abbiamo ripulito i Dati?}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item \textbf{Dati Mancanti}: Riempite 11 celle vuote in *TotalCharges* con `0.0` (erano clienti appena registrati con tenure = 0).
+        \item \textbf{One-Hot Encoding}: Tradotto le parole (es. contratti *Mensile, Annuale*) in numeri `0` e `1` (bandierine) perché il computer legge solo numeri.
+        \item \textbf{Standardizzazione}: Riportato le variabili numeriche ad armi pari (stessa scala), altrimenti i numeri grandi (come i costi totali) avrebbero dominato su quelli piccoli (come i mesi di permanenza).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{../grafici/churn_vs_tenure.png}
+      \begin{center}\scriptsize Grafico: Chi ha pochi mesi di contratto (tenure bassa) tende ad abbandonare di più.\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 4: Apprendimento Non Supervisionato (Clustering k-Means)
+\begin{frame}{3. Dividiamo i clienti in Gruppi (Clustering)}
+  \begin{columns}
+    \begin{column}{0.52\textwidth}
+      Usiamo il $k$-Means per trovare gruppi di clienti simili, senza usare l'etichetta di Churn.
+      \begin{itemize}
+        \item Scelto \textbf{$k=2$} (Silhouette Score massimo = \textbf{0.2946}).
+      \end{itemize}
+      \vspace{0.2cm}
+      \textbf{Chi sono i 2 Cluster trovati?}
+      \begin{itemize}
+        \item \textbf{Cluster 0} (Fedeli - Spesa Bassa):
+          \begin{itemize}
+            \item Spesa media: 21.08 \$. Contratti lunghi.
+            \item Churn rate reale bassissimo: \textbf{7.40\%}.
+          \end{itemize}
+        \item \textbf{Cluster 1} (A rischio - Spesa Alta):
+          \begin{itemize}
+            \item Spesa media: 76.84 \$. Contratti mensili.
+            \item Churn rate reale molto alto: \textbf{31.83\%}.
+          \end{itemize}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{../grafici/clustering_evaluation.png}
+      \begin{center}\scriptsize Grafico: La scelta di $k=2$ bilancia l'Inertia (gomito) e la Silhouette.\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 5: I Modelli di Classificazione Scelti
+\begin{frame}{4. I Modelli di Predizione (Classificazione)}
+  Abbiamo addestrato 3 modelli per capire se un cliente abbandonerà:
+  \vspace{0.4cm}
+  \begin{columns}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{1. Regressione Logistica}
+        \small
+        Il modello di riferimento semplice.
+        
+        Usa la funzione \textbf{Sigmoide} per trasformare i calcoli in una probabilità compresa tra 0 e 1.
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{2. Decision Tree}
+        \small
+        Ragiona a regole ("Sì o No").
+        
+        Impostato con profondità massima a \textbf{5} per evitare che impari a memoria le risposte (regolarizzazione).
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{3. MLP (Rete Neurale)}
+        \small
+        Modello complesso con layer nascosti.
+        
+        Usa l'attivazione \textbf{ReLU} dentro la rete per apprendere relazioni complesse e la \textbf{Sigmoide} in uscita per decidere.
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 6: Risultati Sperimentali
+\begin{frame}{5. Tabella dei Risultati}
+  Confronto tra lo Scenario \textbf{Senza Cluster} e lo Scenario \textbf{Con Cluster} (aggiunto come feature).
+  \vspace{0.2cm}
+  \begin{table}
+    \centering
+    \caption{Accuratezza, Recall (Richiamo dei clienti a rischio) e AUC su Train e Test.}
+    \resizebox{0.9\textwidth}{!}{
+      \begin{tabular}{llcccccc}
+        \toprule
+         & & \multicolumn{2}{c}{\textbf{Accuracy}} & \multicolumn{2}{c}{\textbf{Recall}} & \multicolumn{2}{c}{\textbf{AUC}} \\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+        \textbf{Modello} & \textbf{Feature Scenario} & \textbf{Train} & \textbf{Test} & \textbf{Train} & \textbf{Test} & \textbf{Train} & \textbf{Test} \\
+        \midrule
+        Logistic Regression & Senza Cluster & 0.8053 & 0.8062 & 0.5485 & 0.5588 & 0.8492 & 0.8422 \\
+        Logistic Regression & Con Cluster & 0.8051 & 0.8055 & 0.5485 & 0.5588 & 0.8492 & 0.8423 \\
+        \midrule
+        Decision Tree & Senza Cluster & 0.8023 & 0.7942 & 0.5612 & 0.5401 & 0.8476 & 0.8267 \\
+        Decision Tree & Con Cluster & 0.8023 & 0.7942 & 0.5612 & 0.5401 & 0.8476 & 0.8267 \\
+        \midrule
+        Multi-Layer Perceptron (MLP) & Senza Cluster & 0.9143 & 0.7495 & 0.7813 & 0.4278 & 0.9656 & 0.7844 \\
+        \rowcolor{unimeblue!10}
+        Multi-Layer Perceptron (MLP) & Con Cluster & 0.9104 & 0.7360 & 0.9097 & \textbf{0.5829} & 0.9722 & 0.7846 \\
+        \bottomrule
+      \end{tabular}
+    }
+  \end{table}
+  \vspace{0.1cm}
+  \begin{itemize}
+    \item \textbf{Cosa notare:} L'MLP con l'aggiunta del cluster fa salire la Recall di Test del \textbf{+15.5\%} (da 0.4278 a 0.5829).
+  \end{itemize}
+\end{frame}
+
+% Slide 7: Albero di Decisione (Visualizzazione)
+\begin{frame}{6. Regole dell'Albero di Decisione}
+  \begin{columns}
+    \begin{column}{0.45\textwidth}
+      L'Albero di Decisione è facile da interpretare (trasparente).
+      \vspace{0.3cm}
+      \begin{itemize}
+        \item Lo split principale avviene sulla variabile \textbf{Contract\_Month-to-month} (Contratto mensile).
+        \item Se il contratto è mensile, la variabile successiva più importante è la \textbf{tenure} (permanenza).
+        \item Se il cliente ha un contratto mensile ed è iscritto da poco tempo, la probabilità di abbandono è altissima.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.53\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{../grafici/decision_tree_vis.png}
+      \begin{center}\scriptsize Grafico: Struttura a quiz Sì/No del Decision Tree.\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 8: Overfitting dell'MLP e Importanza Feature
+\begin{frame}{7. L'Overfitting e l'importanza del Cluster}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Cos'è l'Overfitting? (Visto nell'MLP)}
+      \begin{itemize}
+        \item L'MLP ha memorizzato i dati di Train (91.0% accuratezza) ma fa errori sul Test (73.6%). Ha imparato a memoria!
+      \end{itemize}
+      \vspace{0.3cm}
+      \textbf{L'utilità del Cluster:}
+      \begin{itemize}
+        \item La colonna Cluster 1 risulta una delle feature più importanti per l'albero e per la rete neurale.
+        \item Aiuta la rete MLP a trovare i clienti reali a rischio di abbandono (Recall a 0.5829).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{../grafici/feature_importances.png}
+      \begin{center}\scriptsize Grafico: Le variabili più importanti (tipo contratto, mesi, e il nostro Cluster).\end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 9: Conclusioni
+\begin{frame}{8. Cosa impariamo da questo Progetto?}
+  \textbf{Conclusioni Chiave:}
+  \begin{itemize}
+    \item Il \textbf{Clustering} (non supervisionato) ha diviso i clienti in due profili commerciali chiari (spesa bassa e fedeli vs. spesa alta e volatili).
+    \item Inserire questo profilo come feature ha aiutato la \textbf{Rete Neurale (MLP)} a identificare molti più clienti a rischio di abbandono sul Test Set (Recall +15.5\%).
+  \end{itemize}
+  \vspace{0.3cm}
+  \textbf{Sviluppi Futuri per migliorare:}
+  \begin{itemize}
+    \item Utilizzare tecniche per bilanciare i dati (SMOTE) ed evitare l'overfitting dell'MLP.
+    \item Provare modelli ensemble come il \textbf{Random Forest}.
+  \end{itemize}
+  \vspace{0.4cm}
+  \centering
+  \textbf{\large Grazie per l'attenzione!}
+\end{frame}
+
+\end{document}

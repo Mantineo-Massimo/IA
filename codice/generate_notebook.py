@@ -421,6 +421,14 @@ notebook_content = {
     "1. **Logistic Regression & Decision Tree**: Non mostrano segni di overfitting (le metriche di training e testing differiscono di pochissimo). Il Decision Tree, grazie al vincolo `max_depth=5`, mantiene un'ottima generalizzazione pur rimanendo altamente interpretabile.\n",
     "2. **Multi-Layer Perceptron (MLP)**: Mostra un **forte overfitting** (la Train Accuracy è al $91.4\\%$ con un AUC di $0.965$, ma cala al $74.9\\%$ sul test set con AUC di $0.784$). Questo accade perché le reti neurali sono modelli molto flessibili che tendono ad assimilare il rumore del dataset se non regolarizzate a sufficienza. Tuttavia, l'aggiunta della feature di cluster aiuta significativamente a stabilizzare la **Recall sul test set** che passa da $0.4278$ a $0.5829$ ($+15.5\\%$ assoluto)."
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Uso di strumenti di Intelligenza Artificiale Generativa\n",
+    "In conformità con le linee guida del progetto, si dichiara l'uso di Large Language Models esclusivamente come supporto per la formattazione del codice e del testo Markdown;"
+   ]
   }
  ],
  "metadata": {

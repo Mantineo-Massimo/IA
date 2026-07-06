@@ -34,16 +34,14 @@ IA/
 │   ├── clustering_evaluation.png
 │   ├── decision_tree_vis.png
 │   └── feature_importances.png
-├── relazione/                         # Elaborato scritto e presentazione in LaTeX/PDF
-│   ├── relazione.tex                  # Sorgente LaTeX della relazione scritta
-│   ├── relazione.pdf                  # PDF della relazione scritta (consigliata 5-10 pagine)
-│   ├── presentazione.tex              # Sorgente LaTeX delle slide di presentazione
-│   ├── presentazione.pdf              # PDF delle slide di presentazione (9 slide)
-│   ├── results_table.tex              # Tabella dei risultati in formato LaTeX
-│   ├── results_table.csv              # Tabella dei risultati in formato CSV
-│   └── logo_unime_orizontale.png      # Logo dell'Ateneo per header e copertina
-├── teoria/                            # Materiale di studio e dispense del corso
-└── .venv/                             # Ambiente virtuale Python localizzato
+└── relazione/                         # Elaborato scritto e presentazione in LaTeX/PDF
+    ├── relazione.tex                  # Sorgente LaTeX della relazione scritta
+    ├── relazione.pdf                  # PDF della relazione scritta (consigliata 5-10 pagine)
+    ├── presentazione.tex              # Sorgente LaTeX delle slide di presentazione
+    ├── presentazione.pdf              # PDF delle slide di presentazione (9 slide)
+    ├── results_table.tex              # Tabella dei risultati in formato LaTeX
+    ├── results_table.csv              # Tabella dei risultati in formato CSV
+    └── logo_unime_orizontale.png      # Logo dell'Ateneo per header e copertina
 ```
 
 ---
@@ -63,25 +61,19 @@ Tutte le dipendenze con le relative versioni sono elencate in [requirements.txt]
 
 Per riprodurre ed eseguire il codice del progetto localmente:
 
-### 1. Clonare o posizionarsi nella cartella del progetto
-Aprire il terminale e posizionarsi nella root del progetto:
-```bash
-cd /home/massimo-mantineo/Scrivania/IA
-```
-
-### 2. Attivare l'ambiente virtuale (`.venv`)
+### 1. Attivare l'ambiente virtuale (`.venv`)
 Se l'ambiente virtuale non è attivo, attivarlo usando:
 ```bash
 source .venv/bin/activate
 ```
 
-### 3. Installare le dipendenze
+### 2. Installare le dipendenze
 Installare i pacchetti richiesti tramite `pip`:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Avviare Jupyter Notebook ed eseguire il codice
+### 3. Avviare Jupyter Notebook ed eseguire il codice
 Per avviare Jupyter e aprire il notebook:
 ```bash
 jupyter notebook codice/segmentazione_crunch.ipynb

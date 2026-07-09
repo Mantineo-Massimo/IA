@@ -36,108 +36,106 @@
 \end{frame}
 
 % Slide 2: Obiettivi e Dataset
-\begin{frame}{1. Di cosa tratta il Progetto?}
+\begin{frame}{1. Di cosa tratta il Progetto e da dove vengono i Dati?}
   \begin{columns}
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.55\textwidth}
+      \textbf{Il Dataset:}
+      \begin{itemize}
+        \item Usiamo il dataset reale \textbf{Telco Customer Churn di IBM}.
+        \item Contiene i profili commerciali e anagrafici di 7043 clienti.
+      \end{itemize}
+      \vspace{0.2cm}
       \textbf{L'obiettivo:}
       \begin{itemize}
-        \item Capire quali clienti stanno per abbandonare la compagnia telefonica (\textbf{Churn Prediction}).
-        \item Aiutare l'azienda a intervenire prima che il cliente se ne vada.
+        \item Capire quali clienti rischiano di abbandonare l'operatore (\textbf{Churn Prediction}) per intervenire in tempo.
       \end{itemize}
-      \vspace{0.4cm}
-      \textbf{Il problema principale dei dati:}
+      \vspace{0.2cm}
+      \textbf{La sproporzione delle classi:}
       \begin{itemize}
-        \item Le classi sono \textbf{sbilanciate} (3:1).
-        \item Ci sono molti clienti fedeli (73.4\%) e pochi che abbandonano (26.6\%).
+        \item Le classi sono sbilanciate (3:1): 73.4\% fedeli e 26.6\% che abbandonano.
       \end{itemize}
     \end{column}
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.43\textwidth}
       \centering
-      \includegraphics[width=0.9\textwidth]{../grafici/churn_distribution.png}
-      \begin{center}\scriptsize Grafico: La maggior parte dei clienti non abbandona (No Churn).\end{center}
+      \includegraphics[width=0.9\textwidth]{../grafici/churn_vs_tenure.png}
+      \begin{center}\scriptsize \textbf{Grafico}: Chi se ne va (Yes Churn) ha una permanenza bassissima (mediana $\approx$ 10 mesi).\end{center}
     \end{column}
   \end{columns}
 \end{frame}
 
 % Slide 3: Preprocessing dei Dati
-\begin{frame}{2. Come abbiamo ripulito i Dati?}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \begin{itemize}
-        \item \textbf{Dati Mancanti}: Riempite 11 celle vuote in *TotalCharges* con `0.0` (erano clienti appena registrati con tenure = 0).
-        \item \textbf{One-Hot Encoding}: Tradotto le parole (es. contratti *Mensile, Annuale*) in numeri `0` e `1` (bandierine) perché il computer legge solo numeri.
-        \item \textbf{Standardizzazione}: Riportato le variabili numeriche ad armi pari (stessa scala), altrimenti i numeri grandi (come i costi totali) avrebbero dominato su quelli piccoli (come i mesi di permanenza).
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \centering
-      \includegraphics[width=0.9\textwidth]{../grafici/churn_vs_tenure.png}
-      \begin{center}\scriptsize Grafico: Chi ha pochi mesi di contratto (tenure bassa) tende ad abbandonare di più.\end{center}
-    \end{column}
-  \end{columns}
+\begin{frame}{2. Come abbiamo sistemato i Dati? (Preprocessing)}
+  \small
+  Per preparare i dati ai modelli ho seguito cinque passi fondamentali:
+  \vspace{0.2cm}
+  \begin{itemize}
+    \item \textbf{Celle vuote}: Riempite 11 celle vuote in \textit{TotalCharges} con \texttt{0.0} (erano nuovi clienti con tenure=0 che non avevano ancora ricevuto bollette) e convertito in float.
+    \item \textbf{Rimozione customerID}: ID rimosso perché non ha valore predittivo ed eviterà l'overfitting su codici casuali.
+    \item \textbf{One-Hot Encoding}: Tradotto le parole in numeri (0/1). Usato \texttt{drop\_first=True} (escludendo una categoria) per evitare ridondanze matematiche (multicollinearità).
+    \item \textbf{Standard Scaling}: Riportato le variabili numeriche continue a media 0 e deviazione standard 1, per non far dominare i valori grandi (TotalCharges) su quelli piccoli.
+    \item \textbf{Splitting prima dello Scaling}: Diviso i dati in Train (80\%) e Test (20\%) \textbf{prima} dello scaling per evitare il trapelamento di dati (\textbf{Data Leakage}).
+  \end{itemize}
 \end{frame}
 
 % Slide 4: Apprendimento Non Supervisionato (Clustering k-Means)
 \begin{frame}{3. Dividiamo i clienti in Gruppi (Clustering)}
   \begin{columns}
-    \begin{column}{0.52\textwidth}
-      Usiamo il $k$-Means per trovare gruppi di clienti simili, senza usare l'etichetta di Churn.
+    \begin{column}{0.5\textwidth}
+      Usiamo l'algoritmo $k$-Means per trovare gruppi di clienti simili.
+      \vspace{0.2cm}
+      \textbf{Perché abbiamo scelto $k=2$?}
       \begin{itemize}
-        \item Scelto \textbf{$k=2$} (Silhouette Score massimo = \textbf{0.2946}).
+        \item L'Inertia (gomito) flette a $k=2$ e $k=3$.
+        \item Il Silhouette Score (coesione e separazione) ha il suo massimo assoluto proprio a \textbf{$k=2$} (\textbf{0.2946}).
       \end{itemize}
       \vspace{0.2cm}
-      \textbf{Chi sono i 2 Cluster trovati?}
+      \textbf{I 2 Profili Commerciali trovati:}
       \begin{itemize}
         \item \textbf{Cluster 0} (Fedeli - Spesa Bassa):
-          \begin{itemize}
-            \item Spesa media: 21.08 \$. Contratti lunghi.
-            \item Churn rate reale bassissimo: \textbf{7.40\%}.
-          \end{itemize}
+          Tenure media 30.5 mesi, spesa media 21.08 \$, Churn reale del \textbf{7.40\%}.
         \item \textbf{Cluster 1} (A rischio - Spesa Alta):
-          \begin{itemize}
-            \item Spesa media: 76.84 \$. Contratti mensili.
-            \item Churn rate reale molto alto: \textbf{31.83\%}.
-          \end{itemize}
+          Spesa media 76.84 \$, contratti mensili, Churn reale del \textbf{31.83\%}.
       \end{itemize}
     \end{column}
-    \begin{column}{0.45\textwidth}
+    \begin{column}{0.48\textwidth}
       \centering
       \includegraphics[width=\textwidth]{../grafici/clustering_evaluation.png}
-      \begin{center}\scriptsize Grafico: La scelta di $k=2$ bilancia l'Inertia (gomito) e la Silhouette.\end{center}
+      \begin{center}\scriptsize \textbf{Grafico}: Silhouette e Inertia indicano che $k=2$ è ottimale.\end{center}
     \end{column}
   \end{columns}
 \end{frame}
 
 % Slide 5: I Modelli di Classificazione Scelti
-\begin{frame}{4. I Modelli di Predizione (Classificazione)}
-  Abbiamo addestrato 3 modelli per capire se un cliente abbandonerà:
-  \vspace{0.4cm}
+\begin{frame}{4. I Modelli di Predizione e gli Scenari}
+  \small
+  Abbiamo addestrato 3 modelli con filosofie diverse per capire se un cliente abbandonerà:
+  \vspace{0.2cm}
   \begin{columns}
     \begin{column}{0.31\textwidth}
       \begin{block}{1. Regressione Logistica}
-        \small
-        Il modello di riferimento semplice.
-        
-        Usa la funzione \textbf{Sigmoide} per trasformare i calcoli in una probabilità compresa tra 0 e 1.
+        \scriptsize
+        \textbf{Baseline semplice.} Mappa i calcoli lineari in una probabilità [0, 1] tramite la funzione \textbf{Sigmoide}.
       \end{block}
     \end{column}
     \begin{column}{0.31\textwidth}
       \begin{block}{2. Decision Tree}
-        \small
-        Ragiona a regole ("Sì o No").
-        
-        Impostato con profondità massima a \textbf{5} per evitare che impari a memoria le risposte (regolarizzazione).
+        \scriptsize
+        \textbf{Modello a regole (IF-THEN).} Sceglie gli split migliori tramite l'indice di Gini. \texttt{max\_depth=5} per regolarizzare.
       \end{block}
     \end{column}
     \begin{column}{0.31\textwidth}
       \begin{block}{3. MLP (Rete Neurale)}
-        \small
-        Modello complesso con layer nascosti.
-        
-        Usa l'attivazione \textbf{ReLU} dentro la rete per apprendere relazioni complesse e la \textbf{Sigmoide} in uscita per decidere.
+        \scriptsize
+        \textbf{Rete non lineare complessa.} Usa strati nascosti con attivazione \textbf{ReLU} e \textbf{Sigmoide} in uscita per decidere.
       \end{block}
     \end{column}
   \end{columns}
+  \vspace{0.4cm}
+  Confrontati in due scenari:
+  \begin{itemize}
+    \item \textbf{Scenario A (Senza Cluster)}: solo variabili di partenza.
+    \item \textbf{Scenario B (Con Cluster)}: aggiunta del cluster di k-Means come feature extra, per vedere se aiuta a predire il churn.
+  \end{itemize}
 \end{frame}
 
 % Slide 6: Risultati Sperimentali
@@ -176,42 +174,43 @@
 % Slide 7: Albero di Decisione (Visualizzazione)
 \begin{frame}{6. Regole dell'Albero di Decisione}
   \begin{columns}
-    \begin{column}{0.45\textwidth}
-      L'Albero di Decisione è facile da interpretare (trasparente).
-      \vspace{0.3cm}
+    \begin{column}{0.48\textwidth}
+      L'Albero di Decisione è trasparente (\textbf{white-box}):
+      \vspace{0.2cm}
       \begin{itemize}
-        \item Lo split principale avviene sulla variabile \textbf{Contract\_Month-to-month} (Contratto mensile).
-        \item Se il contratto è mensile, la variabile successiva più importante è la \textbf{tenure} (permanenza).
-        \item Se il cliente ha un contratto mensile ed è iscritto da poco tempo, la probabilità di abbandono è altissima.
+        \item \textbf{Scatole nell'albero}: contengono la regola di split, l'impurezza (\textbf{gini}), i clienti rimasti (\textbf{samples}) e il conteggio delle classi (\textbf{value}).
+        \item \textbf{Colori}: i nodi sono \textbf{blu} se prevale chi rimane (classe 0) e \textbf{arancione} se prevale chi se ne va (classe 1). Più il colore è scuro e intenso, più il nodo è puro.
+        \item \textbf{Regola chiave}: lo split iniziale avviene su \textbf{Contract\_Month-to-month}. Chi ha un contratto mensile ed è iscritto da poco (tenure bassa) ha un rischio di abbandono altissimo.
       \end{itemize}
     \end{column}
-    \begin{column}{0.53\textwidth}
+    \begin{column}{0.5\textwidth}
       \centering
       \includegraphics[width=\textwidth]{../grafici/decision_tree_vis.png}
-      \begin{center}\scriptsize Grafico: Struttura a quiz Sì/No del Decision Tree.\end{center}
+      \begin{center}\scriptsize \textbf{Grafico}: Struttura a quiz dell'albero semplificato.\end{center}
     \end{column}
   \end{columns}
 \end{frame}
 
 % Slide 8: Overfitting dell'MLP e Importanza Feature
-\begin{frame}{7. L'Overfitting e l'importanza del Cluster}
+\begin{frame}{7. Overfitting, Underfitting e Importanza Feature}
   \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \textbf{Cos'è l'Overfitting? (Visto nell'MLP)}
+    \begin{column}{0.52\textwidth}
+      \textbf{Overfitting vs Underfitting:}
       \begin{itemize}
-        \item L'MLP ha memorizzato i dati di Train (91.0% accuratezza) ma fa errori sul Test (73.6%). Ha imparato a memoria!
+        \item Non c'è underfitting: i modelli catturano bene il segnale ($\approx$ 80\% accuratezza).
+        \item L'MLP soffre di \textbf{forte overfitting}: impara a memoria i dati di Train (91\%) ma crolla sul Test (73.6%).
       \end{itemize}
-      \vspace{0.3cm}
+      \vspace{0.2cm}
       \textbf{L'utilità del Cluster:}
       \begin{itemize}
-        \item La colonna Cluster 1 risulta una delle feature più importanti per l'albero e per la rete neurale.
-        \item Aiuta la rete MLP a trovare i clienti reali a rischio di abbandono (Recall a 0.5829).
+        \item Il cluster calcolato con k-Means figura nella top 10 delle feature importanti dell'albero di decisione.
+        \item Funge da guida per i neuroni dell'MLP: nello Scenario B la Recall sale dal 42.8\% al \textbf{58.3\%} (\textbf{+15.5\%}).
       \end{itemize}
     \end{column}
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.45\textwidth}
       \centering
       \includegraphics[width=\textwidth]{../grafici/feature_importances.png}
-      \begin{center}\scriptsize Grafico: Le variabili più importanti (tipo contratto, mesi, e il nostro Cluster).\end{center}
+      \begin{center}\scriptsize \textbf{Grafico}: Le caratteristiche più importanti (contratto mensile, tenure, fibra, e il nostro Cluster).\end{center}
     \end{column}
   \end{columns}
 \end{frame}

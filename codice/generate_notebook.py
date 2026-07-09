@@ -15,7 +15,9 @@ notebook_content = {
     "1. **Clustering (Apprendimento non supervisionato)**: usiamo l'algoritmo k-Means per raggruppare i clienti in base ai loro consumi e contratti, provando a identificare dei profili tipici di cliente.\n",
     "2. **Classificazione (Apprendimento supervisionato)**: vogliamo prevedere chi sta per abbandonare la compagnia (*Churn Prediction*). Per farlo proviamo tre modelli: la Regressione Logistica (come modello base o *baseline*), un Albero di Decisione e una Rete Neurale (MLP).\n",
     "\n",
-    "Vogliamo capire se aggiungere le informazioni dei gruppi (cluster) aiuti i modelli di classificazione a lavorare meglio. Inoltre controlleremo con attenzione i risultati sia sui dati di addestramento (Train) che su quelli di test (Test), per vedere se i modelli soffrono di **overfitting** (cioè se hanno semplicemente imparato a memoria i dati di partenza senza capire le regole generali) o di **underfitting**."
+    "Vogliamo capire se aggiungere le informazioni dei gruppi (cluster) aiuti i modelli di classificazione a lavorare meglio. Inoltre controlleremo con attenzione i risultati sia sui dati di addestramento (Train) che su quelli di test (Test), per vedere se i modelli soffrono di:\n",
+    "- **Overfitting (imparare a memoria)**: quando il modello impara troppo a memoria i dati di addestramento (compresi i dettagli inutili) e fallisce sui dati nuovi di test.\n",
+    "- **Underfitting (troppo semplice)**: quando il modello è troppo semplice e non riesce a imparare i pattern di base delle caratteristiche del cliente, ottenendo scarse prestazioni sia su Train che su Test."
    ]
   },
   {
@@ -62,7 +64,7 @@ notebook_content = {
    "metadata": {},
    "source": [
     "## 2. Caricamento Dataset ed Exploratory Data Analysis (EDA)\n",
-    "Carichiamo il dataset. Se non lo abbiamo già sul computer nella cartella `../dati/`, il codice lo scaricherà in automatico da internet."
+    "Carichiamo il dataset. Questo è il dataset reale *Telco Customer Churn* fornito storicamente da IBM. Non si tratta di un dataset generico prelevato da internet, ma di una risorsa standard utilizzata nel Machine Learning per simulare scenari di business realistici: descrive infatti il comportamento di 7043 clienti di una compagnia telefonica tramite caratteristiche anagrafiche, metodi di pagamento, costi e servizi inclusi."
    ]
   },
   {
@@ -91,7 +93,11 @@ notebook_content = {
    "metadata": {},
    "source": [
     "### Ispezione e analisi delle variabili\n",
-    "Diamo un'occhiata a come sono fatti i dati e vediamo se ci sono celle vuote. In particolare la colonna `TotalCharges` ha 11 righe che sembrano vuote: sono i clienti registrati da zero mesi, che quindi non hanno ancora speso nulla."
+    "Diamo un'occhiata alla struttura del dataset chiamando `df.info()`. Notiamo che:\n",
+    "- Ci sono 7043 righe (clienti) e 21 colonne.\n",
+    "- La maggior parte delle variabili sono di tipo `object` (cioè contengono parole come 'Yes', 'No', 'Fiber optic', 'Month-to-month').\n",
+    "- Le variabili numeriche reali sono `tenure` (mesi da cui il cliente è attivo) e `MonthlyCharges` (costi mensili).\n",
+    "- La colonna `TotalCharges` (costi totali) viene letta come testo (`object`) invece che numerica. Il motivo è che contiene 11 spazi vuoti (\" \") per i clienti che hanno appena sottoscritto il contratto (con tenure = 0) e non hanno ancora pagato nulla. Python li legge come testo e questo impedisce qualsiasi calcolo. Nel preprocessing dovremo sostituire questi spazi vuoti con `0.0` e convertire la colonna in formato numerico."
    ]
   },
   {
@@ -143,11 +149,22 @@ notebook_content = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
+    "### Cosa ci dicono i grafici?\n",
+    "1. **Distribuzione del Churn**: Circa il 73.4% dei clienti non ha abbandonato (No Churn, classe 0) e il 26.6% sì (Yes Churn, classe 1). C'è uno sbilanciamento di quasi 3 a 1. Se un modello si limitasse a predire sempre 'No Churn', otterrebbe un'accuratezza del 73.4% pur essendo completamente inutile per il business. Dobbiamo stare attenti a questa metrica.\n",
+    "2. **Relazione tra Churn e Mesi di Permanenza (Tenure)**: Il grafico a scatola (boxplot) mostra che la scatola di chi abbandona (Yes Churn) è molto schiacciata verso il basso (mediana intorno ai 10 mesi), indicando che la stragrande maggioranza dei clienti che se ne vanno sono nuovi clienti iscritti da pochissimo tempo. La scatola di chi rimane fedele (No Churn) è invece spostata molto verso l'alto (mediana intorno ai 38 mesi), confermando che più mesi un cliente rimane con la compagnia, più è probabile che rimanga fedele."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "## 3. Sistemiamo i Dati (Preprocessing)\n",
-    "Prima di addestrare i modelli dobbiamo ripulire e preparare i dati:\n",
-    "1. **Spazi vuoti**: riempiamo gli 11 spazi vuoti in `TotalCharges` inserendo `0.0` (visto che sono nuovi clienti).\n",
-    "2. **Parole in numeri (One-Hot Encoding)**: convertiamo le variabili scritte a parole in numeri 0 e 1. Usiamo `drop_first=True` per escludere una colonna di riferimento ed evitare ridondanze nei calcoli (multicollinearità).\n",
-    "3. **Standardizzazione (Standard Scaling)**: portiamo le variabili numeriche (`tenure`, `MonthlyCharges`, `TotalCharges`) sulla stessa scala (media 0 e deviazione standard 1). Se non lo facessimo, le variabili con i numeri più grandi dominerebbero tutti i calcoli degli algoritmi basati sulle distanze (come k-Means) o sui pesi (come la rete neurale)."
+    "Prima di addestrare i modelli dobbiamo preparare i dati con questi passaggi:\n",
+    "1. **TotalCharges**: sostituiamo gli spazi vuoti con `0.0` (visto che sono nuovi clienti con tenure=0 che non hanno ancora pagato nulla) e convertiamo la colonna in numeri decimali (`float`).\n",
+    "2. **customerID**: eliminiamo la colonna con i codici cliente (es. '7590-VHVEG'). Trattandosi di codici identificativi unici, non hanno alcun valore predittivo e confonderebbero i modelli.\n",
+    "3. **Codifica del target**: convertiamo il target Churn da 'Yes'/'No' a 1/0.\n",
+    "4. **One-Hot Encoding**: traduciamo le variabili scritte a parole in colonne composte solo da numeri 0 e 1. Usiamo `drop_first=True` per escludere una colonna di riferimento per ogni variabile ed evitare ridondanze nei calcoli (multicollinearità). Ad esempio, se abbiamo tre tipi di contratto (mensile, annuale, biennale), creiamo solo due colonne (annuale e biennale): se entrambe sono 0, significa automaticamente che il contratto è mensile.\n",
+    "5. **Standardizzazione (Standard Scaling)**: portiamo le variabili numeriche (`tenure`, `MonthlyCharges`, `TotalCharges`) sulla stessa scala (media 0 e deviazione standard 1). Questo è fondamentale per modelli basati su distanze (come k-Means) o pesi (come la rete neurale MLP) per evitare che una variabile con valori grandi (TotalCharges) oscuri variabili con valori piccoli (tenure)."
    ]
   },
   {
@@ -190,7 +207,9 @@ notebook_content = {
    "metadata": {},
    "source": [
     "## 4. Raggruppiamo i clienti (Clustering con k-Means)\n",
-    "Proviamo a dividere i clienti in 2, 3 o 4 gruppi. Per scegliere la divisione migliore usiamo l'Inertia (metodo del gomito) e il Silhouette Score (che misura quanto sono separati e definiti i gruppi)."
+    "Proviamo a dividere i clienti in 2, 3 o 4 gruppi. Per scegliere la suddivisione migliore usiamo due metriche:\n",
+    "- **Inertia (Metodo del Gomito)**: indica la somma delle distanze dei punti dal centro del loro gruppo. Diminuisce all'aumentare del numero di gruppi; noi cerchiamo il punto in cui la discesa rallenta bruscamente (il 'gomito').\n",
+    "- **Silhouette Score**: misura quanto ogni cliente è vicino al proprio gruppo rispetto agli altri. Più il valore è vicino a 1, meglio definiti e separati sono i gruppi."
    ]
   },
   {
@@ -252,7 +271,14 @@ notebook_content = {
    "metadata": {},
    "source": [
     "### Chi c'è nei due gruppi? (Scelta k=2)\n",
-    "Visto che k=2 ha dato il punteggio di Silhouette migliore, usiamo due gruppi. Guardiamo le caratteristiche medie dei clienti in ciascun gruppo (usando i valori reali prima di essere scalati) per capire chi sono."
+    "Guardando il grafico sopra, notiamo due cose:\n",
+    "- L'Inertia (linea rossa) mostra un cambio di pendenza a $k=2$ e $k=3$.\n",
+    "- Il Silhouette Score (linea blu) ha il suo valore massimo assoluto a **k=2** (0.2946) e scende per valori successivi.\n",
+    "Per questo abbiamo scelto $k=2$ come partizione ottimale. \n",
+    "\n",
+    "Ora analizziamo i due gruppi reali confrontandoli con i valori commerciali prima della standardizzazione:\n",
+    "- **Cluster 0 (Fedeli - Spesa Bassa)**: clienti stabili (tenure media 30.5 mesi), con costi mensili bassi (21.08 $) e contratti lunghi (biennali o annuali). Il loro tasso di churn reale è bassissimo (7.40%).\n",
+    "- **Cluster 1 (A rischio - Spesa Alta)**: clienti più recenti o volatili, ma con una spesa mensile alta (76.84 $) e legati a contratti flessibili mensili. Il loro tasso di churn reale è molto alto (31.83%)."
    ]
   },
   {
@@ -290,14 +316,17 @@ notebook_content = {
    "metadata": {},
    "source": [
     "## 5. Prevediamo l'abbandono (Classificazione)\n",
-    "Dividiamo i dati in Train (80% per addestrare) e Test (20% per verificare). Lo facciamo in modo stratificato per mantenere la proporzione originale di clienti che abbandonano (circa 26.6%).\n",
-    "*Importante*: lo split va fatto prima di calcolare la standardizzazione, altrimenti le informazioni del Test set influenzerebbero il Train (Data Leakage), falsando i risultati.\n",
+    "Dividiamo i dati in Train (80% per addestrare) e Test (20% per verificare). Lo facciamo in modo stratificato per mantenere la proporzione originale del 26.6% di Churn sia in Train che in Test.\n",
+    "*Importante*: lo split va fatto prima di calcolare la standardizzazione, altrimenti le informazioni del Test set influenzerebbero il Train (Data Leakage), invalidando la correttezza della valutazione.\n",
     "\n",
-    "Ora addestriamo tre modelli in due scenari diversi:\n",
-    "- **Scenario A**: senza usare la colonna del cluster.\n",
-    "- **Scenario B**: aggiungendo il cluster come caratteristica in più.\n",
+    "Addestriamo tre modelli con filosofie diverse:\n",
+    "1. **Baseline (Regressione Logistica)**: un modello lineare che calcola una somma pesata delle feature e la passa attraverso una funzione Sigmoide per ottenere una probabilità tra 0 e 1. Ci serve come base semplice di confronto.\n",
+    "2. **Decision Tree**: un modello a regole (IF-THEN) che suddivide i clienti in base a domande logiche che massimizzano la purità dei gruppi (misurata con l'indice di Gini). Impostiamo max_depth=5 per regolarizzare ed evitare che impari le risposte a memoria.\n",
+    "3. **Multi-Layer Perceptron (MLP)**: una rete neurale artificiale complessa. Usa strati nascosti con attivazione non lineare (ReLU) per apprendere relazioni complesse e la Sigmoide in uscita per predire la probabilità di churn.\n",
     "\n",
-    "Calcoliamo le metriche sia sui dati di addestramento che su quelli di test per vedere se i modelli soffrono di overfitting (imparano a memoria i dati di addestramento ma falliscono sui nuovi dati di test) o di underfitting (sono troppo semplici e fanno errori ovunque)."
+    "Valutiamo i modelli in due scenari diversi:\n",
+    "- **Scenario A (Senza Cluster)**: usiamo solo le caratteristiche di partenza.\n",
+    "- **Scenario B (Con Cluster)**: aggiungiamo il cluster (0 o 1) trovato da k-Means come caratteristica in più per capire se questo profilo commerciale pre-calcolato facilita il lavoro dei classificatori."
    ]
   },
   {
@@ -373,7 +402,14 @@ notebook_content = {
    "metadata": {},
    "source": [
     "## 6. Come ragionano i modelli? (Interpretazione)\n",
-    "Disegniamo un albero di decisione semplificato per vedere quali domande fa per classificare i clienti, e guardiamo quali caratteristiche sono considerate più importanti."
+    "Disegniamo un albero di decisione semplificato per vedere quali domande fa per classificare i clienti.\n",
+    "**Come leggere le informazioni dentro ciascun rettangolo dell'albero:**\n",
+    "- **Condizione in alto** (es. `Contract_Month-to-month <= 0.5`): la domanda logica. Se la risposta per un cliente è SI, andiamo nel ramo a sinistra, altrimenti nel ramo a destra.\n",
+    "- **gini**: misura l'impurezza del nodo. Varia da 0 (tutti i clienti in questo nodo appartengono alla stessa classe, purezza massima) a 0.5 (mix 50/50).\n",
+    "- **samples**: quanti clienti sono passati per questo specifico nodo dell'albero.\n",
+    "- **value**: quanti clienti appartengono alla classe 0 (No Churn, primo numero) e alla classe 1 (Churn, secondo numero).\n",
+    "- **class**: la decisione provvisoria presa in quel nodo (in base alla maggioranza).\n",
+    "- **Colori**: i nodi sono colorati in **blu** se la maggioranza dei clienti è fedele (No Churn) e in **arancione** se la maggioranza ha abbandonato (Churn). Più il colore è scuro e intenso, più il nodo è puro e la decisione è netta."
    ]
   },
   {
@@ -412,6 +448,18 @@ notebook_content = {
     "plt.tight_layout()\n",
     "plt.savefig('../grafici/feature_importances.png', dpi=300)\n",
     "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Cosa ci dice il grafico dell'importanza delle caratteristiche?\n",
+    "Questo grafico mostra quali caratteristiche (colonne) sono state più importanti per l'albero di decisione nello Scenario B per distinguere i clienti che se ne vanno da quelli che rimangono:\n",
+    "- La colonna più importante in assoluto è `Contract_Month-to-month` (avere un contratto mensile flessibile senza vincoli temporali).\n",
+    "- Al secondo posto c'è la `tenure` (da quanti mesi il cliente è attivo).\n",
+    "- Al terzo posto c'è `InternetService_Fiber optic` (avere internet in fibra ottica, che è associato a spese mensili più alte).\n",
+    "- Anche il nostro `Cluster_1` (il profilo del cliente volatile ad alta spesa identificato da k-Means) compare nella top 10 delle caratteristiche più significative. Questo conferma che la suddivisione commerciale fatta dal clustering non supervisionato ha un valore predittivo concreto che viene attivamente sfruttato dai modelli supervisionati."
    ]
   },
   {

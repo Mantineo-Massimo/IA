@@ -175,16 +175,18 @@ Per capire se i modelli funzionano bene, ho usato tre metriche classiche:
 % -------------------------------------------------------------
 \section{Dataset e preparazione dei dati}
 \label{sec:dataset_preparazione}
-Ho usato il dataset \textit{Telco Customer Churn} fornito da IBM (si trova facilmente su Kaggle). In totale contiene $7043$ clienti, descritti da $21$ caratteristiche (colonne).
+Ho utilizzato il dataset reale \textit{Telco Customer Churn} fornito storicamente da IBM. Non si tratta di una risorsa qualsiasi reperita casualmente sul web, ma di un dataset di riferimento (benchmark standard) ampiamente studiato nella comunità di Machine Learning per problemi di retention dei clienti. In totale contiene $7043$ clienti di una compagnia di telecomunicazioni, descritti da $21$ variabili (colonne) che coprono i loro dati anagrafiche, i servizi sottoscritti (fibra, telefono, streaming) e il loro stato di fedeltà.
 
 \subsection{Struttura e Principali Variabili}
 Le caratteristiche si dividono in tre categorie principali:
 \begin{enumerate}
     \item \textbf{Variabili numeriche continue}: mesi da cui il cliente è attivo (\textit{tenure}), spesa mensile (\textit{MonthlyCharges}) e spesa totale (\textit{TotalCharges}).
-    \item \textbf{Variabili categoriche qualitative}: tipo di contratto (\textit{Contract}: mensile, annuale, biennale), metodo di pagamento (\textit{PaymentMethod}), tipo di internet (\textit{InternetService}) e altri servizi accessori (es. backup online, streaming tv).
+    \item \textbf{Variabili categoriche qualitative}: tipo di contratto (\textit{Contract}: mensile, annuale, biennale), metodo di pagamento (\textit{PaymentMethod}), tipo di connessione internet (\textit{InternetService}) e altri servizi accessori (es. backup online, streaming tv).
     \item \textbf{Variabili categoriche binarie (sì/no)}: genere, se ha un partner o familiari a carico, se usa la bolletta online e se è un cliente anziano (\textit{SeniorCitizen}, codificata numericamente in $\{0, 1\}$).
 \end{enumerate}
 La variabile da prevedere è \textbf{Churn}, che assume valore ``Yes'' se il cliente ha abbandonato la compagnia nell'ultimo mese, ``No'' in caso contrario.
+
+Durante l'analisi iniziale emerge un'anomalia nella variabile \textit{TotalCharges}. Sebbene indichi costi totali monetari, il suo tipo in Python viene rilevato come testo (\texttt{object}) anziché numerico. Questa anomalia è dovuta alla presenza di $11$ righe che contengono spazi vuoti (\texttt{" "}). Incrociando questi dati, si nota che questi record corrispondono a nuovi clienti registrati da zero mesi (\texttt{tenure = 0}), per i quali la spesa complessiva è effettivamente pari a zero. Python interpreta gli spazi vuoti come stringhe, impedendo qualsiasi operazione matematica: nel preprocessing dovremo sostituire questi spazi vuoti con \texttt{0.0} e convertire la colonna in formato numerico.
 
 \subsection{Operazioni di Preprocessing e Risposte Metodologiche}
 Prima di addestrare i modelli ho dovuto sistemare e preparare i dati con alcuni passaggi fondamentali.
@@ -259,8 +261,12 @@ I modelli basati sulle distanze ($k$-Means) e sulle reti neurali (MLP) risentono
     \end{minipage}
 \end{figure}
 
-\subsection{Criticità: Sbilanciamento delle Classi}
-Il dataset è molto sbilanciato: il $73.4\%$ dei clienti non ha abbandonato (classe $0$), mentre solo il $26.6\%$ ha abbandonato (classe $1$). C'è un rapporto di circa 3 a 1. Se non si fa attenzione, un modello potrebbe limitarsi a dire sempre ``No Churn'' e ottenere un'accuratezza del $73.4\%$ senza capire nulla del problema. Per questo ho eseguito uno split train-test stratificato, per mantenere la stessa proporzione di clienti a rischio sia nel set di addestramento che in quello di test.
+\subsection{Criticità: Sbilanciamento delle Classi e Interpretazione dei Grafici}
+Analizzando i due grafici sopra:
+\begin{enumerate}
+    \item \textbf{Distribuzione del Churn (Figura \ref{fig:churn_dist})}: Il dataset presenta una chiara sproporzione delle classi: $5174$ clienti ($73.4\%$) appartengono alla classe ``No Churn'' (classe 0) e solo $1869$ ($26.6\%$) alla classe ``Yes Churn'' (classe 1). Questo sbilanciamento (rapporto 3:1) è una forte criticità: se un modello banale dicesse sempre 'No Churn', avrebbe un'accuratezza del $73.4\%$. Per proteggere la validità dei test, ho applicato uno split train-test stratificato, preservando la proporzione del $26.6\%$ di Churn in entrambi i set.
+    \item \textbf{Relazione tra Churn e Mesi (Figura \ref{fig:churn_tenure})}: Il boxplot evidenzia la distribuzione del numero di mesi di permanenza dei clienti. Per chi ha abbandonato la compagnia (Yes Churn), la scatola è fortemente compressa verso il basso, con una mediana di circa 10 mesi. Significa che la maggior parte di chi abbandona è cliente da meno di un anno. Al contrario, la scatola di chi rimane fedele (No Churn) è posizionata molto più in alto, con una mediana di circa 38 mesi, confermando che i clienti storici sono molto più stabili.
+\end{enumerate}
 
 % -------------------------------------------------------------
 \section{Metodologia}
@@ -316,17 +322,13 @@ Le librerie usate con le rispettive versioni di riferimento sono:
 \end{itemize}
 Le dipendenze esatte sono raccolte nel file \texttt{requirements.txt} e le istruzioni di installazione sono spiegate nel file \texttt{README.md} nella radice del progetto.
 
-% -------------------------------------------------------------
-\section{Esperimenti}
-\label{sec:esperimenti}
-
-\subsection{Setup Sperimentale e Prevenzione dell'Overfitting}
-Per verificare che i modelli funzionino bene su dati nuovi, dobbiamo controllare due problemi:
+\subsection{Setup Sperimentale e Prevenzione di Overfitting e Underfitting}
+Per valutare l'affidabilità dei modelli, dobbiamo monitorare attentamente due possibili comportamenti problematici:
 \begin{itemize}
-    \item \textbf{Overfitting (imparare a memoria)}: succede quando il modello si adatta troppo bene ai dati di addestramento (compreso il rumore e i dettagli inutili), ma poi fa molti errori sui dati nuovi del Test Set.
-    \item \textbf{Underfitting (troppo semplice)}: succede quando il modello è troppo semplice e non riesce a capire le regole del problema, ottenendo risultati scarsi sia sul Train e sul Test.
+    \item \textbf{Overfitting (imparare a memoria)}: Si verifica quando un modello apprende eccessivamente i dettagli e il rumore del Training Set, perdendo capacità di generalizzazione su dati nuovi (Test Set). Si riconosce quando le metriche sul Train sono quasi perfette, ma crollano sul Test.
+    \item \textbf{Underfitting (troppo semplice)}: Si verifica quando il modello è troppo semplice per catturare la struttura fondamentale dei dati. Si riconosce quando le metriche sono scarse sia sul Training Set che sul Test Set.
 \end{itemize}
-Per verificare questi comportamenti, ho addestrato i modelli sull'80\% dei dati (Train) e poi li ho valutati sul restante 20\% (Test), confrontando le metriche ottenute nei due casi per essere sicuro che le prestazioni fossero stabili.
+Nel nostro esperimento, addestriamo i modelli sull'80\% dei dati (Train, stratificato per mantenere la proporzione di churn) e li valutiamo sul restante 20\% (Test). Monitoriamo l'underfitting verificando che la baseline (Regressione Logistica) e l'albero di decisione raggiungano almeno l'80\% di accuratezza sul train (confermando che hanno appreso le regole di base), e monitoriamo l'overfitting controllando il divario tra train e test.
 
 \subsection{Caratterizzazione dei due Cluster ($k=2$)}
 Dopo aver eseguito l'algoritmo k-Means con $k=2$, ho analizzato le caratteristiche dei clienti nei due gruppi (usando i valori originali prima della standardizzazione):
@@ -352,7 +354,7 @@ Dopo aver eseguito l'algoritmo k-Means con $k=2$, ho analizzato le caratteristic
 \end{enumerate}
 
 % -------------------------------------------------------------
-\section{Risultati}
+\section{Risultati e Interpretazione}
 \label{sec:risultati}
 
 \subsection{Risultati del Clustering k-Means}
@@ -373,8 +375,12 @@ Ho testato k-Means con 2, 3 e 4 cluster. I risultati di Inertia e Silhouette Sco
 \end{tabular}
 \end{table}
 
-La silhouette score migliore si ottiene con $k=2$ ($0.2946$). Con $k=3$ scende leggermente a $0.2861$, e con $k=4$ cala ancora a $0.2279$. Per questo ho scelto $k=2$ come suddivisione ottimale dei clienti.
-La Figura \ref{fig:clustering_eval} mostra l'andamento delle due metriche.
+La Figura \ref{fig:clustering_eval} mostra l'andamento congiunto dell'Inertia (curva rossa) e del Silhouette Score (curva blu):
+\begin{itemize}
+    \item \textbf{Inertia}: Mostra una discesa rapida e un cambio di pendenza (il ``gomito'') a $k=2$ e $k=3$.
+    \item \textbf{Silhouette Score}: Raggiunge il suo massimo assoluto proprio a $k=2$ ($0.2946$) e poi decresce per $k=3$ e $k=4$.
+\end{itemize}
+Questi indicatori indicano che la scelta ottimale è \textbf{k=2}, in quanto garantisce la massima separazione e coesione dei gruppi, fornendo al contempo profili commerciali chiari e facilmente interpretabili per le strategie di business.
 
 \begin{figure}[H]
     \centering
@@ -384,12 +390,20 @@ La Figura \ref{fig:clustering_eval} mostra l'andamento delle due metriche.
 \end{figure}
 
 \subsection{Risultati della Classificazione (Train vs. Test)}
-Ho confrontato le prestazioni nei due scenari:
+Per predire il Churn ho confrontato tre modelli con filosofie diverse:
+\begin{enumerate}
+    \item \textbf{Regressione Logistica}: Il modello di baseline lineare, semplice e veloce, che stima la probabilità tramite la funzione sigmoide. Ci serve come base semplice di confronto.
+    \item \textbf{Albero di Decisione}: Un modello a regole logiche (IF-THEN), facilmente visualizzabile, che suddivide i clienti in base alle scelte che riducono di più l'impurezza.
+    \item \textbf{Multi-Layer Perceptron (MLP)}: Un modello non lineare complesso (rete neurale artificiale) composto da strati di neuroni collegati che apprendono relazioni non lineari grazie alle funzioni di attivazione ReLU e Sigmoide.
+\end{enumerate}
+
+Le metriche di performance sono valutate in due scenari sperimentali:
 \begin{itemize}
-    \item \textbf{Scenario A (Senza Cluster)}: usando solo le caratteristiche originali.
-    \item \textbf{Scenario B (Con Cluster)}: aggiungendo il cluster di appartenenza come caratteristica in più.
+    \item \textbf{Scenario A (Senza Cluster)}: I modelli si addestrano solo sulle caratteristiche preelaborate originarie.
+    \item \textbf{Scenario B (Con Cluster)}: Aggiungiamo ai dati il cluster di appartenenza (0 o 1) calcolato da k-Means, per vedere se questa informazione commerciale pre-raggruppata aiuta la predizione.
 \end{itemize}
-La Tabella \ref{tab:classification_results} riassume le performance di tutti i modelli su Train e Test.
+
+La Tabella \ref{tab:classification_results} riassume le performance su Train e Test.
 
 \begin{table}[H]
 \centering
@@ -409,19 +423,32 @@ Decision Tree & Senza Cluster & 0.8023 & 0.7942 & 0.5612 & 0.5401 & 0.8476 & 0.8
 Decision Tree & Con Cluster & 0.8023 & 0.7942 & 0.5612 & 0.5401 & 0.8476 & 0.8267 \\
 \midrule
 Multi-Layer Perceptron (MLP) & Senza Cluster & 0.9143 & 0.7495 & 0.7813 & 0.4278 & 0.9656 & 0.7844 \\
-Multi-Layer Perceptron (MLP) & Con Cluster & 0.9104 & 0.7360 & 0.9097 & 0.5829 & 0.9722 & 0.7846 \\
+Multi-Layer Perceptron (MLP) & Con Cluster & 0.9104 & 0.7360 & 0.9097 & \textbf{0.5829} & 0.9722 & 0.7846 \\
 \bottomrule
 \end{tabular}
 }
 \end{table}
 
-\subsection{Analisi dei Risultati e dell'Overfitting}
-Dall'ispezione della Tabella \ref{tab:classification_results} emergono tre osservazioni importanti:
+\subsection{Analisi dei Risultati, dell'Overfitting e dell'Impatto delle Feature}
+Dall'ispezione della Tabella \ref{tab:classification_results} emergono tre osservazioni fondamentali:
 \begin{enumerate}
-    \item \textbf{Regressione Logistica e Albero di Decisione sono stabili}: Le prestazioni su Train e Test sono quasi identiche (es. accuratezza intorno all'80\% per entrambi). Non c'è alcun segno di overfitting. L'albero di decisione funziona bene perché limitando la profondità massima a 5 gli abbiamo impedito di crescere troppo e memorizzare i dati di addestramento. In questi due modelli l'aggiunta del cluster non cambia i risultati, perché la divisione fatta dal clustering è lineare ed è già contenuta nelle altre variabili originali.
-    \item \textbf{La Rete Neurale (MLP) soffre di forte overfitting}: Sul Train set senza cluster l'MLP raggiunge risultati altissimi (Accuratezza $91.43\%$, AUC $0.9656$), ma sul Test set crolla vistosamente (Accuratezza $74.95\%$, Recall $42.78\%$, AUC $0.7844$). Essendo un modello molto complesso con molti parametri, tende a memorizzare i dettagli e il rumore del Train set invece di capire le regole generali.
-    \item \textbf{L'impatto del Cluster sull'MLP}: Pur non risolvendo l'overfitting, l'aggiunta del cluster come caratteristica nello Scenario B fa fare un grande balzo in avanti alla \textbf{Recall sul Test set, che sale dal $42.78\%$ al $58.29\%$ ($+15.51\%$ assoluto)}. Questo significa che il cluster aiuta la rete neurale a individuare molti più clienti a rischio di abbandono reale, anche se a costo di qualche falso positivo in più (l'accuratezza sul test scende leggermente al $73.60\%$).
+    \item \textbf{Regressione Logistica e Albero di Decisione sono stabili}: Le loro prestazioni su Train e Test differiscono di pochissimo (accuratezza stabile $\approx 80\%$, AUC $\approx 84\%$). Non c'è alcun segno di underfitting (i modelli catturano bene il segnale dei dati) né di overfitting. L'aggiunta della feature di cluster non ne modifica le prestazioni poiché questi modelli estraggono già le relazioni lineari elementari presenti nei dati.
+    \item \textbf{La Rete Neurale (MLP) soffre di forte overfitting}: Nel train set senza cluster la rete raggiunge l'accuratezza del $91.43\%$ e un AUC del $0.9656$, ma sul test set crolla al $74.95\%$ di accuratezza con Recall al $42.78\%$. Trattandosi di un modello molto parametrizzato e flessibile, ha finito per memorizzare il rumore del dataset di addestramento.
+    \item \textbf{L'impatto del Cluster sull'MLP}: Nello Scenario B, l'aggiunta del cluster come feature non elimina l'overfitting sul train, ma fa fare un grande balzo in avanti alla \textbf{Recall sul Test set, che sale dal $42.78\%$ al $58.29\%$ ($+15.51\%$ assoluto)}. Questo dimostra che l'informazione commerciale del cluster funge da forte linea guida per l'attivazione dei neuroni della rete, permettendole di scovare molti più clienti a rischio effettivo di abbandono (veri positivi), pur pagando un piccolo costo in termini di falsi positivi (l'accuratezza sul test scende a $73.60\%$).
 \end{enumerate}
+
+\subsection{Interpretazione Visiva dei Modelli}
+
+\subsubsection{L'Albero di Decisione Semplificato}
+La Figura \ref{fig:decision_tree_vis} mostra le regole logiche dell'albero di decisione. Ciascun nodo contiene le seguenti informazioni:
+\begin{itemize}
+    \item \textbf{Condizione in alto} (es. `Contract\_Month-to-month $\le 0.5$'): La regola di split. Se il cliente rispetta la condizione si scende a sinistra (SI), altrimenti a destra (NO).
+    \item \textbf{gini}: L'impurezza del nodo (0 indica massima purezza, ovvero che tutti i clienti in quel nodo appartengono alla stessa classe; 0.5 indica massima incertezza).
+    \item \textbf{samples}: Il numero di clienti che cadono in quel nodo.
+    \item \textbf{value}: La distribuzione delle classi, espressa come \texttt{[No Churn, Churn]}.
+    \item \textbf{class}: La classe di maggioranza assegnata provvisoriamente.
+    \item \textbf{Colori}: I nodi sono colorati in \textbf{blu} se la classe di maggioranza è No Churn (classe 0) e in \textbf{arancione} se è Churn (classe 1). L'intensità del colore indica il grado di purezza (nodi blu scuro o arancione scuro sono molto puri, mentre quelli bianchi indicano incertezza vicina al 50/50).
+\end{itemize}
 
 \begin{figure}[H]
     \centering
@@ -429,6 +456,15 @@ Dall'ispezione della Tabella \ref{tab:classification_results} emergono tre osser
     \caption{Albero di Decisione semplificato (max\_depth=3).}
     \label{fig:decision_tree_vis}
 \end{figure}
+
+\subsubsection{Importanza delle Feature}
+La Figura \ref{fig:feature_importances} mostra le 10 caratteristiche più importanti per l'albero di decisione nello Scenario B:
+\begin{itemize}
+    \item La variabile determinante in assoluto è `Contract\_Month-to-month` (avere un contratto mensile flessibile).
+    \item La seconda variabile è la `tenure` (i mesi di permanenza attiva).
+    \item Al terzo posto c'è `InternetService\_Fiber optic` (internet in fibra, legato a spese mensili elevate).
+    \item Il nostro `Cluster\_1` (profilo ad alta spesa volatile) compare nella top 10 delle feature importanti. Questo convalida quantitativamente l'utilità del clustering non supervisionato.
+\end{itemize}
 
 \begin{figure}[H]
     \centering

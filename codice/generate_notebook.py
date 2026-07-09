@@ -9,13 +9,13 @@ notebook_content = {
    "source": [
     "# Progetto 1: Segmentazione Clienti e Churn Prediction\n",
     "### Laboratorio di Intelligenza Artificiale\n",
-    "**Studente:** Massimo Mantineo  \n",
+    "**Studente:** Massimo Mantineo (Matricola 541924)\n",
     "\n",
-    "Questo notebook presenta lo sviluppo completo di una pipeline di Machine Learning per l'analisi dei clienti di un operatore di telecomunicazioni, integrando:\n",
-    "1. **Apprendimento Non Supervisionato (Clustering)**: Segmentazione dei clienti tramite l'algoritmo k-Means per individuare gruppi omogenei.\n",
-    "2. **Apprendimento Supervisionato (Classificazione)**: Predizione del tasso di abbandono (*Churn Prediction*) tramite alberi di decisione (Decision Tree) e reti neurali artificiali (Multi-Layer Perceptron - MLP), confrontandoli con una baseline semplice (Regressione Logistica).\n",
+    "In questo progetto andiamo a studiare i clienti di una compagnia telefonica (usando il dataset Telco Customer Churn). L'obiettivo è duplice:\n",
+    "1. **Clustering (Apprendimento non supervisionato)**: usiamo l'algoritmo k-Means per raggruppare i clienti in base ai loro consumi e contratti, provando a identificare dei profili tipici di cliente.\n",
+    "2. **Classificazione (Apprendimento supervisionato)**: vogliamo prevedere chi sta per abbandonare la compagnia (*Churn Prediction*). Per farlo proviamo tre modelli: la Regressione Logistica (come modello base o *baseline*), un Albero di Decisione e una Rete Neurale (MLP).\n",
     "\n",
-    "L'obiettivo scientifico è valutare se e in che misura le informazioni derivate dal clustering non supervisionato possano migliorare le prestazioni predittive dei modelli supervisionati. Analizziamo esplicitamente sia le metriche di training che quelle di testing per monitorare la presenza di **overfitting** o **underfitting**."
+    "Vogliamo capire se aggiungere le informazioni dei gruppi (cluster) aiuti i modelli di classificazione a lavorare meglio. Inoltre controlleremo con attenzione i risultati sia sui dati di addestramento (Train) che su quelli di test (Test), per vedere se i modelli soffrono di **overfitting** (cioè se hanno semplicemente imparato a memoria i dati di partenza senza capire le regole generali) o di **underfitting**."
    ]
   },
   {
@@ -23,7 +23,7 @@ notebook_content = {
    "metadata": {},
    "source": [
     "## 1. Caricamento Librerie e Configurazione\n",
-    "In questa cella importiamo le librerie standard per l'analisi dei dati, visualizzazione e modellazione statistica."
+    "Importiamo le librerie necessarie per gestire i dati, fare i grafici e addestrare i modelli."
    ]
   },
   {
@@ -62,7 +62,7 @@ notebook_content = {
    "metadata": {},
    "source": [
     "## 2. Caricamento Dataset ed Exploratory Data Analysis (EDA)\n",
-    "Carichiamo il dataset **Telco Customer Churn**. Se non è presente localmente in `../dati/`, lo scarichiamo direttamente."
+    "Carichiamo il dataset. Se non lo abbiamo già sul computer nella cartella `../dati/`, il codice lo scaricherà in automatico da internet."
    ]
   },
   {
@@ -91,9 +91,7 @@ notebook_content = {
    "metadata": {},
    "source": [
     "### Ispezione e analisi delle variabili\n",
-    "Verifichiamo la presenza di valori nulli. Gestiamo il caso della colonna `TotalCharges` che contiene spazi singoli per i clienti appena registrati. \n",
-    "\n",
-    "**Nota:** Le variabili numeriche continue sono `tenure` (mesi di permanenza), `MonthlyCharges` (costi mensili) e `TotalCharges` (costi totali). Le restanti variabili sono categoriche (es. `Contract`, `PaymentMethod`) o binarie (es. `gender`, `Partner`)."
+    "Diamo un'occhiata a come sono fatti i dati e vediamo se ci sono celle vuote. In particolare la colonna `TotalCharges` ha 11 righe che sembrano vuote: sono i clienti registrati da zero mesi, che quindi non hanno ancora speso nulla."
    ]
   },
   {
@@ -145,11 +143,11 @@ notebook_content = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 3. Preprocessing dei Dati\n",
-    "In questa fase:\n",
-    "1. **Gestione dati mancanti**: Imputiamo gli spazi vuoti in `TotalCharges` a `0.0` poiché corrispondono a clienti con `tenure = 0` (non hanno ancora ricevuto addebiti).\n",
-    "2. **Codifica categoriche**: Utilizziamo il **One-Hot Encoding** (tramite `pd.get_dummies(..., drop_first=True)`) per convertire variabili qualitative in numeriche, escludendo una categoria di riferimento per evitare la multicollinearità. \n",
-    "3. **Standardizzazione (Standard Scaling)**: Applichiamo la trasformazione per centrare le variabili continue (`tenure`, `MonthlyCharges`, `TotalCharges`) sulla media ($\\mu = 0$) con varianza unitaria ($\\sigma = 1$). Questo è fondamentale per algoritmi basati sulle distanze come il $k$-Means e le reti neurali (MLP)."
+    "## 3. Sistemiamo i Dati (Preprocessing)\n",
+    "Prima di addestrare i modelli dobbiamo ripulire e preparare i dati:\n",
+    "1. **Spazi vuoti**: riempiamo gli 11 spazi vuoti in `TotalCharges` inserendo `0.0` (visto che sono nuovi clienti).\n",
+    "2. **Parole in numeri (One-Hot Encoding)**: convertiamo le variabili scritte a parole in numeri 0 e 1. Usiamo `drop_first=True` per escludere una colonna di riferimento ed evitare ridondanze nei calcoli (multicollinearità).\n",
+    "3. **Standardizzazione (Standard Scaling)**: portiamo le variabili numeriche (`tenure`, `MonthlyCharges`, `TotalCharges`) sulla stessa scala (media 0 e deviazione standard 1). Se non lo facessimo, le variabili con i numeri più grandi dominerebbero tutti i calcoli degli algoritmi basati sulle distanze (come k-Means) o sui pesi (come la rete neurale)."
    ]
   },
   {
@@ -191,8 +189,8 @@ notebook_content = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 4. Apprendimento Non Supervisionato: Clustering k-Means\n",
-    "Testiamo $k \\in \\{2, 3, 4\\}$ per identificare il numero ottimale di segmenti di clientela tramite Inertia (Elbow Method) e Silhouette Score."
+    "## 4. Raggruppiamo i clienti (Clustering con k-Means)\n",
+    "Proviamo a dividere i clienti in 2, 3 o 4 gruppi. Per scegliere la divisione migliore usiamo l'Inertia (metodo del gomito) e il Silhouette Score (che misura quanto sono separati e definiti i gruppi)."
    ]
   },
   {
@@ -253,8 +251,8 @@ notebook_content = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Caratterizzazione dei Cluster (Scelta k=2)\n",
-    "Incrociamo i cluster con i dati non scalati per capire quali profili di clientela corrispondano ai due segmenti generati."
+    "### Chi c'è nei due gruppi? (Scelta k=2)\n",
+    "Visto che k=2 ha dato il punteggio di Silhouette migliore, usiamo due gruppi. Guardiamo le caratteristiche medie dei clienti in ciascun gruppo (usando i valori reali prima di essere scalati) per capire chi sono."
    ]
   },
   {
@@ -291,11 +289,15 @@ notebook_content = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 5. Apprendimento Supervisionato: Churn Prediction e Analisi dell'Overfitting\n",
-    "Suddividiamo il dataset in **Training** (80%) e **Test** (20%) in modo stratificato. \n",
+    "## 5. Prevediamo l'abbandono (Classificazione)\n",
+    "Dividiamo i dati in Train (80% per addestrare) e Test (20% per verificare). Lo facciamo in modo stratificato per mantenere la proporzione originale di clienti che abbandonano (circa 26.6%).\n",
+    "*Importante*: lo split va fatto prima di calcolare la standardizzazione, altrimenti le informazioni del Test set influenzerebbero il Train (Data Leakage), falsando i risultati.\n",
     "\n",
-    "**Regola fondamentale:** Lo splitting viene effettuato *prima* dello scaling per evitare **data leakage** (ovvero che la media e deviazione standard calcolate sul test set influenzino il training set, invalidando la valutazione). \n",
-    "Addestriamo e confrontiamo i modelli (Logistic Regression, Decision Tree, MLP) nei due scenari, misurando le performance sia sul train set che sul test set per verificare la presenza di **overfitting** (prestazioni alte sul train, basse sul test) o **underfitting** (prestazioni basse su entrambi)."
+    "Ora addestriamo tre modelli in due scenari diversi:\n",
+    "- **Scenario A**: senza usare la colonna del cluster.\n",
+    "- **Scenario B**: aggiungendo il cluster come caratteristica in più.\n",
+    "\n",
+    "Calcoliamo le metriche sia sui dati di addestramento che su quelli di test per vedere se i modelli soffrono di overfitting (imparano a memoria i dati di addestramento ma falliscono sui nuovi dati di test) o di underfitting (sono troppo semplici e fanno errori ovunque)."
    ]
   },
   {
@@ -370,8 +372,8 @@ notebook_content = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 6. Interpretazione e Visualizzazione dei Modelli\n",
-    "Mostiamo l'albero di decisione semplificato e le feature importance."
+    "## 6. Come ragionano i modelli? (Interpretazione)\n",
+    "Disegniamo un albero di decisione semplificato per vedere quali domande fa per classificare i clienti, e guardiamo quali caratteristiche sono considerate più importanti."
    ]
   },
   {
@@ -416,18 +418,19 @@ notebook_content = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 7. Discussione dei Risultati e Conclusioni\n",
-    "Dall'analisi dei risultati train/test emergono considerazioni fondamentali:\n",
-    "1. **Logistic Regression & Decision Tree**: Non mostrano segni di overfitting (le metriche di training e testing differiscono di pochissimo). Il Decision Tree, grazie al vincolo `max_depth=5`, mantiene un'ottima generalizzazione pur rimanendo altamente interpretabile.\n",
-    "2. **Multi-Layer Perceptron (MLP)**: Mostra un **forte overfitting** (la Train Accuracy è al $91.4\\%$ con un AUC di $0.965$, ma cala al $74.9\\%$ sul test set con AUC di $0.784$). Questo accade perché le reti neurali sono modelli molto flessibili che tendono ad assimilare il rumore del dataset se non regolarizzate a sufficienza. Tuttavia, l'aggiunta della feature di cluster aiuta significativamente a stabilizzare la **Recall sul test set** che passa da $0.4278$ a $0.5829$ ($+15.5\\%$ assoluto)."
+    "## 7. Cosa abbiamo scoperto? (Conclusioni)\n",
+    "Guardando i risultati del confronto possiamo trarre queste conclusioni:\n",
+    "1. **La Regressione Logistica e l'Albero di Decisione sono stabili**: le loro prestazioni su Train e Test sono praticamente uguali, quindi non c'è overfitting. L'albero di decisione è ottimo perché è trasparente ed è facile capire come prende le decisioni.\n",
+    "2. **La Rete Neurale (MLP) impara a memoria (Overfitting)**: sul Train set raggiunge un'accuratezza altissima (91.4%), ma sul Test set scende parecchio (74.9%). Essendo un modello molto complesso, tende a memorizzare i dettagli del train invece di capire le regole generali.\n",
+    "3. **L'utilità del Cluster**: se aggiungiamo il cluster come caratteristica (Scenario B), la Recall dell'MLP sul Test set fa un gran balzo in avanti, salendo dal 42.8% al 58.3% (+15.5%). Questo significa che il clustering non supervisionato aiuta concretamente la rete neurale a scovare più clienti a rischio di abbandono."
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Uso di strumenti di Intelligenza Artificiale Generativa\n",
-    "In conformità con le linee guida del progetto, si dichiara l'uso di Large Language Models esclusivamente come supporto per la formattazione del codice e del testo Markdown;"
+    "## Uso di Intelligenza Artificiale Generativa\n",
+    "Ho usato strumenti di intelligenza artificiale (LLM) solo per farmi aiutare a formattare il testo markdown e correggere la sintassi del codice."
    ]
   }
  ],

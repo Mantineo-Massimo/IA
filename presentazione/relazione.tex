@@ -347,7 +347,7 @@ L'addestramento funziona in due fasi ripetute iterativamente:
 Senza di esse, la composizione di più strati lineari collasserebbe matematicamente in una singola trasformazione lineare. La rete neurale perderebbe così la capacità di apprendere relazioni complesse, diventando equivalente ad un semplice modello di Regressione Logistica.
 
 \subsection{Riproducibilità, Dipendenze e Istruzioni d'Esecuzione}
-Per rendere il progetto riproducibile, tutto il codice è racchiuso nel notebook \texttt{segmentazione\_crunch.ipynb}. Se il dataset non è presente localmente nella cartella \texttt{dati/}, il notebook lo scarica da solo all'avvio.
+Per rendere il progetto riproducibile, tutto il codice --- comprendente l'analisi esplorativa dei dati, il preprocessing, la segmentazione tramite clustering ed i modelli di classificazione --- è interamente implementato e documentato all'interno del Jupyter Notebook \texttt{segmentazione\_crunch.ipynb} situato nella cartella \texttt{codice/}. Se il dataset non è presente localmente nella cartella \texttt{dati/}, il notebook provvede a scaricarlo automaticamente all'avvio.
 
 Le librerie usate con le rispettive versioni di riferimento sono:
 \begin{itemize}
@@ -415,13 +415,22 @@ La Figura \ref{fig:clustering_eval} mostra l'andamento congiunto dell'Inertia (c
     \item \textbf{Inertia}: Mostra una discesa rapida e un cambio di pendenza (il ``gomito'') a $k=2$ e $k=3$.
     \item \textbf{Silhouette Score}: Raggiunge il suo massimo assoluto proprio a $k=2$ ($0.2946$) e poi decresce per $k=3$ e $k=4$.
 \end{itemize}
-Questi indicatori indicano che la scelta ottimale è \textbf{k=2}, in quanto garantisce la massima separazione e coesione dei gruppi, fornendo al contempo profili commerciali chiari e facilmente interpretabili per le strategie di business.
+Questi indicatori indicano che la scelta ottimale è \textbf{k=2}, in quanto garantisce la massima separazione e coesione dei gruppi, fornendo al contempo profili commerciali chiari e facilmente interpretabili per le strategie di business. La visualizzazione spaziale di questa suddivisione a due cluster è illustrata nella mappa di clustering (Figura \ref{fig:clustering_map}), dove si osserva graficamente la netta separazione tra i due gruppi di clienti.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.55\textwidth]{../grafici/clustering_evaluation.png}
-    \caption{Valutazione del clustering k-Means tramite metodo del gomito (Inertia) e Silhouette Score.}
-    \label{fig:clustering_eval}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../grafici/clustering_evaluation.png}
+        \caption{Valutazione del clustering k-Means tramite metodo del gomito (Inertia) e Silhouette Score.}
+        \label{fig:clustering_eval}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../grafici/clustering_map.png}
+        \caption{Mappa del clustering k-Means ($k=2$) che mostra la distribuzione dei due cluster.}
+        \label{fig:clustering_map}
+    \end{minipage}
 \end{figure}
 
 \subsection{Risultati della Classificazione (Train vs. Test)}

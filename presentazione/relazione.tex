@@ -521,7 +521,7 @@ L'Albero di Decisione è un modello trasparente (\textit{white-box}): guardando 
 \subsection{Miglioramenti Futuri}
 Per migliorare i modelli proporrei di:
 \begin{itemize}
-    \item Usare tecniche come SMOTE (generazione di dati sintetici della classe minoritaria) o pesare di più la classe minore durante l'addestramento per bilanciare i dati.
+    \item Bilanciare le classi (ad esempio impostando il parametro \texttt{class\_weight='balanced'} nei modelli o ponderando le classi) per gestire lo sbilanciamento del dataset.
     \item Provare modelli ensemble come Random Forest o XGBoost, che spesso gestiscono meglio l'overfitting rispetto alle reti neurali su dati tabellari.
 \end{itemize}
 

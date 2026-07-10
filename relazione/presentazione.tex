@@ -9,6 +9,8 @@
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{amsmath, amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
 
 % --- Configurazione Tema (Madrid elegante con colore personalizzato) ---
 \usetheme{Madrid}
@@ -65,77 +67,193 @@
 
 % Slide 3: Preprocessing dei Dati
 \begin{frame}{2. Come abbiamo sistemato i Dati? (Preprocessing)}
-  \small
-  Per preparare i dati ai modelli ho seguito cinque passi fondamentali:
-  \vspace{0.2cm}
-  \begin{itemize}
-    \item \textbf{Celle vuote}: Riempite 11 celle vuote in \textit{TotalCharges} con \texttt{0.0} (erano nuovi clienti con tenure=0 che non avevano ancora ricevuto bollette) e convertito in float.
-    \item \textbf{Rimozione customerID}: ID rimosso perché non ha valore predittivo ed eviterà l'overfitting su codici casuali.
-    \item \textbf{One-Hot Encoding}: Tradotto le parole in numeri (0/1). Usato \texttt{drop\_first=True} (escludendo una categoria) per evitare ridondanze matematiche (multicollinearità).
-    \item \textbf{Standard Scaling}: Riportato le variabili numeriche continue a media 0 e deviazione standard 1, per non far dominare i valori grandi (TotalCharges) su quelli piccoli.
-    \item \textbf{Splitting prima dello Scaling}: Diviso i dati in Train (80\%) e Test (20\%) \textbf{prima} dello scaling per evitare il trapelamento di dati (\textbf{Data Leakage}).
-  \end{itemize}
+  \centering
+  \begin{tikzpicture}[
+    node distance=0.8cm and 0.6cm,
+    box/.style={
+      rectangle,
+      draw=unimeblue!80,
+      fill=unimeblue!5,
+      thick,
+      rounded corners=4pt,
+      text width=4.3cm,
+      minimum height=1.8cm,
+      align=center,
+      font=\scriptsize
+    },
+    arrow/.style={
+      -{Stealth[scale=1.2]},
+      line width=1.5pt,
+      orange!90!black
+    }
+  ]
+
+    % Row 1
+    \node[box] (b1) {
+      \textbf{1. Celle Vuote}\\[0.1cm]
+      Riempite 11 celle in \textit{TotalCharges} con \texttt{0.0} (nuovi clienti con \textit{tenure}=0) e convertito in float.
+    };
+    
+    \node[box, right=of b1] (b2) {
+      \textbf{2. Rimuovi ID}\\[0.1cm]
+      Rimosso \textit{customerID} poiché privo di valore predittivo; evita l'overfitting.
+    };
+    
+    \node[box, right=of b2] (b3) {
+      \textbf{3. One-Hot Encoding}\\[0.1cm]
+      Tradotte parole in 0/1. Usato \texttt{drop\_first=True} per evitare ridondanze.
+    };
+
+    % Row 2
+    \node[box, below=0.8cm of b3] (b4) {
+      \textbf{4. Splitting}\\[0.1cm]
+      Diviso in Train (80\%) e Test (20\%) \textbf{prima} dello scaling per evitare \textit{Data Leakage}.
+    };
+    
+    \node[box, left=of b4] (b5) {
+      \textbf{5. Scaling}\\[0.1cm]
+      Standard Scaling (media 0, dev. std. 1) per uniformare la scala delle variabili.
+    };
+
+    % Connections
+    \draw[arrow] (b1) -- (b2);
+    \draw[arrow] (b2) -- (b3);
+    \draw[arrow] (b3) -- (b4);
+    \draw[arrow] (b4) -- (b5);
+
+  \end{tikzpicture}
 \end{frame}
 
 % Slide 4: Apprendimento Non Supervisionato (Clustering k-Means)
-\begin{frame}{3. Dividiamo i clienti in Gruppi (Clustering)}
+\begin{frame}{3. Segmentazione dei Clienti (Clustering k-Means)}
   \begin{columns}
-    \begin{column}{0.5\textwidth}
-      Usiamo l'algoritmo $k$-Means per trovare gruppi di clienti simili.
-      \vspace{0.2cm}
-      \textbf{Perché abbiamo scelto $k=2$?}
-      \begin{itemize}
-        \item L'Inertia (gomito) flette a $k=2$ e $k=3$.
-        \item Il Silhouette Score (coesione e separazione) ha il suo massimo assoluto proprio a \textbf{$k=2$} (\textbf{0.2946}).
-      \end{itemize}
-      \vspace{0.2cm}
-      \textbf{I 2 Profili Commerciali trovati:}
-      \begin{itemize}
-        \item \textbf{Cluster 0} (Fedeli - Spesa Bassa):
-          Tenure media 30.5 mesi, spesa media 21.08 \$, Churn reale del \textbf{7.40\%}.
-        \item \textbf{Cluster 1} (A rischio - Spesa Alta):
-          Spesa media 76.84 \$, contratti mensili, Churn reale del \textbf{31.83\%}.
-      \end{itemize}
-    \end{column}
     \begin{column}{0.48\textwidth}
+      \textbf{Scelta del numero di Cluster ($k$):}
+      \vspace{0.1cm}
+      \begin{itemize}
+        \item \textbf{Inertia (Gomito)}: Indica compattezza dei gruppi. La curva flette a $k=2$ e $k=3$.
+        \item \textbf{Silhouette Score}: Indica separazione. Raggiunge il suo \textbf{massimo assoluto a $k=2$ (0.2946)}.
+      \end{itemize}
+      \vspace{0.1cm}
       \centering
-      \includegraphics[width=\textwidth]{../grafici/clustering_evaluation.png}
-      \begin{center}\scriptsize \textbf{Grafico}: Silhouette e Inertia indicano che $k=2$ è ottimale.\end{center}
+      \includegraphics[width=0.7\textwidth]{../grafici/clustering_evaluation.png}
+      \begin{center}\scriptsize \textbf{Grafico}: Gomito e Silhouette.\end{center}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \textbf{I due profili commerciali ($k=2$):}
+      \vspace{0.1cm}
+      
+      \begin{exampleblock}{Cluster 0: Fedeli a basso consumo}
+        \scriptsize
+        \begin{itemize}
+          \item \textbf{Spesa / Mesi}: 21.08 \$ / 30.5 mesi (medie).
+          \item \textbf{Contratto}: Pluriennali (stabili).
+          \item \textbf{Tasso di Churn}: \textbf{7.40\%} (estremamente sicuro).
+        \end{itemize}
+      \end{exampleblock}
+      
+      \begin{alertblock}{Cluster 1: Ad alta spesa e volatili}
+        \scriptsize
+        \begin{itemize}
+          \item \textbf{Spesa / Mesi}: 76.84 \$ / 32.9 mesi (medie).
+          \item \textbf{Contratto}: Mensile flessibile.
+          \item \textbf{Tasso di Churn}: \textbf{31.83\%} (rischio 4 volte superiore).
+        \end{itemize}
+      \end{alertblock}
     \end{column}
   \end{columns}
 \end{frame}
-
-% Slide 5: I Modelli di Classificazione Scelti
 \begin{frame}{4. I Modelli di Predizione e gli Scenari}
-  \small
-  Abbiamo addestrato 3 modelli con filosofie diverse per capire se un cliente abbandonerà:
-  \vspace{0.2cm}
-  \begin{columns}
+  \textbf{Abbiamo addestrato 3 classificatori con filosofie differenti:}
+  \vspace{0.1cm}
+  
+  \begin{columns}[t]
     \begin{column}{0.31\textwidth}
       \begin{block}{1. Regressione Logistica}
         \scriptsize
-        \textbf{Baseline semplice.} Mappa i calcoli lineari in una probabilità [0, 1] tramite la funzione \textbf{Sigmoide}.
+        \textbf{Baseline lineare.}\\
+        Calcola l'impatto delle caratteristiche del cliente e le mappa in una probabilità tramite la curva \textbf{Sigmoide}.
       \end{block}
     \end{column}
     \begin{column}{0.31\textwidth}
-      \begin{block}{2. Decision Tree}
+      \begin{block}{2. Albero di Decisione}
         \scriptsize
-        \textbf{Modello a regole (IF-THEN).} Sceglie gli split migliori tramite l'indice di Gini. \texttt{max\_depth=5} per regolarizzare.
+        \textbf{Modello White-Box.}\\
+        Crea regole logiche gerarchiche (IF-THEN). Trova gli split migliori per massimizzare l'omogeneità dei gruppi (Gini).
       \end{block}
     \end{column}
     \begin{column}{0.31\textwidth}
       \begin{block}{3. MLP (Rete Neurale)}
         \scriptsize
-        \textbf{Rete non lineare complessa.} Usa strati nascosti con attivazione \textbf{ReLU} e \textbf{Sigmoide} in uscita per decidere.
+        \textbf{Modello Black-Box.}\\
+        Rete a strati densi per catturare relazioni complesse ed effetti combinati delle caratteristiche.
       \end{block}
     \end{column}
   \end{columns}
-  \vspace{0.4cm}
-  Confrontati in due scenari:
-  \begin{itemize}
-    \item \textbf{Scenario A (Senza Cluster)}: solo variabili di partenza.
-    \item \textbf{Scenario B (Con Cluster)}: aggiunta del cluster di k-Means come feature extra, per vedere se aiuta a predire il churn.
-  \end{itemize}
+  
+  \vspace{0.3cm}
+  \textbf{I due scenari di addestramento messi a confronto:}
+  \vspace{0.1cm}
+  
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Scenario A: Senza Cluster}
+        \scriptsize
+        I modelli usano solo le feature originali del dataset (dati commerciali e anagrafici preelaborati).
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Scenario B: Con Cluster (Modello Ibrido)}
+        \scriptsize
+        Aggiungiamo all'input il \textbf{cluster di appartenenza (0 o 1)} di $k$-Means, per valutarne il valore informativo.
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 5b: Funzionamento Concettuale dei Modelli
+\begin{frame}{4.1 Come Funzionano i Modelli? (Concetti Chiave)}
+  \textbf{Ogni classificatore elabora i dati con una logica differente:}
+  \vspace{0.2cm}
+  
+  \begin{columns}[t]
+    \begin{column}{0.32\textwidth}
+      \begin{block}{Regressione Logistica}
+        \scriptsize
+        \textbf{Logica Probabilistica:}\\
+        \begin{itemize}
+          \item Pesa l'influenza di ciascuna variabile sul rischio di abbandono.
+          \item Calcola una probabilità complessiva che il cliente se ne vada.
+          \item Classifica come "a rischio" se supera la soglia del 50\%.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.32\textwidth}
+      \begin{block}{Albero di Decisione}
+        \scriptsize
+        \textbf{Logica a Regole (IF-THEN):}\\
+        \begin{itemize}
+          \item Divide ricorsivamente i dati ponendo domande basate su soglie (es. \textit{tenure} $\le 10$ mesi).
+          \item Cerca lo split che crea i gruppi più omogenei e separati.
+          \item Struttura visiva trasparente e intuitiva per le scelte aziendali.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.32\textwidth}
+      \begin{block}{Rete Neurale (MLP)}
+        \scriptsize
+        \textbf{Logica Multi-Strato:}\\
+        \begin{itemize}
+          \item Simula una rete di neuroni organizzata in vari livelli.
+          \item Combina le variabili per apprendere relazioni non lineari complesse.
+          \item Regola continuamente le connessioni per correggere gli errori di stima.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 % Slide 6: Risultati Sperimentali
@@ -172,63 +290,75 @@
 \end{frame}
 
 % Slide 7: Albero di Decisione (Visualizzazione)
-\begin{frame}{6. Regole dell'Albero di Decisione}
+\begin{frame}{6. Interpretazione dell'Albero di Decisione}
+  \footnotesize
   \begin{columns}
-    \begin{column}{0.48\textwidth}
-      L'Albero di Decisione è trasparente (\textbf{white-box}):
-      \vspace{0.2cm}
+    \begin{column}{0.52\textwidth}
+      \textbf{Significato dei Colori:}
       \begin{itemize}
-        \item \textbf{Scatole nell'albero}: contengono la regola di split, l'impurezza (\textbf{gini}), i clienti rimasti (\textbf{samples}) e il conteggio delle classi (\textbf{value}).
-        \item \textbf{Colori}: i nodi sono \textbf{blu} se prevale chi rimane (classe 0) e \textbf{arancione} se prevale chi se ne va (classe 1). Più il colore è scuro e intenso, più il nodo è puro.
-        \item \textbf{Regola chiave}: lo split iniziale avviene su \textbf{Contract\_Month-to-month}. Chi ha un contratto mensile ed è iscritto da poco (tenure bassa) ha un rischio di abbandono altissimo.
+        \item \textbf{Nodi Blu}: Clienti fedeli (No Churn).
+        \item \textbf{Nodi Arancioni}: Clienti a rischio (Yes Churn).
+        \item \textbf{Intensità}: Colori più scuri indicano decisioni più nette e omogenee.
+      \end{itemize}
+      \vspace{0.15cm}
+      
+      \textbf{Le 3 Regole Chiave individuate:}
+      \begin{itemize}
+        \item \textbf{1. Tipo di Contratto}: È lo split iniziale più importante. I contratti mensili sono molto più instabili.
+        \item \textbf{2. Mesi di permanenza (Tenure)}: Chi ha un contratto mensile ed è iscritto da poco è nella fascia a rischio massimo.
+        \item \textbf{3. Servizi \& Spesa}: Fibra ottica e costi mensili alti aumentano la volatilità dei clienti.
       \end{itemize}
     \end{column}
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.45\textwidth}
       \centering
       \includegraphics[width=\textwidth]{../grafici/decision_tree_vis.png}
-      \begin{center}\scriptsize \textbf{Grafico}: Struttura a quiz dell'albero semplificato.\end{center}
+      \begin{center}\scriptsize \textbf{Grafico}: Regole dell'albero.\end{center}
     \end{column}
   \end{columns}
 \end{frame}
 
 % Slide 8: Overfitting dell'MLP e Importanza Feature
-\begin{frame}{7. Overfitting, Underfitting e Importanza Feature}
+\begin{frame}{7. Diagnostica dei Modelli e Indizi Chiave}
+  \footnotesize
   \begin{columns}
     \begin{column}{0.52\textwidth}
-      \textbf{Overfitting vs Underfitting:}
+      \textbf{Capire gli Errori dei Modelli:}
       \begin{itemize}
-        \item Non c'è underfitting: i modelli catturano bene il segnale ($\approx$ 80\% accuratezza).
-        \item L'MLP soffre di \textbf{forte overfitting}: impara a memoria i dati di Train (91\%) ma crolla sul Test (73.6%).
+        \item \textbf{Underfitting (Studiare troppo poco)}: Non è il nostro caso. I modelli sono in grado di catturare le regole di base dei dati ($\approx 80\%$ di accuratezza).
+        \item \textbf{Overfitting (Studiare a memoria)}: Colpisce la Rete Neurale (MLP). Ottiene il 91\% di risposte corrette in addestramento, ma cala al 73.6\% su dati nuovi perché "impara a memoria" i dettagli.
       \end{itemize}
-      \vspace{0.2cm}
-      \textbf{L'utilità del Cluster:}
+      \vspace{0.15cm}
+      
+      \textbf{L'utilità reale del Cluster:}
       \begin{itemize}
-        \item Il cluster calcolato con k-Means figura nella top 10 delle feature importanti dell'albero di decisione.
-        \item Funge da guida per i neuroni dell'MLP: nello Scenario B la Recall sale dal 42.8\% al \textbf{58.3\%} (\textbf{+15.5\%}).
+        \item Anche se la Rete Neurale soffre di overfitting, l'uso del \textbf{Cluster} come indizio extra la guida nel focalizzarsi sui clienti giusti: la sua capacità di trovarli (Recall) sale del \textbf{+15.5\%} (da 42.8\% a 58.3\%).
       \end{itemize}
     \end{column}
     \begin{column}{0.45\textwidth}
       \centering
       \includegraphics[width=\textwidth]{../grafici/feature_importances.png}
-      \begin{center}\scriptsize \textbf{Grafico}: Le caratteristiche più importanti (contratto mensile, tenure, fibra, e il nostro Cluster).\end{center}
+      \begin{center}\scriptsize \textbf{Grafico}: I 10 indizi più importanti. I mesi di permanenza (\textit{tenure}) e la fibra ottica guidano la decisione.\end{center}
     \end{column}
   \end{columns}
 \end{frame}
 
 % Slide 9: Conclusioni
 \begin{frame}{8. Cosa impariamo da questo Progetto?}
-  \textbf{Conclusioni Chiave:}
+  \footnotesize
+  \textbf{Le Lezioni del Progetto:}
   \begin{itemize}
-    \item Il \textbf{Clustering} (non supervisionato) ha diviso i clienti in due profili commerciali chiari (spesa bassa e fedeli vs. spesa alta e volatili).
-    \item Inserire questo profilo come feature ha aiutato la \textbf{Rete Neurale (MLP)} a identificare molti più clienti a rischio di abbandono sul Test Set (Recall +15.5\%).
+    \item \textbf{Utilità del Clustering}: Il $k$-Means ha estratto profili commerciali chiari (fedeli a bassa spesa vs. volatili ad alta spesa) utili per definire strategie aziendali mirate.
+    \item \textbf{Valore del Modello Ibrido}: Inserire il Cluster come feature ha potenziato la Rete Neurale (MLP), aumentandone la Recall sul test del \textbf{+15.5\%} (scovando molti più clienti in partenza).
+    \item \textbf{Scelta del Modello}: L'Albero di Decisione è preferibile per la trasparenza aziendale delle sue regole di split, mentre l'MLP ha potenzialità maggiori ma richiede controllo sull'overfitting.
   \end{itemize}
-  \vspace{0.3cm}
-  \textbf{Sviluppi Futuri per migliorare:}
+  \vspace{0.15cm}
+  
+  \textbf{Sviluppi Futuri (Miglioramento dei Modelli Esistenti):}
   \begin{itemize}
-    \item Utilizzare tecniche per bilanciare i dati (SMOTE) ed evitare l'overfitting dell'MLP.
-    \item Provare modelli ensemble come il \textbf{Random Forest}.
+    \item \textbf{Regolarizzazione dell'MLP}: Introdurre penalizzazioni (L2) o arresto anticipato per ridurre l'overfitting e stabilizzare l'accuratezza di test.
+    \item \textbf{Bilanciamento dei Dati}: Gestire lo sbilanciamento delle classi (es. tramite tecniche come SMOTE) per addestrare i modelli su campioni di churn più equilibrati.
   \end{itemize}
-  \vspace{0.4cm}
+  \vspace{0.25cm}
   \centering
   \textbf{\large Grazie per l'attenzione!}
 \end{frame}

@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,11pt]{article}
 \setlength{\headheight}{68.803pt}
 \addtolength{\topmargin}{-56.803pt}
 
@@ -16,10 +16,9 @@
 
 % Impostazione dei margini con geometry
 \usepackage[
-  left=1in,
-  right=1in,
-  top=3cm,
-  bottom=1in
+  margin=0.72in,
+  top=1.7cm,
+  bottom=0.72in
 ]{geometry}
 
 \usepackage[
@@ -44,9 +43,16 @@
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{enumitem}
+\setlist{nosep, topsep=2pt, parsep=2pt}
 \usepackage{caption}
 \usepackage{microtype}
 \usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\small\bfseries}{\thesubsubsection}{1em}{}
+\titlespacing*{\section}{0pt}{10pt}{4pt}
+\titlespacing*{\subsection}{0pt}{8pt}{3pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{2pt}
 
 \setlength{\footskip}{50pt}
 
@@ -129,13 +135,13 @@
 
 \clearpage
 \pagestyle{fancy}
-\tableofcontents
-\newpage
+% \tableofcontents
+% \vspace{0.8cm}
 
 \begin{abstract}
-In questo progetto ho studiato come unire il clustering (apprendimento non supervisionato) e la classificazione (apprendimento supervisionato) per analizzare il comportamento dei clienti di una compagnia telefonica (usando il dataset Telco Customer Churn). L'obiettivo principale è prevedere quali clienti rischiano di abbandonare l'operatore (churn prediction). Prima ho diviso i clienti in due gruppi (cluster) con l'algoritmo k-Means, trovando un profilo di clienti fedeli che spendono poco e uno di clienti a rischio che spendono molto. Poi ho addestrato tre modelli per la classificazione: la Regressione Logistica, un Albero di Decisione e una Rete Neurale (MLP). Ho confrontato le prestazioni dei modelli con e senza la feature del cluster. La Regressione Logistica e l'Albero hanno mostrato prestazioni stabili (~80.6\% accuratezza), mentre la rete neurale MLP ha avuto un forte overfitting. Tuttavia, aggiungendo il cluster come feature, la Recall (cioè la capacità di individuare chi abbandona davvero) dell'MLP sul test set è salita dal 42.8\% al 58.3\% (+15.5\%). Nelle conclusioni discuto l'interpretabilità dei modelli, i loro limiti e le possibili migliorie come il bilanciamento dei dati.
+In questo progetto ho studiato come unire il clustering (apprendimento non supervisionato) e la classificazione (apprendimento supervisionato) per analizzare il comportamento dei clienti di una compagnia telefonica (usando il dataset Telco Customer Churn). L'obiettivo principale è prevedere quali clienti rischiano di abbandonare l'operatore (churn prediction). Prima ho diviso i clienti in due gruppi (cluster) con l'algoritmo k-Means, trovando un profilo di clienti fedeli che spendono poco e uno di clienti a rischio che spendono molto. Poi ho addestrano tre modelli per la classificazione: la Regressione Logistica, un Albero di Decisione e una Rete Neurale (MLP). Ho confrontato le prestazioni dei modelli con e senza la feature del cluster. La Regressione Logistica e l'Albero hanno mostrato prestazioni stabili (~80.6\% accuratezza), mentre la rete neurale MLP ha avuto un forte overfitting. Tuttavia, aggiungendo il cluster come feature, la Recall (cioè la capacità di individuare chi abbandona davvero) dell'MLP sul test set è salita dal 42.8\% al 58.3\% (+15.5\%). Nelle conclusioni discuto l'interpretabilità dei modelli, i loro limiti e le possibili migliorie come il bilanciamento dei dati.
 \end{abstract}
-\newpage
+\vspace{0.4cm}
 
 % -------------------------------------------------------------
 \section{Descrizione del problema}
@@ -159,17 +165,24 @@ Il secondo compito è una classificazione binaria. Vogliamo addestrare un modell
 \subsection{Le Metriche di Valutazione della Classificazione}
 Per capire se i modelli funzionano bene, ho usato tre metriche classiche:
 \begin{itemize}
-    \item \textbf{Accuracy (Accuratezza)}: ci dice semplicemente quante predizioni sono corrette sul totale delle prove. È utile ma può ingannare se le classi sono molto sbilanciate:
+    \item \textbf{Accuracy (Accuratezza)}: ci dice semplicemente quante predizioni sono corrette sul totale delle prove.
     \begin{equation}
         \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
     \end{equation}
-    dove $TP$, $TN$, $FP$ e $FN$ sono rispettivamente i Veri Positivi, Veri Negativi, Falsi Positivi e Falsi Negativi ricavati dalla matrice di confusione.
-    \item \textbf{Recall (Richiamo)}: ci dice quanti dei clienti che vogliono abbandonare davvero (veri positivi) vengono scoperti dal modello:
+    dove i singoli elementi rappresentano:
+    \begin{itemize}
+        \item $TP$ (\textit{True Positives} - Veri Positivi): Clienti che volevano andarsene e che il modello ha identificato correttamente come in partenza.
+        \item $TN$ (\textit{True Negatives} - Veri Negativi): Clienti fedeli che il modello ha correttamente identificato come stabili.
+        \item $FP$ (\textit{False Positives} - Falsi Positivi): Clienti fedeli che il modello ha erroneamente previsto come in partenza.
+        \item $FN$ (\textit{False Negatives} - Falsi Negativi): Clienti in partenza che il modello ha erroneamente previsto come stabili.
+    \end{itemize}
+    In parole semplici, l'Accuratezza è il rapporto tra tutte le risposte esatte del modello (sia per chi resta, sia per chi va via) e il numero totale di clienti analizzati. Rappresenta la percentuale di successo complessiva, ma può essere ingannevole se le classi sono sbilanciate.
+    \item \textbf{Recall (Richiamo)}: ci dice quanti dei clienti che vogliono abbandonare davvero vengono scoperti dal modello:
     \begin{equation}
         \text{Recall} = \frac{TP}{TP + FN}
     \end{equation}
-    Nel nostro caso, questa è la metrica più importante per il business. Se il modello non vede un cliente che sta per andarsene (falso negativo), l'azienda lo perde senza poter fare nulla per trattenerlo.
-    \item \textbf{AUC (Area Under the ROC Curve)}: misura la capacità del modello di distinguere tra le due classi a prescindere dalla soglia scelta. Varia tra $0.5$ (scelte casuali, come lanciare una moneta) e $1.0$ (modello perfetto). È una misura molto robusta quando le classi sono sbilanciate.
+    Conceptualizzando questa formula, il denominatore ($TP + FN$) rappresenta la totalità dei clienti che stanno effettivamente abbandonando la compagnia. La Recall ci dice quindi quale percentuale di questa "lista rossa" il nostro modello è stato in grado di intercettare. Nel nostro caso, questa è la metrica più importante per il business: se il modello commette un falso negativo ($FN$), l'azienda perde il cliente senza avergli potuto proporre offerte di fidelizzazione.
+    \item \textbf{AUC (Area Under the ROC Curve)}: misura la capacità del modello di distinguere tra le due classi a prescindere dalla soglia di decisione scelta. Varia tra $0.5$ (scelte del tutto casuali, come lanciare una moneta) e $1.0$ (modello perfetto che non sbaglia mai). È una misura molto robusta quando le classi sono sbilanciate.
 \end{itemize}
 
 % -------------------------------------------------------------
@@ -208,6 +221,12 @@ Matematicamente, per calcolare il valore mediano:
     \text{Mediana} = \frac{x_{\frac{N}{2}} + x_{\frac{N}{2}+1}}{2}
 \end{equation}
 
+\textbf{Esempio pratico per capire le formule:}
+\begin{itemize}
+    \item \textbf{Caso Dispari ($N=5$)}: se abbiamo i valori ordinati $\{10, 20, 30, 40, 50\}$, la formula ci dice di prendere il valore alla posizione $\frac{5+1}{2} = 3$, che corrisponde a $30$.
+    \item \textbf{Caso Pari ($N=6$)}: se abbiamo i valori ordinati $\{10, 20, 30, 40, 50, 60\}$, i due valori centrali sono in posizione $\frac{6}{2}=3$ (ovvero $30$) e in posizione $\frac{6}{2}+1=4$ (ovvero $40$). Facciamo la loro media aritmetica: $\frac{30+40}{2} = 35$.
+\end{itemize}
+
 \textbf{Perché si usa la mediana invece della media?}\\
 La mediana è ottima perché è robusta contro i valori estremi (outlier), a differenza della media che risente pesantemente di un singolo valore molto alto o molto basso. Nel nostro caso, però, mettere \texttt{0.0} era la scelta logicamente corretta per il business, mentre usare la mediana generale (circa $1397.47\$$) sarebbe stato un errore perché avrebbe assegnato una spesa alta a persone che non sono ancora clienti da un mese.
 
@@ -229,23 +248,28 @@ I modelli matematici non capiscono le parole (come ``Mensile'' o ``Annuale''). P
 \subsubsection{Standardizzazione (Standard Scaling)}
 I modelli basati sulle distanze ($k$-Means) e sulle reti neurali (MLP) risentono fortemente delle differenze di scala tra le variabili.
 \begin{itemize}
-    \item \textbf{Come funziona lo Standard Scaling?}\\
-    La standardizzazione trasforma le variabili numeriche continue in modo che abbiano tutte media $\mu = 0$ e deviazione standard $\sigma = 1$ (la deviazione standard indica quanto in media i valori si allontanano dal valore medio). Per ciascun valore $x_i$, si calcola il valore scalato $z_i$:
+    \item \textbf{Come funziona lo Standard Scaling e cosa significano i simboli?}\\
+    La standardizzazione trasforma le variabili numeriche in modo che abbiano tutte lo stesso intervallo d'azione. Per ciascun valore $x_i$, si calcola il valore scalato $z_i$ tramite la formula:
     \begin{equation}
         z_i = \frac{x_i - \mu}{\sigma}
     \end{equation}
-    dove:
-    \begin{equation}
-        \mu = \frac{1}{N}\sum_{i=1}^{N} x_i \quad (\text{Media})
-    \end{equation}
-    \begin{equation}
-        \sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N} (x_i - \mu)^2} \quad (\text{Deviazione Standard})
-    \end{equation}
+    dove i componenti matematici sono:
+    \begin{itemize}
+        \item \textbf{La Media ($\mu$)}: Rappresenta il baricentro o valore medio aritmetico. Si sommano tutti gli $N$ valori e si divide per $N$:
+        \begin{equation}
+            \mu = \frac{1}{N}\sum_{i=1}^{N} x_i
+        \end{equation}
+        \item \textbf{La Deviazione Standard ($\sigma$)}: Rappresenta quanto, in media, i singoli valori si discostano dal valore medio. Se i dati sono molto dispersi (es. spese da 10\$ a 1000\$), $\sigma$ sarà grande; se sono tutti concentrati, $\sigma$ sarà piccola:
+        \begin{equation}
+            \sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N} (x_i - \mu)^2}
+        \end{equation}
+    \end{itemize}
+    In parole semplici, sottraendo la media $\mu$ al numeratore si sposta il centro dei dati a $0$. Dividendo poi per $\sigma$, si fa in modo che l'unità di misura diventi "quante deviazioni standard dista questo punto dal centro". In questo modo, variabili con range enormi (come la spesa totale, da 0 a 8000\$) e variabili con range ristretti (come i mesi di permanenza, da 0 a 72) vengono portate sulla stessa identica scala numerica, evitando che il costo totale schiacci l'importanza della durata del contratto.
     \item \textbf{Perché lo splitting in Train/Test si fa PRIMA dello scaling?}\\
     Questa è una regola fondamentale per evitare il \textbf{Data Leakage} (trapelamento di informazioni). Se calcolassimo la media $\mu$ e la deviazione standard $\sigma$ su tutto il dataset prima di dividerlo, le informazioni del test set (che deve simulare dati futuri sconosciuti) influenzerebbero i valori del train set. Perciò ho diviso prima il dataset, calcolato i parametri di scaling solo sul Train, e infine li ho applicati a entrambi.
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
@@ -287,11 +311,19 @@ L'algoritmo $k$-Means serve a dividere i dati in gruppi. All'inizio sceglie a ca
 Si ferma quando i centri non si muovono più. Ho provato soluzioni con 2, 3 e 4 cluster valutando Inertia e Silhouette Score per scegliere il numero ottimale di gruppi.
 
 \subsubsection{Regressione Logistica (Baseline)}
-Usata come baseline semplice. Calcola una somma pesata delle caratteristiche del cliente e la passa dentro la funzione sigmoide:
+Usata come baseline semplice. Calcola una somma pesata delle caratteristiche del cliente (in cui ciascuna variabile ha un peso che ne determina l'importanza) e passa questo punteggio lineare, che chiamiamo $t$, all'interno della funzione \textbf{Sigmoide}:
 \begin{equation}
     \sigma(t) = \frac{1}{1 + e^{-t}}
 \end{equation}
-Questa funzione schiaccia il risultato in un valore tra 0 e 1, che rappresenta la probabilità che il cliente abbandoni.
+dove $e$ è il numero di Eulero (una costante matematica fondamentale pari a circa $2.718$).
+
+\textbf{Spiegazione intuitiva del funzionamento:}
+\begin{itemize}
+    \item Se il cliente ha indizi molto forti di fedeltà, il punteggio pesato $t$ sarà un numero negativo molto grande (es. $t = -5$). La formula diventa $\sigma(-5) = \frac{1}{1 + e^5} \approx \frac{1}{1 + 148} \approx 0.006$, indicando uno $0.6\%$ di probabilità di abbandono (il cliente è sicuro).
+    \item Se il cliente mostra un comportamento tipico di chi sta per andarsene, il punteggio $t$ sarà un numero positivo molto grande (es. $t = 5$). La formula diventa $\sigma(5) = \frac{1}{1 + e^{-5}} \approx \frac{1}{1 + 0.0067} \approx 0.993$, indicando una probabilità del $99.3\%$ di abbandono.
+    \item Se la situazione è di massima incertezza, il punteggio è $t = 0$, e la formula restituisce $\sigma(0) = \frac{1}{1+1} = 0.5$ (probabilità del $50\%$).
+\end{itemize}
+In sintesi, questa funzione a forma di ``S'' (curva logistica) serve a comprimere qualsiasi valore numerico in un intervallo stretto tra 0 e 1, permettendoci di leggerlo direttamente come una probabilità di Churn.
 
 \subsubsection{Decision Tree (Modello Principale 1)}
 Questo modello ragiona a domande sì/no (regole). Sceglie le suddivisioni migliori per separare il più possibile i clienti a rischio da quelli fedeli, misurando la purità dei gruppi tramite l'indice di Gini. Ho impostato la profondità massima dell'albero a $5$ (\texttt{max\_depth=5}) per evitare che cresca troppo e impari a memoria le risposte (overfitting).
@@ -305,11 +337,14 @@ L'addestramento funziona in due fasi ripetute iterativamente:
     \item \textbf{Fase all'indietro (Backpropagation)}: Si calcola l'errore tra la risposta della rete e quella reale (usando la perdita di cross-entropia). L'errore viene propagato a ritroso per correggere i pesi dei collegamenti usando un ottimizzatore (Adam) basato sulla discesa del gradiente.
 \end{enumerate}
 
+\textbf{Spiegazione intuitiva delle funzioni di attivazione:}
+\begin{itemize}
+    \item \textbf{La ReLU ($f(x) = \max(0, x)$) negli strati nascosti}: Se il segnale in ingresso $x$ è negativo o debole, la funzione restituisce $0$ (il neurone rimane spento); se è positivo, lo lascia passare invariato. Funge in pratica da interruttore biologico, consentendo alla rete di attivare percorsi diversi in base ai dati e di apprendere relazioni non lineari complesse.
+    \item \textbf{La Sigmoide nello strato di uscita}: Viene utilizzata alla fine per lo stesso motivo descritto per la Regressione Logistica: schiacciare il valore reale finale calcolato dalla rete in una probabilità comprensibile tra 0 e 1.
+\end{itemize}
+
 \textbf{Perché nei neuroni nascosti servono funzioni non lineari?}\\
 Senza di esse, la composizione di più strati lineari collasserebbe matematicamente in una singola trasformazione lineare. La rete neurale perderebbe così la capacità di apprendere relazioni complesse, diventando equivalente ad un semplice modello di Regressione Logistica.
-
-\textbf{Perché nell'ultimo neurone serve la Sigmoide?}\\
-Perché vogliamo che l'output sia una probabilità compresa tra 0 e 1. Se non la usassimo, la rete darebbe in uscita un numero reale qualsiasi, rendendo impossibile interpretarlo come probabilità e calcolare l'errore con la cross-entropia standard per la classificazione binaria.
 
 \subsection{Riproducibilità, Dipendenze e Istruzioni d'Esecuzione}
 Per rendere il progetto riproducibile, tutto il codice è racchiuso nel notebook \texttt{segmentazione\_crunch.ipynb}. Se il dataset non è presente localmente nella cartella \texttt{dati/}, il notebook lo scarica da solo all'avvio.
@@ -360,7 +395,7 @@ Dopo aver eseguito l'algoritmo k-Means con $k=2$, ho analizzato le caratteristic
 \subsection{Risultati del Clustering k-Means}
 Ho testato k-Means con 2, 3 e 4 cluster. I risultati di Inertia e Silhouette Score sono riportati nella Tabella \ref{tab:clustering_metrics}.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Metriche di valutazione del clustering k-Means.}
 \label{tab:clustering_metrics}
@@ -382,9 +417,9 @@ La Figura \ref{fig:clustering_eval} mostra l'andamento congiunto dell'Inertia (c
 \end{itemize}
 Questi indicatori indicano che la scelta ottimale è \textbf{k=2}, in quanto garantisce la massima separazione e coesione dei gruppi, fornendo al contempo profili commerciali chiari e facilmente interpretabili per le strategie di business.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{../grafici/clustering_evaluation.png}
+    \includegraphics[width=0.55\textwidth]{../grafici/clustering_evaluation.png}
     \caption{Valutazione del clustering k-Means tramite metodo del gomito (Inertia) e Silhouette Score.}
     \label{fig:clustering_eval}
 \end{figure}
@@ -405,7 +440,7 @@ Le metriche di performance sono valutate in due scenari sperimentali:
 
 La Tabella \ref{tab:classification_results} riassume le performance su Train e Test.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Confronto delle metriche di classificazione tra Train e Test.}
 \label{tab:classification_results}
@@ -440,37 +475,25 @@ Dall'ispezione della Tabella \ref{tab:classification_results} emergono tre osser
 \subsection{Interpretazione Visiva dei Modelli}
 
 \subsubsection{L'Albero di Decisione Semplificato}
-La Figura \ref{fig:decision_tree_vis} mostra le regole logiche dell'albero di decisione. Ciascun nodo contiene le seguenti informazioni:
-\begin{itemize}
-    \item \textbf{Condizione in alto} (es. `Contract\_Month-to-month $\le 0.5$'): La regola di split. Se il cliente rispetta la condizione si scende a sinistra (SI), altrimenti a destra (NO).
-    \item \textbf{gini}: L'impurezza del nodo (0 indica massima purezza, ovvero che tutti i clienti in quel nodo appartengono alla stessa classe; 0.5 indica massima incertezza).
-    \item \textbf{samples}: Il numero di clienti che cadono in quel nodo.
-    \item \textbf{value}: La distribuzione delle classi, espressa come \texttt{[No Churn, Churn]}.
-    \item \textbf{class}: La classe di maggioranza assegnata provvisoriamente.
-    \item \textbf{Colori}: I nodi sono colorati in \textbf{blu} se la classe di maggioranza è No Churn (classe 0) e in \textbf{arancione} se è Churn (classe 1). L'intensità del colore indica il grado di purezza (nodi blu scuro o arancione scuro sono molto puri, mentre quelli bianchi indicano incertezza vicina al 50/50).
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../grafici/decision_tree_vis.png}
-    \caption{Albero di Decisione semplificato (max\_depth=3).}
-    \label{fig:decision_tree_vis}
-\end{figure}
+La Figura \ref{fig:decision_tree_vis} mostra le regole logiche dell'albero di decisione. Ciascun nodo contiene la regola di split in alto (se rispettata si scende a sinistra), l'impurezza (\textit{gini}), il numero di campioni (\textit{samples}), la distribuzione delle classi (\textit{value} ovvero \texttt{[No Churn, Churn]}) e la classe di maggioranza (\textit{class}). I nodi sono colorati in \textbf{blu} se prevale No Churn (classe 0) e in \textbf{arancione} se prevale Churn (classe 1). L'intensità del colore indica il grado di purezza.
 
 \subsubsection{Importanza delle Feature}
-La Figura \ref{fig:feature_importances} mostra le 10 caratteristiche più importanti per l'albero di decisione nello Scenario B:
-\begin{itemize}
-    \item La variabile determinante in assoluto è `Contract\_Month-to-month` (avere un contratto mensile flessibile).
-    \item La seconda variabile è la `tenure` (i mesi di permanenza attiva).
-    \item Al terzo posto c'è `InternetService\_Fiber optic` (internet in fibra, legato a spese mensili elevate).
-    \item Il nostro `Cluster\_1` (profilo ad alta spesa volatile) compare nella top 10 delle feature importanti. Questo convalida quantitativamente l'utilità del clustering non supervisionato.
-\end{itemize}
+La Figura \ref{fig:feature_importances} mostra le caratteristiche più importanti per l'albero nello Scenario B: la variabile determinante in assoluto è `Contract\_Month-to-month` (contratto mensile), seguita da `tenure` (mesi di permanenza) e `InternetService\_Fiber optic` (fibra ottica). Nel grafico notiamo che il nostro `Cluster\_1` non compare nella top 10 dell'albero di decisione (in quanto l'albero ricostruisce la logica del cluster tramite split diretti sulle variabili originali). Tuttavia, come visto nella sezione precedente, l'aggiunta del cluster ha un impatto formidabile sulla Rete Neurale (MLP), incrementando la Recall di ben 15.5 punti percentuali.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{../grafici/feature_importances.png}
-    \caption{Top 10 importanza delle feature per il Decision Tree nello Scenario B (con feature del cluster).}
-    \label{fig:feature_importances}
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../grafici/decision_tree_vis.png}
+        \caption{Albero di Decisione semplificato ($max\_depth=3$).}
+        \label{fig:decision_tree_vis}
+    \end{minipage}\hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../grafici/feature_importances.png}
+        \caption{Top 10 importanza delle feature nello Scenario B.}
+        \label{fig:feature_importances}
+    \end{minipage}
 \end{figure}
 
 % -------------------------------------------------------------

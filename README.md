@@ -38,7 +38,7 @@ IA/
     ├── relazione.tex                  # Sorgente LaTeX della relazione scritta
     ├── relazione.pdf                  # PDF della relazione scritta (consigliata 5-10 pagine)
     ├── presentazione.tex              # Sorgente LaTeX delle slide di presentazione
-    ├── presentazione.pdf              # PDF delle slide di presentazione (9 slide)
+    ├── presentazione.pdf              # PDF delle slide di presentazione (10 slide)
     ├── results_table.tex              # Tabella dei risultati in formato LaTeX
     ├── results_table.csv              # Tabella dei risultati in formato CSV
     └── logo_unime_orizontale.png      # Logo dell'Ateneo per header e copertina
@@ -113,7 +113,7 @@ Grafico di valutazione per determinare il numero ottimale di cluster ($k=2$).
 Struttura decisionale trasparente che mostra le regole di classificazione.
 ![Struttura Albero decisionale](grafici/decision_tree_vis.png)
 
-### 3. Top 10 Feature Importances (Scenario B con Clustering)
-Mostra l'importanza relativa delle variabili nel determinare il churn, evidenziando il ruolo del Cluster 1.
+### 3. Top 10 Feature Importances (Scenario B)
+Mostra l'importanza delle caratteristiche per l'Albero di Decisione, evidenziando come la stabilità temporale (tenure) e il tipo di contratto guidino la scelta.
 ![Importanza Feature](grafici/feature_importances.png)
 

@@ -1,0 +1,317 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage{caption}
+
+% Impostazioni dei margini e della geometria
+\geometry{
+    a4paper,
+    total={160mm,240mm},
+    left=25mm,
+    top=30mm,
+}
+
+% Definizione della tavolozza colori professionale (Toni Blu Acciaio / Navy)
+\definecolor{NavyBlue}{RGB}{25, 50, 90}
+\definecolor{SteelBlue}{RGB}{60, 110, 160}
+\definecolor{LightGray}{RGB}{240, 242, 245}
+
+% Personalizzazione delle didascalie delle figure e tabelle
+\captionsetup{
+    font=small,
+    labelfont={bf,color=NavyBlue},
+    format=plain,
+    margin=10pt
+}
+
+% Configurazione dei collegamenti ipertestuali
+\hypersetup{
+    colorlinks=true,
+    linkcolor=NavyBlue,
+    citecolor=NavyBlue,
+    filecolor=NavyBlue,
+    urlcolor=SteelBlue
+}
+
+% Formattazione dei titoli delle sezioni
+\titleformat{\section}
+  {\color{NavyBlue}\normalfont\large\bfseries}
+  {\thesection}{1em}{}[\titleline{\color{SteelBlue}\rule{\textwidth}{1pt}}]
+
+\titleformat{\subsection}
+  {\color{NavyBlue}\normalfont\normalsize\bfseries}
+  {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\color{SteelBlue}\normalfont\normalsize\itshape}
+  {\thesubsubsection}{1em}{}
+
+\setlength{\headheight}{22pt}
+\addtolength{\topmargin}{-10pt}
+% Configurazione dell'intestazione e del piè di pagina
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Relazione di Laboratorio di IA -- Massimo Mantineo}
+\fancyhead[R]{\small Churn Prediction \& Segmentazione}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{SteelBlue}\leaders\hrule height \headrulewidth\hfill}}
+
+\title{
+    \vspace{-15mm}
+    \color{NavyBlue}\textbf{\large Laboratorio di Intelligenza Artificiale}\\[3mm]
+    \LARGE \textbf{Segmentazione Comportamentale e Churn Prediction in Ambito Telco}\\[3mm]
+    \large \textbf{Analisi Integrata Supervisionata e Non Supervisionata sul Dataset IBM}
+}
+\author{
+    \textbf{Massimo Mantineo} \\
+    Studente Singolo \\
+    \small Corso di Laurea in Informatica -- Corso di Intelligenza Artificiale (Prof. G. Fiumara)
+}
+\date{Anno Accademico 2025/2026}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduzione e Descrizione del Problema}
+Il fenomeno del \textit{churn} (abbandono dei clienti) rappresenta uno dei problemi di business più rilevanti nel settore delle telecomunicazioni (Telco). In un mercato altamente competitivo e saturo, il costo associato all'acquisizione di un nuovo utente (Customer Acquisition Cost, CAC) è significativamente superiore rispetto a quello necessario per fidelizzarne uno esistente. Di conseguenza, le aziende Telco utilizzano tecniche di intelligenza artificiale per:
+\begin{enumerate}
+    \item Identificare i clienti ad alto rischio di abbandono prima che rescindano il contratto.
+    \item Comprendere le determinanti tariffarie e comportamentali che portano all'insoddisfazione.
+    \item Raggruppare i clienti in segmenti logici per pianificare campagne promozionali mirate.
+\end{enumerate}
+
+Coerentemente con il programma del corso di Intelligenza Artificiale (basato sulle lezioni del Prof. G. Fiumara e sul testo di riferimento Russell \& Norvig), il problema aziendale viene modellato secondo il paradigma dell'\textbf{Agente Intelligente Razionale}:
+\begin{itemize}
+    \item \textbf{Performance Measure (P)}: Riduzione del tasso di abbandono aziendale, fidelizzazione dei clienti ad alto valore e massimizzazione di metriche predittive robuste ($F_1$-Score e AUC-ROC).
+    \item \textbf{Environment (E)}: L'ambiente CRM (\textit{Customer Relationship Management}, il database dei dati contrattuali e finanziari dei 7.043 clienti Telco), caratterizzato dall'essere stocastico e parzialmente osservabile.
+    \item \textbf{Actuators (A)}: Campagne di fidelizzazione mirate, erogazione di sconti personalizzati e interventi diretti del supporto clienti.
+    \item \textbf{Sensors (S)}: Registri di fatturazione, tipo di abbonamento, fruizione dei servizi (Fibra/TechSupport) e mesi di permanenza (\textit{tenure}).
+\end{itemize}
+
+Il progetto sviluppa un approccio integrato che combina:
+\begin{itemize}
+    \item \textbf{Apprendimento Non Supervisionato (Unsupervised Learning - Lezione 06)}: Algoritmo di clustering K-Means e riduzione della dimensionalità tramite PCA.
+    \item \textbf{Apprendimento Supervisionato (Supervised Learning - Lezioni 03, 04, 05, 07)}: Modelli di classificazione binaria quali Regressione Logistica, Alberi Decisionali (Decision Trees) e Reti Neurali Artificiali (Multi-Layer Perceptron - MLP).
+\end{itemize}
+
+L'obiettivo principale è valutare se l'inclusione dell'informazione di cluster come feature predittiva possa migliorare le prestazioni dei classificatori nel riconoscere i clienti in abbandono.
+
+\section{Dataset e Preparazione dei Dati}
+Il dataset analizzato fa riferimento all'archivio IBM \textbf{Telco Customer Churn} e comprende 7.043 istanze e 21 variabili relative a informazioni demografiche, contrattuali e finanziarie.
+
+\subsection{Esplorazione e Pulizia dei Dati}
+La variabile target è \texttt{Churn} (valori originari \texttt{Yes}/\texttt{No}). Durante la fase di analisi esplorativa e pulizia, sono state eseguite le seguenti operazioni:
+\begin{itemize}
+    \item \textbf{Rimozione di identificativi}: La colonna \texttt{customerID} è stata eliminata in quanto identificativo univoco privo di potere generalizzante.
+    \item \textbf{Risoluzione anomalie nei tipi di dato}: La colonna \texttt{TotalCharges} (costo totale) era registrata come stringa a causa di 11 righe contenenti spazi vuoti (\texttt{" "}). Un'analisi ha rivelato che queste righe corrispondono a clienti con \texttt{tenure} (mesi di permanenza) pari a 0, ossia nuovi utenti che non hanno ancora completato il primo ciclo di fatturazione. Di conseguenza, il loro costo totale è stato impostato a \texttt{0.0} e la variabile è stata convertita in tipo numerico continuo (\texttt{float}).
+    \item \textbf{Codifica del target e Analisi del Tasso di Churn}: La variabile \texttt{Churn} è stata mappata in valori binari: $y \in \{0, 1\}$, dove $1$ indica l'abbandono (\texttt{Yes}) e $0$ la permanenza (\texttt{No}). Il tasso di churn complessivo nel dataset è pari al \textbf{26.54\%} ($1.869$ clienti su $7.043$).
+\end{itemize}
+
+\subsubsection{Focus sul Tasso di Churn del 26.54\% e Sbilanciamento delle Classi}
+Nel settore Telco, un tasso di abbandono del 26.54\% è indice di un'elevata criticità commerciale (oltre un quarto dei clienti lascia l'azienda). Dal punto di vista del Machine Learning (Lezione 04), questo tasso evidenzia uno \textbf{sbilanciamento delle classi} (rapporto circa 1:3). 
+Un classificatore banale (*dummy classifier*) che predicesse costantemente la classe maggioritaria ($y=0$) otterrebbe un'accuratezza del $73.46\%$, ma avrebbe una Sensitivity/Recall pari a $0\%$, risultando completamente inutile per il business. Per questo motivo, la valutazione dei modelli si baserà su metriche robuste: Precision, Recall, F1-Score e AUC-ROC.
+
+\subsection{Analisi Grafica Esplorativa (EDA)}
+In Figura~\ref{fig:eda} vengono mostrati i grafici esplorativi delle variabili chiave:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/distribuzione_churn.png}
+    \caption{\textbf{Analisi Esplorativa Iniziale (EDA)}: A sinistra, la distribuzione della variabile target Churn. Al centro, la relazione tra mesi di permanenza (\textit{tenure}) e Churn tramite boxplot. A destra, la spesa mensile (\textit{MonthlyCharges}) rispetto al Churn.}
+    \label{fig:eda}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Distribuzione Churn (grafico a sinistra)}: Conferma lo sbilanciamento delle classi e motiva l'uso del campionamento stratificato (*Stratified Sampling*).
+    \item \textbf{Permanenza vs Churn (grafico al centro)}: I clienti che abbandonano presentano una permanenza mediana molto bassa (~10 mesi), indicando che il rischio si concentra nelle fasi iniziali del contratto.
+    \item \textbf{Spesa Mensile vs Churn (grafico a destra)}: Gli utenti in churn registrano spese mensili mediane più elevate (~80€) rispetto ai clienti fedeli (~65€), dimostrando la forte sensibilità del cliente al costo del servizio.
+\end{itemize}
+
+\subsection{Preprocessing e Standardizzazione delle Feature}
+Come evidenziato nella Lezione 06 (*Unsupervised Learning*), gli algoritmi basati sul calcolo delle distanze euclidee (come K-Means) e le reti neurali (Lezione 07) richiedono tassativamente il ridimensionamento delle feature (*feature scaling*). Per questo scopo abbiamo costruito una pipeline di preprocessing tramite \texttt{ColumnTransformer}:
+\begin{enumerate}
+    \item \textbf{Standardizzazione delle Feature Numeriche} (\texttt{tenure}, \texttt{MonthlyCharges}, \texttt{TotalCharges}): Trasformate tramite \texttt{StandardScaler} per ottenere media $\mu=0$ e varianza $\sigma^2=1$:
+    \begin{equation}
+        z = \frac{x - \mu}{\sigma}
+    \end{equation}
+    \item \textbf{Codifica delle Feature Categoriali}: Trasformate via One-Hot Encoding con l'opzione \texttt{drop='first'} per evitare la trappola delle variabili dummy e la multicollinearità nei modelli lineari.
+\end{enumerate}
+
+\section{Metodologia}
+
+\subsection{Clustering Non Supervisionato: Algoritmo K-Means}
+L'algoritmo K-Means (Lezione 06) partiziona il dataset in $K$ cluster cercando di minimizzare l'Inerzia ( Within-Cluster Sum-of-Squares, WCSS), definita come:
+\begin{equation}
+    \text{Inerzia} = \sum_{i=1}^{N} \min_{\mathbf{\mu}_j \in C} \|\mathbf{x}_i - \mathbf{\mu}_j\|^2
+\end{equation}
+
+\subsubsection{Valutazione del Numero Ottimale di Cluster (\texorpdfstring{$K$}{K})}
+Per determinare il numero ottimale di cluster $K$, abbiamo valutato l'intervallo $K \in \{2, 3, 4, 5, 6\}$ combinando due metodi complementari analizzati nella Lezione 06 (Figura~\ref{fig:clustering_k}):
+\begin{enumerate}
+    \item \textbf{Metodo del Gomito (Elbow Method)}: Misura la compattezza dei cluster tramite l'Inerzia.
+    \item \textbf{Silhouette Score}: Combina la compattezza interna al cluster ($a_i$) e la separazione dal cluster più vicino ($b_i$), definendo per ciascun punto il coefficiente:
+    \begin{equation}
+        s_i = \frac{b_i - a_i}{\max(a_i, b_i)}, \quad s_i \in [-1, 1]
+    \end{equation}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/clustering_scelta_k.png}
+    \caption{\textbf{Valutazione del Numero di Cluster}: L'asse X riporta il numero di cluster $K$. La linea blu indica l'Inerzia (Elbow Method), mentre la linea arancione tratteggiata rappresenta il Silhouette Score medio.}
+    \label{fig:clustering_k}
+\end{figure}
+
+\subsubsection{Motivazione della Scelta di \texorpdfstring{$K=3$}{K=3}}
+Coerentemente con quanto illustrato nelle lezioni del corso (dove si raccomanda di bilanciare le metriche quantitative con l'interpretabilità sostantiva dei gruppi), la scelta è ricaduta su **$K=3$**:
+\begin{itemize}
+    \item \textbf{Analisi per $K < 3$ ($K = 2$)}: Sebbene $K=2$ registri un Silhouette score leggermente più alto ($0.2946$), la segmentazione risulta triviale (separa solo gli utenti con servizio internet da quelli senza) e non riesce a catturare la dinamica della permanenza temporale (*tenure*). Inoltre, l'inerzia mostra un crollo verticale tra 2 e 3, dimostrando che $K=2$ non modella adeguatamente la varianza dei dati.
+    \item \textbf{Analisi per $K = 3$}: La curva dell'inerzia mostra un chiaro punto di gomito (*elbow*), oltre il quale il tasso di decrescita rallenta marcatamente. Contestualmente, il Silhouette score si mantiene su un valore solido ($0.2861$).
+    \item \textbf{Analisi per $K > 3$ ($K \ge 4$)}: Per $K=4$ si osserva un calo netto del Silhouette score ($0.2279$), che prosegue in discesa a $K=5$ ($0.2080$) e $K=6$ ($0.1843$). Questo andamento monotono decrescente indica che dividere ulteriormente i dati crea sovrapposizioni geometriche e frammentazione artificiale (*over-clustering*).
+\end{itemize}
+
+\subsubsection{Visualizzazione 2D dei Cluster tramite PCA}
+Per verificare visivamente la separazione geometrica dei cluster in uno spazio a due dimensioni (Lezione 06), abbiamo applicato la **Principal Component Analysis (PCA)**, riducendo lo spazio ad alte dimensioni sulle prime due componenti principali $PC_1$ e $PC_2$ (Figura~\ref{fig:clustering_pca}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/clustering_visualizzazione_pca.png}
+    \caption{\textbf{Visualizzazione 2D tramite PCA}: Proiezione dei $7.043$ clienti sulle prime due componenti principali. I tre colori identificano i cluster K-Means.}
+    \label{fig:clustering_pca}
+\end{figure}
+
+\subsection{Apprendimento Supervisionato: Modelli di Classificazione}
+Per la fase di classificazione binaria ($y \in \{0, 1\}$), sono stati selezionati tre modelli rappresentativi trattati nel corso:
+
+\begin{enumerate}
+    \item \textbf{Regressione Logistica (Baseline Lineare - Lezione 04)}: Modello parametrico basato sulla funzione sigmoide $\sigma(z) = \frac{1}{1 + e^{-z}}$, veloce ed interpretabile.
+    \item \textbf{Decision Tree (Modello White-Box - Lezione 05)}: Modello non parametrico basato sull'algoritmo **CART** (Classification and Regression Trees). Per controllare l'overfitting (alta varianza), è stato regolarizzato impostando la profondità massima \texttt{max\_depth=5}. La misura di impurità utilizzata per la scelta degli split è l'**Indice di Gini**:
+    \begin{equation}
+        G_i = 1 - \sum_{k=1}^{K} p_{i,k}^2
+    \end{equation}
+    \item \textbf{Multi-Layer Perceptron (Rete Neurale Black-Box - Lezione 07)}: Rete neurale artificiale feed-forward composta da uno strato di input, due strati nascosti con $64$ e $32$ neuroni (attivazione ReLU: $f(x) = \max(0, x)$) e uno strato di output con attivazione sigmoide. Addestrata minimizzando la funzione di perdita **Binary Cross-Entropy** tramite ottimizzatore Adam, regolarizzazione L2 ed *early stopping* (Lezione 08).
+\end{enumerate}
+
+\section{Esperimenti e Profilazione dei Cluster}
+
+\subsection{Profilo dei Cluster Ottenuti e Analisi del Churn}
+La segmentazione non supervisionata con $K=3$ ha prodotto tre profili aziendali distinti (Tabella 1):
+
+\begin{table}[H]
+\centering
+\caption{Profilo medio dei tre Cluster ($K=3$)}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Cluster} & \textbf{Tenure (mesi)} & \textbf{Costo Mensile (€)} & \textbf{Costo Totale (€)} & \textbf{Tasso di Churn} \\
+\midrule
+0 (Volatili) & 13.25 & 74.95 & 1030.57 & \textbf{47.08\%} \\
+1 (Fedeli High-Value) & 58.56 & 89.70 & 5246.13 & 15.36\% \\
+2 (Low-Cost) & 29.50 & 26.57 & 809.42  & \textbf{12.30\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dal confronto tra il tasso di churn medio aziendale ($26.54\%$) e i tassi di cluster si evince che:
+\begin{itemize}
+    \item \textbf{Cluster 0 (Nuovi / Volatili)}: Presenta un tasso di churn record del **47.08\%** (quasi il doppio della media). Comprende clienti di recente acquisizione (~13 mesi di permanenza) e costi mensili elevati (~75€). Rappresenta il segmento critico ad alto rischio su cui l'agente IA deve intervenire con strategie di fidelizzazione.
+    \item \textbf{Cluster 1 (Fedeli / High-Value)}: Tasso di churn contenuto al **15.36\%**. Sono utenti storici (~58 mesi) ad alta spesa mensile (~90€).
+    \item \textbf{Cluster 2 (Low-Cost)}: Tasso di churn minimo del **12.30\%**. Trattasi di utenti stabili con servizi di base e costi contenuti (~26€).
+\end{itemize}
+
+La Figura~\ref{fig:churn_cluster} illustra la distribuzione assoluta dei clienti nei tre cluster.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/distribuzione_churn_cluster.png}
+    \caption{\textbf{Distribuzione del Churn per Cluster}: Conteggio assoluto dei clienti rimasti (in verde) e in churn (in rosso) all'interno dei tre cluster K-Means.}
+    \label{fig:churn_cluster}
+\end{figure}
+
+\subsection{Setup Sperimentale}
+La valutazione dei classificatori è stata condotta tramite uno **split casuale stratificato** (*Stratified Train-Test Split*, 80\% Train, 20\% Test). La stratificazione è indispensabile per garantire che la proporzione target ($26.54\%$ Churn) sia identica nei due subset, evitando distorsioni nelle metriche.
+
+\section{Risultati Sperimentali}
+I tre classificatori sono stati addestrati su due configurazioni:
+\begin{enumerate}
+    \item **Dataset Originale**: Feature preprocessate senza cluster.
+    \item **Dataset con Cluster**: Feature preprocessate + colonna One-Hot del cluster K-Means.
+\end{enumerate}
+
+Le metriche di valutazione sul Test Set ($1.409$ istanze) sono riportate nella Tabella 2:
+
+\begin{table}[H]
+\centering
+\caption{Confronto delle prestazioni sul Test Set (con e senza feature di clustering)}
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Modello} & \multicolumn{2}{c}{\textbf{Accuracy}} & \multicolumn{2}{c}{\textbf{Recall}} & \multicolumn{2}{c}{\textbf{F1-Score}} & \multicolumn{2}{c}{\textbf{AUC-ROC}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+& \textbf{Orig} & \textbf{Clust} & \textbf{Orig} & \textbf{Clust} & \textbf{Orig} & \textbf{Clust} & \textbf{Orig} & \textbf{Clust} \\
+\midrule
+Regressione Logistica & \textbf{0.8062} & 0.8034 & \textbf{0.5588} & 0.5481 & \textbf{0.6049} & 0.5968 & \textbf{0.8422} & 0.8422 \\
+Decision Tree & 0.7942 & 0.7942 & 0.5401 & 0.5401 & 0.5821 & 0.5821 & 0.8267 & 0.8267 \\
+MLP (Rete Neurale) & 0.7495 & 0.7566 & 0.4278 & \textbf{0.4920} & 0.4755 & \textbf{0.5176} & 0.7844 & 0.7728 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le curve ROC per le due configurazioni sono trasposte in Figura~\ref{fig:roc}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/curve_roc.png}
+    \caption{\textbf{Curve ROC del Confronto}: Curve ROC per i tre modelli su dati originali (sinistra) e dati arricchiti dal cluster (destra).}
+    \label{fig:roc}
+\end{figure}
+
+\section{Discussione Critica e Analisi dei Modelli}
+
+\subsection{Impatto dell'Integrazione del Clustering}
+I risultati sperimentali mostrano che:
+\begin{itemize}
+    \item Per i modelli tradizionali (**Regressione Logistica** e **Decision Tree**), l'inclusione del cluster non modifica significativamente le prestazioni. Essendo il K-Means calcolato sulle stesse variabili fisiche (\textit{tenure}, costi), i modelli supervisionati sono già in grado di apprendere direttamente le relazioni lineari e le soglie di split ottimali.
+    \item Per la rete neurale **MLP**, l'aggiunta del cluster migliora la Recall dal $42.78\%$ al $49.20\%$ e l'F1-score dal $47.55\%$ al $51.76\%$. In questo caso, la variabile di cluster agisce come una caratteristica aggregata pre-calcolata (*feature engineering* non supervisionato), che guida la rete neurale verso regioni di decisione più efficaci.
+\end{itemize}
+
+\subsection{Spiegabilità: Il Decision Tree come Modello White-Box}
+Come approfondito nella Lezione 05, l'Albero Decisionale è un tipico **modello White-Box** (trasparente), a differenza dei modelli Black-Box come l'MLP. In Figura~\ref{fig:tree} vengono mostrate le regole apprese dall'algoritmo CART fino al terzo livello:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/albero_decisionale.png}
+    \caption{\textbf{Albero Decisionale (Primi 3 Livelli)}: Struttura dei primi nodi decisionali appresi dall'algoritmo CART.}
+    \label{fig:tree}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Split di Radice}: La decisione principale si basa sulla variabile \texttt{Contract\_Month-to-month}. I contratti mensili senza vincolo temporale costituiscono la principale causa di abbandono.
+    \item \textbf{Split Secondari}: Per i contratti mensili, i fattori di abbandono determinanti sono l'assenza di supporto tecnico (\texttt{TechSupport\_No internet service}) e l'abbonamento a servizi internet in fibra ottica ad alto costo.
+\end{itemize}
+
+\section{Conclusioni}
+Il lavoro ha dimostrato l'efficacia delle metodologie del corso applicate a un problema reale:
+\begin{enumerate}
+    \item L'apprendimento non supervisionato (K-Means con $K=3$) ha fornito una segmentazione aziendale solida e interpretabile, identificando nel Cluster 0 i clienti a maggior rischio ($43.22\%$ churn).
+    \item La Regressione Logistica ha ottenuto i migliori risultati predittivi generali (Accuracy $80.62\%$, AUC-ROC $0.8422$).
+    \item Il Decision Tree, pur con un'accuratezza leggermente inferiore ($79.42\%$), garantisce una completa interpretabilità (*White-Box*), fondamentale per spiegare le regole di business durante l'esame orale.
+\end{enumerate}
+
+\end{document}

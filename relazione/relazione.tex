@@ -20,9 +20,10 @@
 % Impostazioni dei margini e della geometria
 \geometry{
     a4paper,
-    total={160mm,240mm},
-    left=25mm,
-    top=30mm,
+    total={170mm,250mm},
+    left=20mm,
+    top=22mm,
+    bottom=22mm
 }
 
 % Definizione della tavolozza colori professionale (Toni Blu Acciaio / Navy)
@@ -135,7 +136,7 @@ Un classificatore banale (*dummy classifier*) che predicesse costantemente la cl
 In Figura~\ref{fig:eda} vengono mostrati i grafici esplorativi delle variabili chiave:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/distribuzione_churn.png}
+    \includegraphics[width=0.85\textwidth]{images/distribuzione_churn.png}
     \caption{\textbf{Analisi Esplorativa Iniziale (EDA)}: A sinistra, la distribuzione della variabile target Churn. Al centro, la relazione tra mesi di permanenza (\textit{tenure}) e Churn tramite boxplot. A destra, la spesa mensile (\textit{MonthlyCharges}) rispetto al Churn.}
     \label{fig:eda}
 \end{figure}
@@ -175,7 +176,7 @@ Per determinare il numero ottimale di cluster $K$, abbiamo valutato l'intervallo
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/clustering_scelta_k.png}
+    \includegraphics[width=0.72\textwidth]{images/clustering_scelta_k.png}
     \caption{\textbf{Valutazione del Numero di Cluster}: L'asse X riporta il numero di cluster $K$. La linea blu indica l'Inerzia (Elbow Method), mentre la linea arancione tratteggiata rappresenta il Silhouette Score medio.}
     \label{fig:clustering_k}
 \end{figure}
@@ -193,7 +194,7 @@ Per verificare visivamente la separazione geometrica dei cluster in uno spazio a
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/clustering_visualizzazione_pca.png}
+    \includegraphics[width=0.72\textwidth]{images/clustering_visualizzazione_pca.png}
     \caption{\textbf{Visualizzazione 2D tramite PCA}: Proiezione dei $7.043$ clienti sulle prime due componenti principali. I tre colori identificano i cluster K-Means.}
     \label{fig:clustering_pca}
 \end{figure}
@@ -218,6 +219,7 @@ La segmentazione non supervisionata con $K=3$ ha prodotto tre profili aziendali 
 \begin{table}[H]
 \centering
 \caption{Profilo medio dei tre Cluster ($K=3$)}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{ccccc}
 \toprule
 \textbf{Cluster} & \textbf{Tenure (mesi)} & \textbf{Costo Mensile (€)} & \textbf{Costo Totale (€)} & \textbf{Tasso di Churn} \\
@@ -227,6 +229,7 @@ La segmentazione non supervisionata con $K=3$ ha prodotto tre profili aziendali 
 2 (Low-Cost) & 29.50 & 26.57 & 809.42  & \textbf{12.30\%} \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 Dal confronto tra il tasso di churn medio aziendale ($26.54\%$) e i tassi di cluster si evince che:
@@ -240,7 +243,7 @@ La Figura~\ref{fig:churn_cluster} illustra la distribuzione assoluta dei clienti
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{images/distribuzione_churn_cluster.png}
+    \includegraphics[width=0.62\textwidth]{images/distribuzione_churn_cluster.png}
     \caption{\textbf{Distribuzione del Churn per Cluster}: Conteggio assoluto dei clienti rimasti (in verde) e in churn (in rosso) all'interno dei tre cluster K-Means.}
     \label{fig:churn_cluster}
 \end{figure}
@@ -249,69 +252,116 @@ La Figura~\ref{fig:churn_cluster} illustra la distribuzione assoluta dei clienti
 La valutazione dei classificatori è stata condotta tramite uno **split casuale stratificato** (*Stratified Train-Test Split*, 80\% Train, 20\% Test). La stratificazione è indispensabile per garantire che la proporzione target ($26.54\%$ Churn) sia identica nei due subset, evitando distorsioni nelle metriche.
 
 \section{Risultati Sperimentali}
-I tre classificatori sono stati addestrati su due configurazioni:
+I tre classificatori sono stati addestrati ed usati in due configurazioni sperimentali distinte:
 \begin{enumerate}
-    \item **Dataset Originale**: Feature preprocessate senza cluster.
-    \item **Dataset con Cluster**: Feature preprocessate + colonna One-Hot del cluster K-Means.
+    \item \textbf{Dataset Originale (Baseline)}: Feature preprocessate (scaling + One-Hot Encoding) senza la variabile di cluster.
+    \item \textbf{Dataset con Cluster (+Cluster)}: Feature preprocessate + colonna One-Hot del cluster K-Means ($K=3$).
 \end{enumerate}
 
-Le metriche di valutazione sul Test Set ($1.409$ istanze) sono riportate nella Tabella 2:
+Le metriche di valutazione sul Test Set ($1.409$ istanze) sono riportate nella Tabella 2 e visualizzate tramite il grafico a barre di confronto in Figura~\ref{fig:barre}:
 
 \begin{table}[H]
 \centering
 \caption{Confronto delle prestazioni sul Test Set (con e senza feature di clustering)}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{lcccccccc}
 \toprule
-\textbf{Modello} & \multicolumn{2}{c}{\textbf{Accuracy}} & \multicolumn{2}{c}{\textbf{Recall}} & \multicolumn{2}{c}{\textbf{F1-Score}} & \multicolumn{2}{c}{\textbf{AUC-ROC}} \\
+\textbf{Modello} & \multicolumn{2}{c}{\textbf{Accuracy}} & \multicolumn{2}{c}{\textbf{Recall (Metrica Chiave)}} & \multicolumn{2}{c}{\textbf{F1-Score}} & \multicolumn{2}{c}{\textbf{AUC-ROC}} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
 & \textbf{Orig} & \textbf{Clust} & \textbf{Orig} & \textbf{Clust} & \textbf{Orig} & \textbf{Clust} & \textbf{Orig} & \textbf{Clust} \\
 \midrule
-Regressione Logistica & \textbf{0.8062} & 0.8034 & \textbf{0.5588} & 0.5481 & \textbf{0.6049} & 0.5968 & \textbf{0.8422} & 0.8422 \\
-Decision Tree & 0.7942 & 0.7942 & 0.5401 & 0.5401 & 0.5821 & 0.5821 & 0.8267 & 0.8267 \\
-MLP (Rete Neurale) & 0.7495 & 0.7566 & 0.4278 & \textbf{0.4920} & 0.4755 & \textbf{0.5176} & 0.7844 & 0.7728 \\
+Regressione Logistica (Best) & \textbf{0.8062} & 0.8034 & \textbf{0.5588} & 0.5481 & \textbf{0.6049} & 0.5968 & \textbf{0.8422} & 0.8422 \\
+Decision Tree (CART) & 0.7942 & 0.7942 & 0.5401 & 0.5401 & 0.5821 & 0.5821 & 0.8267 & 0.8267 \\
+MLP (Rete Neurale) & 0.7495 & 0.7566 & 0.4278 & \textbf{0.4920 (+6.4\%)} & 0.4755 & \textbf{0.5176} & 0.7844 & 0.7728 \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
-
-Le curve ROC per le due configurazioni sono trasposte in Figura~\ref{fig:roc}:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/curve_roc.png}
+    \includegraphics[width=0.75\textwidth]{images/confronto_prestazioni_barre.png}
+    \caption{\textbf{Confronto Visivo delle Prestazioni}: A sinistra la Recall (capacità di scovare i clienti a rischio abbandono) prima (blu) e dopo l'integrazione del cluster (rosso). A destra la stabilità globale misurata dall'AUC-ROC.}
+    \label{fig:barre}
+\end{figure}
+
+Le curve ROC per le due configurazioni sperimentali sono trasposte in Figura~\ref{fig:roc}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{images/curve_roc.png}
     \caption{\textbf{Curve ROC del Confronto}: Curve ROC per i tre modelli su dati originali (sinistra) e dati arricchiti dal cluster (destra).}
     \label{fig:roc}
 \end{figure}
 
-\section{Discussione Critica e Analisi dei Modelli}
+\section{Discussione Critica, Spiegabilità \& Sviluppi Futuri}
 
 \subsection{Impatto dell'Integrazione del Clustering}
-I risultati sperimentali mostrano che:
+I risultati sperimentali evidenziano due comportamenti distinti tra i modelli:
 \begin{itemize}
-    \item Per i modelli tradizionali (**Regressione Logistica** e **Decision Tree**), l'inclusione del cluster non modifica significativamente le prestazioni. Essendo il K-Means calcolato sulle stesse variabili fisiche (\textit{tenure}, costi), i modelli supervisionati sono già in grado di apprendere direttamente le relazioni lineari e le soglie di split ottimali.
-    \item Per la rete neurale **MLP**, l'aggiunta del cluster migliora la Recall dal $42.78\%$ al $49.20\%$ e l'F1-score dal $47.55\%$ al $51.76\%$. In questo caso, la variabile di cluster agisce come una caratteristica aggregata pre-calcolata (*feature engineering* non supervisionato), che guida la rete neurale verso regioni di decisione più efficaci.
+    \item \textbf{Modelli Parametrici e Trasparenti (Regressione Logistica e CART)}: L'inclusione della variabile di cluster non altera in modo significativo le prestazioni. Poiché il K-Means è calcolato sulle stesse variabili fisiche (\textit{tenure}, costi), la Regressione Logistica e l'Albero CART apprendono già direttamente la separabilità lineare e le soglie di split ottimali.
+    \item \textbf{Modelli Profondi (Rete Neurale MLP)}: L'aggiunta del cluster produce un incremento significativo della **Recall dal 42.78\% al 49.20\% (+6.4\%)** e dell'F1-Score dal 47.55\% al 51.76\%. In questo contesto, l'apprendimento non supervisionato funge da \textit{Feature Engineering} guidando l'ottimizzatore Adam nell'evitare minimi locali ed isolando lo spazio dei dati.
 \end{itemize}
 
-\subsection{Spiegabilità: Il Decision Tree come Modello White-Box}
-Come approfondito nella Lezione 05, l'Albero Decisionale è un tipico **modello White-Box** (trasparente), a differenza dei modelli Black-Box come l'MLP. In Figura~\ref{fig:tree} vengono mostrate le regole apprese dall'algoritmo CART fino al terzo livello:
+\subsection{Spiegabilità Business: Il Decision Tree come Modello White-Box}
+Come approfondito nella Lezione 05, l'Albero Decisionale CART rappresenta il tipico **modello White-Box** (trasparente), indispensabile per spiegare le regole di business al management aziendale. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/albero_decisionale.png}
-    \caption{\textbf{Albero Decisionale (Primi 3 Livelli)}: Struttura dei primi nodi decisionali appresi dall'algoritmo CART.}
+    \includegraphics[width=0.95\textwidth]{images/albero_decisionale.png}
+    \caption{\textbf{Albero Decisionale CART (Primi 3 Livelli)}: Struttura visiva dei nodi di decisione con indicazione dell'impurità di Gini, del numero di campioni e della classe maggioritaria.}
     \label{fig:tree}
 \end{figure}
 
+L'algoritmo valuta la purezza di ogni nodo tramite l'**Indice di Gini** $G_i$:
+\begin{equation}
+    G_i = 1 - \sum_{k=1}^{K} p_{i,k}^2 \quad \in [0.0, 0.5]
+\end{equation}
+dove $G_i = 0.0$ indica un nodo perfettamente puro ($100\%$ clienti della stessa classe) e $G_i = 0.5$ indica la massima confusione ($50\%$ rimasti e $50\%$ in churn).
+
+Dall'analisi della struttura ad albero in Figura~\ref{fig:tree} si estraggono le seguenti regole aziendali:
 \begin{itemize}
-    \item \textbf{Split di Radice}: La decisione principale si basa sulla variabile \texttt{Contract\_Month-to-month}. I contratti mensili senza vincolo temporale costituiscono la principale causa di abbandono.
-    \item \textbf{Split Secondari}: Per i contratti mensili, i fattori di abbandono determinanti sono l'assenza di supporto tecnico (\texttt{TechSupport\_No internet service}) e l'abbonamento a servizi internet in fibra ottica ad alto costo.
+    \item \textbf{Split di Radice (Fattore Primario)}: Il primo nodo spartiacque si basa sulla variabile $\text{\texttt{tenure}} \le 16.5$ mesi. I clienti con una permanenza inferiore a un anno e mezzo costituiscono il gruppo a maggior rischio iniziale.
+    \item \textbf{Percorso Critico di Churn (Nodi Blu Scuro)}: La combinazione di una permanenza breve ($\text{\texttt{tenure}} \le 16.5$ mesi) unita alla presenza di un abbonamento in **Fibra Ottica** ($\text{\texttt{InternetService\_Fiber optic}} > 0.5$) isola i nodi terminali a maggior tasso di abbandono (**$>70\%$ di Churn**).
+    \item \textbf{Impatto per l'Agente CRM}: L'agente razionale può utilizzare queste regole per intervenire in modo preventivo erogando sconti dedicati ed assistenza prioritaria sui nuovi contratti in Fibra Ottica.
 \end{itemize}
 
-\section{Conclusioni}
-Il lavoro ha dimostrato l'efficacia delle metodologie del corso applicate a un problema reale:
+\subsection{Razionalità Economica e Significato del Costo CAC}
+In ambito Telco, le prestazioni di un modello di Intelligenza Artificiale devono essere valutate in relazione ai costi aziendali reali. 
+Il **CAC (Customer Acquisition Cost)** rappresenta il costo economico totale che l'azienda deve sostenere per acquisire un nuovo cliente (spese di marketing, pubblicità, provvigioni di vendita e installazione tecnica). 
+Trattenere un cliente esistente tramite un'offerta di fidelizzazione costa una frazione minima del CAC. Di conseguenza, l'Agente IA dà priorità assoluta alla **Recall** (minimizzare i Falsi Negativi), poiché lasciar scappare un cliente genera una perdita economica nettamente superiore rispetto all'erogazione di un piccolo sconto promozionale.
+
+\subsection{Implicazioni Etiche, Affidabilità e Privacy (GDPR)}
+L'impiego di agenti IA nel CRM richiede il rispetto di principi etici e normativi:
+\begin{itemize}
+    \item \textbf{Privacy e Conformità GDPR}: I dati contrattuali devono essere trattati nel rispetto della normativa europea sulla protezione dei dati, applicando tecniche di minimizzazione e pseudonimizzazione.
+    \item \textbf{Equità (Fairness) ed Evitamento del Bias}: L'agente non deve applicare discriminazioni di prezzo o penalizzazioni di servizio basate su variabili demografiche sensibili, garantendo offerte trasparenti e non ingannevoli.
+\end{itemize}
+
+\subsection{Sviluppi Futuri (Next Steps)}
+Per superare i limiti metodologici emersi nella sperimentazione, si individuano tre linee di sviluppo futuro:
 \begin{enumerate}
-    \item L'apprendimento non supervisionato (K-Means con $K=3$) ha fornito una segmentazione aziendale solida e interpretabile, identificando nel Cluster 0 i clienti a maggior rischio ($43.22\%$ churn).
-    \item La Regressione Logistica ha ottenuto i migliori risultati predittivi generali (Accuracy $80.62\%$, AUC-ROC $0.8422$).
-    \item Il Decision Tree, pur con un'accuratezza leggermente inferiore ($79.42\%$), garantisce una completa interpretabilità (*White-Box*), fondamentale per spiegare le regole di business durante l'esame orale.
+    \item \textbf{Bilanciamento del Target tramite SMOTE} (\textit{Synthetic Minority Over-sampling Technique}): Generazione di campioni sintetici per la classe minoritaria (Churn) al fine di equilibrare il dataset ed elevare ulteriormente la Recall dei modelli.
+    \item \textbf{Adozione di Modelli Ensemble} (\textbf{Random Forest} e \textbf{XGBoost}): 
+    \begin{itemize}
+        \item \textit{Random Forest}: Addestramento di $100+$ alberi di decisione in parallelo con votazione a maggioranza per eliminare l'overfitting.
+        \item \textit{XGBoost}: Addestramento di alberi in serie dove ciascun nuovo albero corregge progressivamente gli errori del precedente, massimizzando la precisione su dati tabellari.
+    \end{itemize}
+    \item \textbf{Cost-Sensitive Learning}: Configurazione della funzione di perdita (*loss function*) direttamente pesata sui costi reali in Euro (€), integrando il valore esatto del CAC per ottimizzare il profitto aziendale netto.
 \end{enumerate}
+
+\section{Conclusioni e Dichiarazione sull'uso dell'AI}
+
+\subsection{Sintesi dei Risultati}
+Il progetto ha dimostrato l'efficacia dell'integrazione tra tecniche non supervisionate e supervisionate:
+\begin{enumerate}
+    \item L'apprendimento non supervisionato (K-Means con $K=3$) ha fornito una segmentazione aziendale interpretabile, identificando nel Cluster 0 (Volatili) il segmento critico a maggior rischio di abbandono (**47.08\% di churn**).
+    \item La Regressione Logistica ha registrato le migliori prestazioni generali sul Test Set (Accuracy $80.62\%$, AUC-ROC $0.8422$, Recall $55.88\%$).
+    \item L'inclusione dei cluster ha incrementato la Recall della Rete Neurale MLP del **+6.4\%** (dal $42.78\%$ al $49.20\%$).
+    \item L'Albero Decisionale CART ha garantito la piena spiegabilità delle regole aziendali (*White-Box*), fornendo una guida trasparente per l'Agente CRM.
+\end{enumerate}
+
+\subsection{Dichiarazione sull'Uso di Strumenti di AI Generativa}
+In conformità con le linee guida del corso (*Descrizione dei progetti di Laboratorio di IA*), si dichiara che gli strumenti di AI generativa sono stati impiegati in modo trasparente esclusivamente come supporto all'assistenza nella stesura della documentazione in formato LaTeX, nel refactoring del codice per la riproducibilità e nella formattazione grafica delle slide. L'intera progettazione dell'architettura dell'agente, la scelta dei modelli, la condotta degli esperimenti e l'analisi critica dei risultati sono state eseguite direttamente dallo studente.
 
 \end{document}

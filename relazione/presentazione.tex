@@ -39,27 +39,46 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{footline}[frame number]
 \setbeamerfont{frametitle}{series=\bfseries, size=\large}
-\setbeamerfont{title}{series=\bfseries, size=\Large}
-\setbeamerfont{subtitle}{series=\normalfont, size=\small}
 
 \captionsetup{font=small, labelfont={bf,color=PrimaryNavy}}
 
-% --- Informazioni Titolo ---
-\title[Laboratorio IA -- Presentazione Esame]{Segmentazione Comportamentale e Churn Prediction in Ambito Telco}
-\subtitle{Analisi Integrata Supervisionata e Non Supervisionata sul Dataset IBM}
-\author[M. Mantineo]{Massimo Mantineo}
-\institute[Unime]{
-    Corso di Laurea in Informatica -- Corso di Laboratorio di Intelligenza Artificiale \\
-    \small Docente: Prof. G. Fiumara
+% --- Personalizzazione Title Page Elegante e Professionale ---
+\setbeamertemplate{title page}{
+    \centering
+    \vfill
+    
+    % Logo Università degli Studi di Messina
+    \includegraphics[height=1.4cm]{images/logo_unime_orizontale.png}
+    
+    \vspace{0.4cm}
+    
+    % Dipartimento e Corso di Laurea
+    {\footnotesize \color{DarkText} Dipartimento MIFT -- Corso di Laurea in Informatica (L-31)}\\[1.5mm]
+    {\small \textbf{\color{PrimaryNavy} Laboratorio di Intelligenza Artificiale}}
+    
+    \vspace{0.6cm}
+    
+    % Titolo Principale e Riga d'Accento
+    {\Large \textbf{\color{PrimaryNavy} Churn Prediction e Segmentazione Comportamentale}}\\[2mm]
+    {\color{SecondaryBlue}\rule{0.55\textwidth}{1.2pt}}
+    
+    \vspace{0.8cm}
+    
+    % Autore e Matricola
+    {\small \textbf{Massimo Mantineo} \quad (Matricola: 541924)}\\[2.5mm]
+    
+    % Anno Accademico centrato sotto l'autore
+    {\small \color{DarkText!80} Anno Accademico 2025/2026}
+    
+    \vfill
 }
-\date{Anno Accademico 2025/2026}
 
 \begin{document}
 
 % ==========================================
 % SLIDE 1: TITOLO
 % ==========================================
-\begin{frame}
+\begin{frame}[plain]
     \titlepage
     \note{Buongiorno professore, il mio progetto riguarda la segmentazione comportamentale e la predizione dell'abbandono (churn) dei clienti nel settore Telco, basato sul dataset IBM Telco Customer Churn. L'analisi integra metodologie non supervisionate e supervisionate trattate durante il corso.}
 \end{frame}
@@ -105,7 +124,7 @@
             \begin{itemize}
                 \small
                 \setlength{\itemsep}{2.5pt}
-                \item \textbf{Performance (P)}: Massimizzazione di Recall e F1-Score per la retention dei clienti.
+                \item \textbf{Performance (P)}: Massimizzazione della Recall per la retention dei clienti.
                 \item \textbf{Environment (E)}: CRM Telco stocastico, parzialmente osservabile e sequenziale.
                 \item \textbf{Actuators (A)}: Offerte promozionali, sconti mirati e supporto tecnico.
                 \item \textbf{Sensors (S)}: Registri di fatturazione, tenure e tipo di abbonamento.
@@ -148,7 +167,7 @@
                 \setlength{\itemsep}{2.5pt}
                 \item \textbf{Task (T)}: Prevedere chi abbandonerà l'azienda (Churn).
                 \item \textbf{Experience (E)}: 7.043 dati storici di clienti IBM Telco.
-                \item \textbf{Performance (P)}: Misurare Recall, F1-Score e AUC-ROC.
+                \item \textbf{Performance (P)}: Misurare Recall ed AUC-ROC.
             \end{itemize}
             
             \vspace{1.5mm}

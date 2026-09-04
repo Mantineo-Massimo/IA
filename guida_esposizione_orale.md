@@ -23,7 +23,7 @@ Questa guida ti fornisce **cosa dire voce per voce** per ciascuna delle 10 slide
 > *"Ho formalizzato l'apprendimento automatico seguendo la celebre definizione di Tom Mitchell del 1997, basata sulla terna T, E, P:
 > - **Task (T)**: La classificazione binaria finalizzata a predire il Churn.
 > - **Experience (E)**: L'addestramento sui dati storici dei 7.043 clienti IBM Telco.
-> - **Performance (P)**: Ottimizzazione di metriche robuste (Recall, F1-Score, AUC-ROC) al posto della semplice accuratezza.
+> - **Performance (P)**: Ottimizzazione di metriche robuste (Recall, AUC-ROC) al posto della semplice accuratezza.
 > A destra giustifichiamo la necessità dell'approccio probabilistico (di Bayes e Laplace) rispetto alla logica formale rigida (di Boole e Frege). Il comportamento dei clienti è intrinsecamente non deterministico; un sistema a regole rigide fallirebbe per l'esplosione combinatoria delle variabili e la parzialità delle informazioni. La probabilità ci permette di modellare l'incertezza esprimendo gradi di credenza continui."*
 
 ---

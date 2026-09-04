@@ -20,10 +20,12 @@
 % Impostazioni dei margini e della geometria
 \geometry{
     a4paper,
-    total={170mm,250mm},
-    left=20mm,
-    top=22mm,
-    bottom=22mm
+    left=22mm,
+    right=22mm,
+    top=25mm,
+    bottom=22mm,
+    headheight=32pt,
+    headsep=12pt
 }
 
 % Definizione della tavolozza colori professionale (Toni Blu Acciaio / Navy)
@@ -61,35 +63,58 @@
   {\color{SteelBlue}\normalfont\normalsize\itshape}
   {\thesubsubsection}{1em}{}
 
-\setlength{\headheight}{22pt}
-\addtolength{\topmargin}{-10pt}
 % Configurazione dell'intestazione e del piè di pagina
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small Relazione di Laboratorio di IA -- Massimo Mantineo}
-\fancyhead[R]{\small Churn Prediction \& Segmentazione}
+\fancyhead[L]{\small \textbf{M. Mantineo} (541924)}
+\fancyhead[C]{\small Churn Prediction \& Segmentazione}
+\fancyhead[R]{\raisebox{-0.15\height}{\includegraphics[height=0.7cm]{images/logo_unime_orizontale.png}}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{SteelBlue}\leaders\hrule height \headrulewidth\hfill}}
 
-\title{
-    \vspace{-15mm}
-    \color{NavyBlue}\textbf{\large Laboratorio di Intelligenza Artificiale}\\[3mm]
-    \LARGE \textbf{Segmentazione Comportamentale e Churn Prediction in Ambito Telco}\\[3mm]
-    \large \textbf{Analisi Integrata Supervisionata e Non Supervisionata sul Dataset IBM}
-}
-\author{
-    \textbf{Massimo Mantineo} \\
-    Studente Singolo \\
-    \small Corso di Laurea in Informatica -- Corso di Intelligenza Artificiale (Prof. G. Fiumara)
-}
-\date{Anno Accademico 2025/2026}
-
 \begin{document}
 
-\maketitle
-\thispagestyle{empty}
+\begin{titlepage}
+    \centering
+    \vspace*{0.5cm}
+    
+    % Logo Università degli Studi di Messina
+    \includegraphics[width=0.45\textwidth]{images/logo_unime_orizontale.png}
+    
+    \vspace{1.2cm}
+    
+    % Università, Dipartimento e CdL
+    {\Large \textbf{Università degli Studi di Messina}}\\[2mm]
+    {\large Dipartimento di Scienze Matematiche e Informatiche,\\ Scienze Fisiche e Scienze della Terra (MIFT)}\\[2mm]
+    {\large Corso di Laurea Triennale in Informatica (L-31)}
+    
+    \vspace{1.5cm}
+    
+    % Materia
+    {\Large \textbf{Laboratorio di Intelligenza Artificiale}}
+    
+    \vspace{1.5cm}
+    
+    % Titolo
+    {\Huge \textbf{Churn Prediction e Segmentazione Comportamentale}}
+    
+    \vfill
+    
+    % Nome e Cognome
+    {\large \textbf{Massimo Mantineo} (Matricola: 541924)}
+    
+    \vfill
+    \vspace{0.8cm}
+    
+    % Anno Accademico
+    {\large Anno Accademico 2025/2026}
+    
+\end{titlepage}
+
 \newpage
+\pagestyle{fancy}
+
 \tableofcontents
 \newpage
 
@@ -103,7 +128,7 @@ Il fenomeno del \textit{churn} (abbandono dei clienti) rappresenta uno dei probl
 
 Coerentemente con il programma del corso di Intelligenza Artificiale (basato sulle lezioni del Prof. G. Fiumara e sul testo di riferimento Russell \& Norvig), il problema aziendale viene modellato secondo il paradigma dell'\textbf{Agente Intelligente Razionale}:
 \begin{itemize}
-    \item \textbf{Performance Measure (P)}: Riduzione del tasso di abbandono aziendale, fidelizzazione dei clienti ad alto valore e massimizzazione di metriche predittive robuste ($F_1$-Score e AUC-ROC).
+    \item \textbf{Performance Measure (P)}: Riduzione del tasso di abbandono aziendale, fidelizzazione dei clienti ad alto valore e massimizzazione di metriche predittive robuste (Recall e AUC-ROC).
     \item \textbf{Environment (E)}: L'ambiente CRM (\textit{Customer Relationship Management}, il database dei dati contrattuali e finanziari dei 7.043 clienti Telco), caratterizzato dall'essere stocastico e parzialmente osservabile.
     \item \textbf{Actuators (A)}: Campagne di fidelizzazione mirate, erogazione di sconti personalizzati e interventi diretti del supporto clienti.
     \item \textbf{Sensors (S)}: Registri di fatturazione, tipo di abbonamento, fruizione dei servizi (Fibra/TechSupport) e mesi di permanenza (\textit{tenure}).

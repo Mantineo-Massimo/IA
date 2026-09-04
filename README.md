@@ -14,8 +14,8 @@ IA2026/
 │   └── churn_analysis.ipynb       # Jupyter Notebook con l'intera pipeline eseguita
 │
 ├── relazione/
-│   ├── relazione.tex              # Codice sorgente LaTeX della relazione finale
-│   └── presentazione.tex          # Codice sorgente LaTeX Beamer per le slide d'esame
+│   ├── relaztexione.pdf              # Relazione finale
+│   └── presentazione.pdf          # Slide d'esame
 │
 ├── documenti_progetto/             # PDF con le specifiche e le linee guida del corso
 │   ├── Progetti.pdf

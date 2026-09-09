@@ -221,19 +221,20 @@
 
         \begin{column}{0.48\textwidth}
             \centering
-            \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{images/boxplot_permanenza_costi.png}
+            \includegraphics[width=\textwidth,height=0.36\textheight,keepaspectratio]{images/boxplot_permanenza_costi.png}
             
             \vspace{1.5mm}
             \colorbox{LightBg}{\parbox{\textwidth}{
-                \small \color{DarkText}
-                \textbf{Come leggere i due Boxplot}:
+                \footnotesize \color{DarkText}
+                \textbf{Lettura e Pattern dei Boxplot}:
                 \begin{itemize}
-                    \small
+                    \footnotesize
                     \setlength{\itemsep}{2pt}
-                    \item \textbf{Grafico Sinistra (Tenure)}: Chi abbandona (rosso) ha una mediana di soli \textbf{10 mesi} rispetto ai \textbf{38 mesi} di chi resta (verde).
-                    \item \textbf{Grafico Destra (Spesa)}: Chi abbandona (rosso) paga una mediana di \textbf{80€/mese} contro i \textbf{64€/mese} di chi resta (verde).
+                    \item \textbf{Struttura}: Linea = Mediana | Scatola = 50\% dati | Baffi = Min/Max | Pallini = Outlier.
+                    \item \textbf{Permanenza}: Chi abbandona dura solo \textbf{10 mesi} (vs \textbf{38} chi resta).
+                    \item \textbf{Spesa Mensile}: Chi abbandona paga \textbf{80€/mese} (vs \textbf{64€} chi resta).
                 \end{itemize}
-                \textbf{Conclusione}: Il churn si concentra sui \textbf{nuovi clienti con contratti ad alto costo}.
+                \textbf{Esito}: Churn su \textbf{nuovi clienti con contratti ad alto costo}.
             }}
         \end{column}
     \end{columns}

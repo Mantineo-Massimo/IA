@@ -18,7 +18,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 2: Inquadramento Teorico: Epistemologia e Agente PEAS
 
 ### 🗣️ Cosa dire a voce:
-> *"Iniziamo dall'inquadramento teorico del problema basato su Russell & Norvig. L'Intelligenza Artificiale si definisce su due assi: Pensare vs. Agire e Umanamente vs. Razionalmente. Il mio lavoro si colloca saldamente nel quadrante dell'**Agire Razionalmente**: l'obiettivo non è simulare i processi cognitivi umani, ma massimizzare l'utilità attesa (la fidelizzazione dei clienti) sulla base dei dati storici CRM. 
+> *(Frase di transizione dalla Slide 1 alla 2)*:  
+> *"Per inquadrare rigorosamente il progetto da un punto di vista teorico, iniziamo collocando l'IA all'interno dei fondamenti epistemologici di Russell & Norvig e definendo l'Agente Razionale tramite il modello PEAS..."*
+> 
+> L'Intelligenza Artificiale si definisce su due assi: Pensare vs. Agire e Umanamente vs. Razionalmente. Il mio lavoro si colloca saldamente nel quadrante dell'**Agire Razionalmente**: l'obiettivo non è simulare i processi cognitivi umani, ma massimizzare l'utilità attesa (la fidelizzazione dei clienti) sulla base dei dati storici CRM. 
 > 
 > A destra vediamo la modellizzazione **PEAS** dell'agente:
 > - **Performance (P)**: Massimizzare la Recall per intercettare il maggior numero di clienti a rischio ed evitare i Falsi Negativi.
@@ -37,7 +40,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 3: Fondamenti di Machine Learning e Approccio Probabilistico
 
 ### 🗣️ Cosa dire a voce:
-> *"Ho formalizzato l'apprendimento automatico seguendo la celebre definizione di Tom Mitchell del 1997, basata sulla terna T, E, P:
+> *(Frase di transizione dalla Slide 2 alla 3)*:  
+> *"Una volta formalizzato l'Agente Razionale in termini di PEAS, si pone la domanda fondamentale: **come fa l'agente a trasformare le percezioni dei Sensori nelle decisioni degli Attuatori?** In un ambiente stocastico e reale non può usare semplici regole rigide del tipo 'SE... ALLORA...'. Deve invece apprendere dai dati del passato attraverso il Machine Learning e la probabilità.*
+> 
+> Ho formalizzato questo apprendimento seguendo la celebre definizione di Tom Mitchell del 1997, basata sulla terna T, E, P:
 > - **Task (T)**: La classificazione binaria finalizzata a predire l'abbandono (Churn = 1 vs No Churn = 0).
 > - **Experience (E)**: L'addestramento sui dati storici dei 7.043 clienti IBM Telco.
 > - **Performance (P)**: L'ottimizzazione della Recall al posto della semplice accuratezza.
@@ -53,14 +59,23 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 4: Preprocessing dei Dati e Sbilanciamento del Target
 
 ### 🗣️ Cosa dire a voce:
-> *"Il dataset comprende 7.043 clienti e 21 variabili. Nel preprocessing abbiamo gestito tre aspetti fondamentali:
+> *(Frase di transizione dalla Slide 3 alla 4)*:  
+> *"Dopo aver formalizzato il task di apprendimento $T, E, P$, il primo passo operativo per costruire l'Agente consiste nel preparare i dati storici del CRM e gestire le criticità del dataset..."*
+> 
+> Il dataset comprende 7.043 clienti e 21 variabili. Nel preprocessing abbiamo gestito tre aspetti fondamentali:
 > - **Data Cleaning**: Gli 11 valori vuoti di spesa totale sono stati imputati a `0.0€` perché relativi a clienti nuovi (`tenure = 0`), salvaguardando dati utili.
 > - **Normalizzazione**: I dati numerici sono stati portati sulla stessa scala per evitare che le cifre in Euro schiacciassero i mesi di permanenza nei calcoli dell'IA.
 > - **One-Hot Encoding**: La conversione dei testi in numeri binari ($0$ e $1$) permette ai modelli di elaborare le categorie senza creare gerarchie fittizie.
 > 
 > Un elemento cruciale è poi lo **sbilanciamento del target**: solo il **26.54%** dei clienti abbandona. Un classificatore banale (*dummy classifier*) che dicesse sempre 'No Churn' otterrebbe il 73.46% di Accuracy ma una **Recall pari a zero**, risultando del tutto inutile. Identificare chi abbandona ha priorità assoluta, perché perdere un cliente costa molto di più che offrire una promozione.
 > 
-> A destra, i **Boxplot** mostrano visivamente due pattern chiari: chi abbandona (scatola rossa) ha una permanenza mediana di soli **10 mesi** (contro i **38 mesi** di chi resta) e paga bollette medie più alte (**80€/mese** contro **64€/mese**)."*
+> A destra, i **Boxplot** mostrano la distribuzione di permanenza e spesa. Per la lettura della struttura:
+> - **La linea centrale nella scatola**: è la **Mediana** (il 50° percentile dei clienti).
+> - **La scatola (rettangolo)**: racchiude il **50% centrale dei dati** (dall'intervallo $Q_1$ al 25% a $Q_3$ al 75%).
+> - **I baffi (linee verticali)**: indicano i valori minimi e massimi ordinari dei dati.
+> - **I pallini esterni**: rappresentano i valori anomali (**outliers**).
+> 
+> Dal confronto delle scatole emergono due pattern chiari: chi abbandona (scatola rossa) ha una permanenza mediana di soli **10 mesi** (contro i **38 mesi** di chi resta) e paga bollette medie più alte (**80€/mese** contro **64€/mese**)."*
 
 ### ❓ Domande probabili dell'Esaminatore:
 * **P:** *"Perché avete imputato 0.0€ ai 11 valori vuoti di `TotalCharges` invece di eliminare le righe o usare la media?"*
@@ -75,7 +90,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 5: Apprendimento Non Supervisionato: Clustering K-Means
 
 ### 🗣️ Cosa dire a voce:
-> *"Per l'apprendimento non supervisionato ho utilizzato l'algoritmo **K-Means** per raggruppare spontaneamente i clienti in segmenti omogenei senza usare l'etichetta del Churn.
+> *(Frase di transizione dalla Slide 4 alla 5)*:  
+> *"Una volta pulito e normalizzato il dataset, prima di passare alla classificazione supervisionata ho esplorato la struttura nascosta dei dati tramite l'apprendimento non supervisionato, applicando il clustering K-Means..."*
+> 
+> Per l'apprendimento non supervisionato ho utilizzato l'algoritmo **K-Means** per raggruppare spontaneamente i clienti in segmenti omogenei senza usare l'etichetta del Churn.
 > 
 > Per determinare il numero ottimale di cluster $K$, ho analizzato due metriche complementari:
 > - **Inerzia (Curva Blu)**: Misura l'errore quadratico interno al cluster (WCSS).
@@ -92,7 +110,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 6: Segmentazione PCA e Profilo dei Segmenti
 
 ### 🗣️ Cosa dire a voce:
-> *"La tabella in alto riassume i 3 profili di business emersi dal K-Means:
+> *(Frase di transizione dalla Slide 5 alla 6)*:  
+> *"Dopo aver individuato $K=3$ come numero ottimale di cluster, analizziamo i tre profili di business emersi e verifichiamo la loro separazione geometrica nello spazio tramite la riduzione dimensionale PCA..."*
+> 
+> La tabella in alto riassume i 3 profili di business emersi dal K-Means:
 > - **Cluster 0 (Volatili)**: Nuovi clienti con tenure breve (13 mesi), spesa mensile alta (75€) e un tasso di churn record del **47.08%** (quasi il doppio della media aziendale!). Rappresenta il target prioritario per l'Agente IA.
 > - **Cluster 1 (Fedeli High-Value)**: Utenti storici (59 mesi), spesa alta (90€) e tasso di churn contenuto (15.36%).
 > - **Cluster 2 (Low-Cost)**: Clienti con servizi base (27€/mese) ed elevata stabilità (churn al 12.30%).
@@ -108,7 +129,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 7: Pipeline Sperimentale Supervisionata
 
 ### 🗣️ Cosa dire a voce:
-> *"Questa slide descrive la pipeline di classificazione supervisionata. A sinistra vediamo il diagramma di flusso: dai dati preprocessati applichiamo uno **split stratificato 80/20** su 7.043 clienti per mantenere l'esatto sbilanciamento del target ($26.54\%$ Churn) sia nel training set che nel test set.
+> *(Frase di transizione dalla Slide 6 alla 7)*:  
+> *"Ora che l'apprendimento non supervisionato ha mappato i segmenti comportamentali dei clienti, passiamo alla fase supervisionata vera e propria, costruendo la pipeline di classificazione..."*
+> 
+> Questa slide descrive la pipeline di classificazione supervisionata. A sinistra vediamo il diagramma di flusso: dai dati preprocessati applichiamo uno **split stratificato 80/20** su 7.043 clienti per mantenere l'esatto sbilanciamento del target ($26.54\%$ Churn) sia nel training set che nel test set.
 > 
 > Abbiamo selezionato tre famiglie di modelli rappresentative trattate nel corso:
 > 1. **Regressione Logistica**: Baseline parametrica per valutare la separabilità lineare iniziale dei dati.
@@ -124,7 +148,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 8: Confronto delle Prestazioni Sperimentali
 
 ### 🗣️ Cosa dire a voce:
-> *"In questa slide analizziamo i risultati ottenuti sul Test Set ($1.409$ istanze) ponendo a confronto la configurazione Base con la configurazione arricchita dalla feature di Clustering ($K=3$).
+> *(Frase di transizione dalla Slide 7 alla 8)*:  
+> *"Vediamo ora i risultati sperimentali ottenuti sul Test Set, ponendo a confronto le prestazioni dei tre modelli sia nella configurazione base sia con l'integrazione della feature di clustering..."*
+> 
+> In questa slide analizziamo i risultati ottenuti sul Test Set ($1.409$ istanze) ponendo a confronto la configurazione Base con la configurazione arricchita dalla feature di Clustering ($K=3$).
 > 
 > I risultati evidenziano due conclusioni fondamentali:
 > 1. **Miglior Modello Globale**: La **Regressione Logistica** registra le prestazioni migliori in assoluto (Accuracy **80.6%** e Recall **55.9%**), dimostrando che i dati contrattuali Telco possiedono un'elevata separabilità lineare.
@@ -139,7 +166,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 9: Spiegabilità Business: Regole dell'Albero Decisionale (CART)
 
 ### 🗣️ Cosa dire a voce:
-> *"L'Albero Decisionale CART ci fornisce il valore indispensabile della trasparenza (*White-Box*). 
+> *(Frase di transizione dalla Slide 8 alla 9)*:  
+> *"Se la Regressione Logistica ha registrato le prestazioni numeriche migliori e la Rete Neurale ha tratto massimo beneficio dal clustering, in ambito aziendale è fondamentale disporre anche di spiegabilità trasparente (White-Box). Analizziamo quindi le regole estratte dall'Albero CART..."*
+> 
+> L'Albero Decisionale CART ci fornisce il valore indispensabile della trasparenza (*White-Box*). 
 > 
 > Per spiegare la struttura in tre passi:
 > - **Passo 1 (Gini)**: L'albero misura l'impurità dei nodi con l'Indice di Gini ($G \in [0, 0.5]$). $G=0$ indica un nodo puro al $100\%$ (tinta scura), mentre $G=0.5$ indica la massima confusione (tinta chiara).
@@ -157,7 +187,10 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 ## 📌 Slide 10: Discussione Critica, Conclusioni & Sviluppi Futuri
 
 ### 🗣️ Cosa dire a voce:
-> *"Per concludere la presentazione, ricapitoliamo 4 punti fondamentali:
+> *(Frase di transizione dalla Slide 9 alla 10)*:  
+> *"Per tirare le somme dell'intero progetto e concludere la presentazione, ricapitoliamo le quattro conclusioni fondamentali e gli sviluppi futuri per il potenziamento dell'Agente IA..."*
+> 
+> Per concludere la presentazione, ricapitoliamo 4 punti fondamentali:
 > 1. **Valore dell'Integrazione Unsupervised/Supervised**: Il clustering K-Means arricchisce lo spazio delle feature offrendo una mappa pre-calcolata che aumenta la Recall dell'MLP del **+6.4%**.
 > 2. **Razionalità Economica e Costo CAC**: L'Agente IA dota di priorità la Recall perché il Customer Acquisition Cost (CAC) per sostituire un cliente perso è nettamente superiore al costo di retention.
 > 3. **Trio dei Modelli**: La Regressione Logistica garantisce il miglior rendimento predittivo, la Rete Neurale beneficia maggiormente del clustering, e l'Albero CART offre la spiegabilità necessaria per le regole aziendali.

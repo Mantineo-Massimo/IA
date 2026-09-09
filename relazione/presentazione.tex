@@ -167,7 +167,7 @@
                 \setlength{\itemsep}{2.5pt}
                 \item \textbf{Task (T)}: Prevedere chi abbandonerà l'azienda (Churn).
                 \item \textbf{Experience (E)}: 7.043 dati storici di clienti IBM Telco.
-                \item \textbf{Performance (P)}: Misurare Recall ed AUC-ROC.
+                \item \textbf{Performance (P)}: Massimizzare la Recall.
             \end{itemize}
             
             \vspace{1.5mm}
@@ -212,10 +212,11 @@
             \begin{itemize}
                 \small
                 \setlength{\itemsep}{3pt}
-                \item \textbf{Data Cleaning}: Corretti 11 valori vuoti in \texttt{TotalCharges} (clienti nuovi con permanenza = 0 mesi).
-                \item \textbf{Scaling \& Encoding}: Normalizzazione variabili e codifica One-Hot Encoding per evitare sovrapposizioni.
-                \item \textbf{Sbilanciamento Target}: Solo il \textbf{26.5\%} abbandona. Indovinare sempre "No Churn" dà il 73.5\% di Accuracy ma \textbf{Recall 0\%}.
-                \item \textbf{Priorità alla Recall}: Perdere un cliente (Falso Negativo) costa molto di più che fare una promo a un cliente fedele.
+                \item \textbf{Data Cleaning}: Gli 11 valori vuoti di spesa totale sono stati imputati a \textbf{0.0€} perché relativi a clienti nuovi (0 mesi), salvaguardando dati utili.
+                \item \textbf{Normalizzazione}: I dati numerici sono stati portati sulla stessa scala per evitare che le cifre in Euro schiaccino i mesi di permanenza nei calcoli dell'IA.
+                \item \textbf{One-Hot Encoding}: La conversione dei testi in numeri binari ($0$ e $1$) permette ai modelli di elaborare le categorie senza creare gerarchie fittizie.
+                \item \textbf{Sbilanciamento Target}: Poiché solo il \textbf{26.5\%} abbandona, dire sempre "No Churn" darebbe il 73.5\% di Accuracy ma una \textbf{Recall pari a zero}.
+                \item \textbf{Priorità alla Recall}: Identificare chi abbandona è la priorità assoluta, perché perdere un cliente costa molto di più che offrire una promozione.
             \end{itemize}
         \end{column}
 
@@ -413,14 +414,14 @@
             \rowcolors{2}{PrimaryNavy!5}{white}
             \setlength{\tabcolsep}{4pt}
             \renewcommand{\arraystretch}{1.25}
-            \begin{tabular}{l c c c}
+            \begin{tabular}{l c c}
                 \toprule
                 \rowcolor{PrimaryNavy}
-                \color{white}\textbf{Modello} & \color{white}\textbf{Recall (Base $\rightarrow$ +Cluster)} & \color{white}\textbf{AUC-ROC} & \color{white}\textbf{Accuracy} \\
+                \color{white}\textbf{Modello} & \color{white}\textbf{Recall (Base $\rightarrow$ +Cluster)} & \color{white}\textbf{Accuracy} \\
                 \midrule
-                \textbf{Reg. Logistica (Best)} & \textbf{55.9\%} $\rightarrow$ 54.8\% & \textbf{0.842} & \textbf{80.6\%} \\
-                \textbf{Decision Tree (CART)} & 54.0\% $\rightarrow$ 54.0\% & 0.827 & 79.4\% \\
-                \textbf{Rete Neurale (MLP)} & 42.8\% $\rightarrow$ \textbf{49.2\%} \textcolor{AccentHighlight}{\textbf{(+6.4\%)}} & 0.784 & 75.7\% \\
+                \textbf{Reg. Logistica (Best)} & \textbf{55.9\%} $\rightarrow$ 54.8\% & \textbf{80.6\%} \\
+                \textbf{Decision Tree (CART)} & 54.0\% $\rightarrow$ 54.0\% & 79.4\% \\
+                \textbf{Rete Neurale (MLP)} & 42.8\% $\rightarrow$ \textbf{49.2\%} \textcolor{AccentHighlight}{\textbf{(+6.4\%)}} & 75.7\% \\
                 \bottomrule
             \end{tabular}
             }
@@ -433,7 +434,7 @@
                 \begin{itemize}
                     \scriptsize
                     \setlength{\itemsep}{1.5pt}
-                    \item Accuracy \textbf{80.6\%}, AUC-ROC \textbf{0.842}, Recall \textbf{55.9\%}.
+                    \item Accuracy \textbf{80.6\%}, Recall \textbf{55.9\%}.
                     \item Conferma l'elevata separabilità lineare dei dati Telco.
                 \end{itemize}
             }}
@@ -455,7 +456,7 @@
 
     \note{In questa slide confrontiamo le prestazioni dei tre modelli sia sul dataset base che con la feature di clustering. 
     Da spiegare all'esame in 2 punti chiave:
-    1) La Regressione Logistica è il miglior modello globale (Accuracy 80.6\% e AUC 0.842), dimostrando che i dati contrattuali hanno forte separabilità lineare.
+    1) La Regressione Logistica è il miglior modello globale (Accuracy 80.6\%), dimostrando che i dati contrattuali hanno forte separabilità lineare.
     2) L'effetto del clustering è cruciale per la Rete Neurale: aumenta la Recall dal 42.8\% al 49.2\% (+6.4\%), permettendo all'agente di intercettare molti più clienti in fuga.}
 \end{frame}
 

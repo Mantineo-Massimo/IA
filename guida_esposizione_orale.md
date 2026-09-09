@@ -24,7 +24,9 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 > - **Performance (P)**: Massimizzare la Recall per intercettare il maggior numero di clienti a rischio ed evitare i Falsi Negativi.
 > - **Environment (E)**: L'ambiente CRM Telco, caratterizzato dall'essere stocastico, parzialmente osservabile, sequenziale nel tempo e multi-dimensionale.
 > - **Actuators (A)**: Campagne promozionali mirate, sconti personalizzati e supporto clienti.
-> - **Sensors (S)**: Registri di fatturazione, tenure e tipologia di contratti."*
+> - **Sensors (S)**: Registri di fatturazione, tenure e tipologia di contratti.
+> 
+> In basso nel diagramma vediamo il **ciclo di interazione**: attraverso i **Sensori** (a sinistra), l'Agente recepisce i dati dal CRM (spesa e contratto); calcola il rischio di abbandono e, attraverso gli **Attuatori** (a destra), agisce sull'ambiente attivando offerte promozionali e sconti per trattenere il cliente."*
 
 ### ❓ Domande probabili dell'Esaminatore:
 * **P:** *"Perché l'ambiente CRM è definito stocastico e parzialmente osservabile?"*
@@ -170,6 +172,7 @@ Questa guida ti fornisce il **discorso pronto parola per parola** per ciascuna d
 | Termine | Definizione Breve da Usare all'Orale |
 | :--- | :--- |
 | **PEAS** | Modello formalizzante dell'agente razionale: *Performance, Environment, Actuators, Sensors*. |
+| **CRM** | *Customer Relationship Management*: sistema informativo aziendale che gestisce i dati, i contratti e le interazioni con i clienti. |
 | **CAC** | *Customer Acquisition Cost*: costo economico sostenuto dal marketing per trovare un nuovo cliente. |
 | **Recall** | Quanti clienti in abbandono reale l'IA è riuscita a scovare (minimizza i Falsi Negativi). |
 | **AUC-ROC** | Area Sotto la Curva ROC: misura la capacità del modello di separare le due classi a prescindere dalla soglia. |

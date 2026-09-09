@@ -213,7 +213,7 @@
                 \setlength{\itemsep}{3pt}
                 \item \textbf{Data Cleaning}: Gli 11 valori vuoti di spesa totale sono stati imputati a \textbf{0.0€} perché relativi a clienti nuovi (0 mesi), salvaguardando dati utili.
                 \item \textbf{Normalizzazione}: I dati numerici sono stati portati sulla stessa scala per evitare che le cifre in Euro schiaccino i mesi di permanenza nei calcoli dell'IA.
-                \item \textbf{One-Hot Encoding}: La conversione dei testi in numeri binari ($0$ e $1$) permette ai modelli di elaborare le categorie senza creare gerarchie fittizie.
+                \item \textbf{One-Hot Encoding}: La conversione dei testi in colonne di $0$ e $1$ impedisce all'IA di creare finti ordini di importanza tra le categorie.
                 \item \textbf{Sbilanciamento Target}: Poiché solo il \textbf{26.5\%} abbandona, dire sempre "No Churn" darebbe il 73.5\% di Accuracy ma una \textbf{Recall pari a zero}.
                 \item \textbf{Priorità alla Recall}: Identificare chi abbandona è la priorità assoluta, perché perdere un cliente costa molto di più che offrire una promozione.
             \end{itemize}
@@ -456,8 +456,8 @@
 
     \note{In questa slide confrontiamo le prestazioni dei tre modelli sia sul dataset base che con la feature di clustering. 
     Da spiegare all'esame in 2 punti chiave:
-    1) La Regressione Logistica è il miglior modello globale (Accuracy 80.6\%), dimostrando che i dati contrattuali hanno forte separabilità lineare.
-    2) L'effetto del clustering è cruciale per la Rete Neurale: aumenta la Recall dal 42.8\% al 49.2\% (+6.4\%), permettendo all'agente di intercettare molti più clienti in fuga.}
+    1) La Regressione Logistica è il miglior modello globale (Accuracy 80.6\%, Recall 55.9\%): per il Rasoio di Occam, il modello lineare semplice evita l'overfitting a cui le reti neurali sono soggette su dati tabulari con forte separabilità lineare.
+    2) L'effetto del clustering è invece straordinario per la Rete Neurale MLP: la conoscenza a priori del cluster sblocca l'ottimizzatore Adam aumentandone la Recall dal 42.8\% al 49.2\% (+6.4\%).}
 \end{frame}
 
 % ==========================================

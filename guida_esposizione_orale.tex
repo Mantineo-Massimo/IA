@@ -1,0 +1,568 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern}
+\usepackage[margin=1.8cm]{geometry}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+
+% Stile Sezioni per Stampa in Bianco e Nero
+\titleformat{\section}{\Large\bfseries}{}{0em}{}[\vspace{-2pt}\hrule height 1.5pt]
+\titleformat{\subsection}{\large\bfseries}{}{0em}{}
+\titleformat{\subsubsection}{\bfseries}{}{0em}{}
+
+\begin{document}
+
+% COPERTINA / INTESTAZIONE
+\begin{center}
+    {\Huge \bfseries Guida Completa per l'Esposizione Orale}\\[6pt]
+    {\Large Esame di Intelligenza Artificiale --- Progetto Telco Churn Prediction}\\[4pt]
+    {\small Corso del Prof. G. Fiumara / Testo di Riferimento: Russell \& Norvig}
+\end{center}
+
+\vspace{2mm}
+
+\noindent Questa guida e ottimizzata per la \textbf{stampa in bianco e nero} su carta. E divisa in cinque parti fondamentali:
+\begin{enumerate}[leftmargin=1.5em, itemsep=1pt]
+    \item \textbf{Mappa Concettuale} dell'architettura del progetto.
+    \item \textbf{Parte 1: Esposizione Slide per Slide} con discorsi a voce e transizioni.
+    \item \textbf{Parte 2: Guida Dettagliata ai Grafici} (lettura assi, barre, etichette e scopi).
+    \item \textbf{Parte 3: Tavola Completa delle Formule Matematiche} (tutti i calcoli dell'esame).
+    \item \textbf{Parte 4: Domande dell'Esaminatore con Risposte} e \textbf{Parte 5: Glossario}.
+\end{enumerate}
+
+\vspace{3mm}
+
+% MAPPA CONCETTUALE
+\section*{Mappa Concettuale dell'Architettura del Progetto}
+
+\vspace{3mm}
+
+\begin{center}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw=black, thick, text width=7.0cm, minimum height=1.3cm, align=center, font=\small, inner sep=4pt},
+    wideblock/.style={rectangle, draw=black, thick, text width=14.5cm, minimum height=1.1cm, align=center, font=\small, inner sep=4pt},
+    titleblock/.style={rectangle, draw=black, fill=gray!15, thick, text width=14.5cm, minimum height=0.7cm, align=center, font=\bfseries\small, inner sep=4pt},
+    arrow/.style={-Latex, thick}
+]
+
+% Title Box (Center at 0,0)
+\node (top) [titleblock] at (0,0) {TELCO CHURN PREDICTION E SEGMENTAZIONE COMPORTAMENTALE};
+
+% Level 1: Epistemologia & ML (Anchor-aligned to titlebox corners)
+\node (epist) [block, below right=0.5cm and 0cm of top.south west, anchor=north west] {\textbf{1. Epistemologia \& Agente PEAS}\\Russell \& Norvig: Agire Razionalmente\\P (Recall), E (Stocastico), A, S};
+\node (ml) [block, below left=0.5cm and 0cm of top.south east, anchor=north east] {\textbf{2. ML \& Approccio Probabilistico}\\Mitchell (Task T, Experience E, Perf P)\\Stima $P(\text{Churn} \mid \text{Dati})$ (Bayes/Laplace)};
+
+% Level 2: Preprocessing (Below Level 1)
+\node (prep) [wideblock, below=0.5cm of epist.south west, anchor=north west] {\textbf{3. Preprocessing \& Data Cleaning}\\Imputazione ($0.0$\texteuro{} per \texttt{tenure=0}) $\cdot$ StandardScaler ($z=\frac{x-\mu}{\sigma}$) $\cdot$ One-Hot Encoding (\texttt{drop='first'})\\Analisi Boxplot: Mediana, IQR, Outliers (Permanenza 10 vs 38 mesi)};
+
+% Level 3: Unsupervised & Supervised (Below Level 2)
+\node (unsup) [block, below right=0.5cm and 0cm of prep.south west, anchor=north west] {\textbf{4. Unsupervised: K-Means ($K=3$)}\\Inerzia (WCSS Gomito) + Silhouette ($s=0.286$)\\Profili: Volatili (47\% Churn), Fedeli, Low-Cost\\Proiezione 2D tramite PCA ($PC_1, PC_2$)};
+\node (sup) [block, below left=0.5cm and 0cm of prep.south east, anchor=north east] {\textbf{5. Supervised: Classificazione (80/20)}\\LogReg: Best (80.6\% Acc, 55.9\% Rec)\\CART: White-Box (Gini, Regola Fibra)\\MLP: Black-Box (+6.4\% Rec con Cluster)};
+
+% Level 4: Decision & Business (Below Level 3)
+\node (business) [wideblock, below=0.5cm of unsup.south west, anchor=north west] {\textbf{6. Decisione Agente Razionale \& Impatto Business}\\Priorita alla Recall per minimizzare i Falsi Negativi (Costo CAC > Costo Retention)\\Interventi promozionali mirati sui clienti a rischio prima dell'abbandono};
+
+% Arrows
+\draw [arrow] (epist.south) -- (prep.north -| epist.south);
+\draw [arrow] (ml.south) -- (prep.north -| ml.south);
+\draw [arrow] (prep.south -| unsup.north) -- (unsup.north);
+\draw [arrow] (prep.south -| sup.north) -- (sup.north);
+\draw [arrow] (unsup.east) -- (sup.west) node[midway, above=1pt, font=\tiny\bfseries] {Feature Cluster};
+\draw [arrow] (unsup.south) -- (business.north -| unsup.south);
+\draw [arrow] (sup.south) -- (business.north -| sup.south);
+
+\end{tikzpicture}
+\end{center}
+
+\vspace{3mm}
+
+\newpage
+
+% =========================================================================
+\section*{PARTE 1: Esposizione Orale Slide per Slide}
+% =========================================================================
+
+\vspace{2mm}
+
+% SLIDE 1
+\subsection*{Slide 1: Titolo e Copertina}
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+``Buongiorno professore, il mio progetto riguarda la \textbf{Churn Prediction e Segmentazione Comportamentale} applicata al settore delle telecomunicazioni, basato sul dataset IBM Telco Customer Churn. L'analisi integra metodologie di apprendimento non supervisionato e supervisionato trattate durante il corso.''
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 2
+\subsection*{Slide 2: Inquadramento Teorico: Epistemologia e Agente PEAS}
+\noindent \textbf{Frase di transizione:} \textit{``Per inquadrare rigorosamente il progetto da un punto di vista teorico, iniziamo collocando l'IA all'interno dei fondamenti epistemologici di Russell \& Norvig e definendo l'Agente Razionale tramite il modello PEAS...''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+L'Intelligenza Artificiale si definisce su due assi: Pensare vs. Agire e Umanamente vs. Razionalmente. Il mio lavoro si colloca saldamente nel quadrante dell'\textbf{Agire Razionalmente}: l'obiettivo non e simulare i processi cognitivi umani, ma massimizzare l'utilita attesa (la fidelizzazione dei clienti) sulla base dei dati storici CRM.\\[3pt]
+A destra vediamo la modellizzazione \textbf{PEAS} dell'agente:
+\begin{itemize}[leftmargin=1.2em, itemsep=0pt]
+    \item \textbf{Performance (P)}: Massimizzare la Recall per intercettare i clienti a rischio ed evitare Falsi Negativi.
+    \item \textbf{Environment (E)}: L'ambiente CRM Telco (stocastico, parzialmente osservabile, sequenziale, multi-dimensionale).
+    \item \textbf{Actuators (A)}: Campagne promozionali mirate, sconti personalizzati e supporto clienti.
+    \item \textbf{Sensors (S)}: Registri di fatturazione, tenure e tipologia di contratti.
+\end{itemize}
+In basso nel diagramma vediamo il \textbf{ciclo di interazione}: attraverso i \textbf{Sensori}, l'Agente recepisce i dati dal CRM; calcola il rischio e, attraverso gli \textbf{Attuatori}, agisce sull'ambiente attivando offerte promozionali per trattenere il cliente.
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 3
+\subsection*{Slide 3: Fondamenti di Machine Learning e Approccio Probabilistico}
+\noindent \textbf{Frase di transizione:} \textit{``Una volta formalizzato l'Agente Razionale in termini di PEAS, si pone la domanda fondamentale: come fa l'agente a trasformare le percezioni dei Sensori nelle decisioni degli Attuatori? In un ambiente stocastico non puo usare regole rigide, ma deve apprendere attraverso il Machine Learning e la probabilita.''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+Ho formalizzato questo apprendimento seguendo la definizione di Tom Mitchell (1997), basata sulla terna T, E, P:
+\begin{itemize}[leftmargin=1.2em, itemsep=0pt]
+    \item \textbf{Task (T)}: Classificazione binaria dell'abbandono (Churn = 1 vs No Churn = 0).
+    \item \textbf{Experience (E)}: Addestramento sui dati storici dei 7.043 clienti IBM Telco.
+    \item \textbf{Performance (P)}: Ottimizzazione della Recall al posto della semplice accuratezza.
+\end{itemize}
+A destra giustifichiamo la necessita dell'\textbf{approccio probabilistico} (Bayes) rispetto alla logica formale rigida (Boole). La probabilita $P(\text{Churn} \mid \text{Dati})$ ci permette di modellare l'incertezza esprimendo un rischio continuo tra $0\%$ e $100\%$.
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 4
+\subsection*{Slide 4: Preprocessing dei Dati e Sbilanciamento del Target}
+\noindent \textbf{Frase di transizione:} \textit{``Dopo aver formalizzato il task T, E, P, il primo passo operativo consiste nel preparare i dati storici del CRM e gestire le criticita del dataset...''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+Nel preprocessing abbiamo gestito tre aspetti fondamentali:
+\begin{itemize}[leftmargin=1.2em, itemsep=0pt]
+    \item \textbf{Data Cleaning}: Imputazione degli 11 valori vuoti di spesa totale a 0.0\texteuro{} perche relativi a clienti nuovi (\texttt{tenure = 0}).
+    \item \textbf{Normalizzazione}: Scaling delle variabili numeriche per portare permanenza e spesa sulla stessa scala.
+    \item \textbf{One-Hot Encoding}: Conversione del testo in colonne binarie con \texttt{drop='first'} per evitare la multicollinearita.
+\end{itemize}
+Lo \textbf{sbilanciamento del target} mostra che solo il \textbf{26.54\%} dei clienti abbandona. Un classificatore banale otterrebbe il 73.46\% di Accuracy ma una \textbf{Recall pari a zero}.
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 5
+\subsection*{Slide 5: Apprendimento Non Supervisionato: Clustering K-Means}
+\noindent \textbf{Frase di transizione:} \textit{``Una volta pulito e normalizzato il dataset, ho esplorato la struttura nascosta dei dati tramite il clustering K-Means...''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+Ho applicato il \textbf{K-Means} per raggruppare i clienti in segmenti omogenei. Per scegliere il numero di cluster $K$, ho analizzato l'\textbf{Inerzia (WCSS)} ed la \textbf{Silhouette Score}. Ho selezionato \textbf{$K=3$} come gomito ottimale con Silhouette $s=0.286$.
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 6
+\subsection*{Slide 6: Segmentazione PCA e Profilo dei Segmenti}
+\noindent \textbf{Frase di transizione:} \textit{``Analizziamo ora i tre profili di business emersi e verifichiamo la loro separazione nello spazio tramite PCA...''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+I 3 profili emersi sono: \textbf{Cluster 0 (Volatili)} con Churn record del 47.08\%; \textbf{Cluster 1 (Fedeli High-Value)} con Churn del 15.36\%; \textbf{Cluster 2 (Low-Cost)} con Churn del 12.30\%. La proiezione 2D sulle componenti principali della **PCA** conferma che i tre gruppi sono ben separati nello spazio.
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 7
+\subsection*{Slide 7: Pipeline Sperimentale Supervisionata}
+\noindent \textbf{Frase di transizione:} \textit{``Passiamo ora alla fase supervisionata vera e propria, costruendo la pipeline di classificazione...''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+Applichiamo uno \textbf{split stratificato 80/20} su 7.043 clienti. Confrontiamo tre modelli: **Regressione Logistica** (baseline lineare), **Albero CART** (White-Box trasparente) e **Rete Neurale MLP** (Black-Box non lineare).
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 8
+\subsection*{Slide 8: Confronto delle Prestazioni Sperimentali}
+\noindent \textbf{Frase di transizione:} \textit{``Analizziamo i risultati ottenuti sul Test Set ponendo a confronto la configurazione Base e quella con Feature di Clustering...''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+La **Regressione Logistica** e il miglior modello globale (Accuracy 80.6\%, Recall 55.9\%) per il Rasoio di Occam su dati lineari. L'integrazione del cluster fa compiere un balzo alla **Recall della Rete Neurale MLP dal 42.8\% al 49.2\% (+6.4\%)**.
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 9
+\subsection*{Slide 9: Spiegabilita Business: Regole dell'Albero Decisionale (CART)}
+\noindent \textbf{Frase di transizione:} \textit{``Analizziamo la spiegabilita trasparente fornita dall'Albero CART...''}
+
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+L'albero CART misura l'impurita dei nodi con l'Indice di Gini. Lo split di radice individua la permanenza breve ($\text{tenure} \le 16.5 \text{ mesi}$) e la **Fibra Ottica** come fattori a massimo rischio di abbandono ($>70\%$).
+\end{quote}
+
+\vspace{3mm}
+
+% SLIDE 10
+\subsection*{Slide 10: Conclusioni \& Sviluppi Futuri}
+\noindent \textbf{Cosa dire a voce:}
+\begin{quote}
+Ricapitolando: l'integrazione K-Means/MLP aumenta la Recall del +6.4\%; l'Agente dota di priorita la Recall per ragioni economiche (CAC > Retention). Sviluppi futuri prevedono SMOTE, Random Forest, XGBoost e Cost-Sensitive Learning.
+\end{quote}
+
+\newpage
+
+% =========================================================================
+\section*{PARTE 2: Guida Dettagliata alla Lettura e al Calcolo dei Grafici}
+% =========================================================================
+
+\vspace{2mm}
+
+Questa sezione illustra la struttura visiva, il metodo di calcolo matematica e lo scopo operativo di **tutti i 7 grafici** presenti nelle slide del progetto.
+
+\vspace{4mm}
+
+\subsection*{1. Diagramma del Ciclo PEAS (Slide 2)}
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{A cosa serve}: Mostra l'architettura dell'Agente Razionale secondo Russell \& Norvig e il suo ciclo continuo di interazione con l'ambiente CRM.
+    \item \textbf{Come si leggono le componenti}:
+    \begin{itemize}[leftmargin=1em]
+        \item \textbf{Riquadro Sinistro (Sensori - S)}: Rappresenta l'input di percepimento (dati storici di fatturazione, tenure e tipo contratto).
+        \item \textbf{Blocco Centrale (Agente IA - P/E)}: Il cervello dell'agente che esegue l'inferenza probabilistica e stima $P(\text{Churn} \mid \text{Dati})$.
+        \item \textbf{Riquadro Destro (Attuatori - A)}: L'output di azione sull'ambiente (invio sconti, promozioni, chiamate di retention).
+        \item \textbf{Freccia di Feedback Inferiore}: Rappresenta l'impatto dell'azione sull'ambiente CRM Telco.
+    \end{itemize}
+    \item \textbf{Cosa dire all'orale}: ``Il grafico a blocchi evidenzia la natura a ciclo chiuso dell'agente: dai dati CRM recepiti dai Sensori si passa al calcolo del rischio, che sblocca l'azione preventiva degli Attuatori.''
+\end{itemize}
+
+\vspace{4mm}
+
+\subsection*{2. Grafico Boxplot di Permanenza e Spesa (Slide 4)}
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{A cosa serve}: Confronta la distribuzione delle variabili continue (\texttt{tenure} e \texttt{MonthlyCharges}) suddivise tra chi abbandona (\text{Churn} = 1) e chi resta (\text{Churn} = 0).
+    \item \textbf{Come si leggono le barre, le scatole e le scritte}:
+    \begin{itemize}[leftmargin=1em]
+        \item \textbf{Asse Verticale (Y)}: Scala numerica della variabile (mesi per tenure, Euro per spesa).
+        \item \textbf{Asse Orizzontale (X)}: I due gruppi confrontati (\text{No Churn} vs \text{Churn}).
+        \item \textbf{Linea Orizzontale Centrale}: E la \textbf{Mediana} ($Q_2$, 50° percentile dei dati).
+        \item \textbf{La Scatola (Rettangolo)}: Rappresenta l'Intervallo Interquartile ($\text{IQR} = Q_3 - Q_1$), che racchiude il 50\% centrale del campione.
+        \item \textbf{I Baffi Verticali}: Estensioni che vanno dai limiti della scatola ai valori minimi e massimi non anomali (calcolati come $Q_1 - 1.5 \cdot \text{IQR}$ e $Q_3 + 1.5 \cdot \text{IQR}$).
+        \item \textbf{I Pallini Esterni}: Rappresentano i valori anomali (\textbf{outliers}) situati oltre i baffi.
+    \end{itemize}
+    \item \textbf{Come si calcolano i valori}:
+    $\text{Mediana} = \text{valore centrale dei dati ordinati}$; $\text{IQR} = Q_3 - Q_1$.
+    \item \textbf{Cosa dire all'orale}: ``La linea centrale della scatola e la Mediana: si nota subito che la linea di chi abbandona e schiacciata a soli 10 mesi rispetto ai 38 mesi di chi resta.''
+\end{itemize}
+
+\vspace{4mm}
+
+\subsection*{3. Curva Gomito WCSS e Silhouette Score (Slide 5)}
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{A cosa serve}: Giustifica matematicamente la scelta del numero ottimale di cluster $K=3$ per il K-Means.
+    \item \textbf{Come si leggono le due curve}:
+    \begin{itemize}[leftmargin=1.2em]
+        \item \textbf{Asse X (Orizzontale)}: Numero di cluster $K$ testati (da $K=2$ a $K=8$).
+        \item \textbf{Curva Blu (Inerzia WCSS - Asse Y Sinistro)}: Misura la somma delle distanze al quadrato dei punti dal baricentro. Decresce sempre all'aumentare di $K$. Si cerca il punto diflessione o \textbf{gomito}.
+        \item \textbf{Curva Arancione (Silhouette Score - Asse Y Destro)}: Valori da $-1$ a $+1$. Piu e vicina a $+1$, piu i cluster sono ben separati e compatti.
+    \end{itemize}
+    \item \textbf{Come si calcola l'Inerzia}: $WCSS = \sum_{j=1}^{K} \sum_{i \in C_j} \|\mathbf{x}_i - \boldsymbol{\mu}_j\|^2$.
+    \item \textbf{Cosa dire all'orale}: ``La curva blu mostra un chiaro gomito in $K=3$, punto in cui l'inerzia crolla e la Silhouette arancione mantiene un valore elevato di 0.286.''
+\end{itemize}
+
+\newpage
+
+\subsection*{4. Scatter Plot 2D PCA e Profilo dei Cluster (Slide 6)}
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{A cosa serve}: Dimostra visivamente che i 3 cluster trovati dal K-Means in uno spazio a 30 dimensioni sono geometricamente ben separati e non sovrapposti.
+    \item \textbf{Come si leggono gli assi e i punti}:
+    \begin{itemize}[leftmargin=1.2em]
+        \item \textbf{Asse X}: Prima componente principale (\texttt{PC1}), che cattura la massima varianza dei dati (correlata a spesa e contratti).
+        \item \textbf{Asse Y}: Seconda componente principale (\texttt{PC2}), ortogonale a \texttt{PC1}.
+        \item \textbf{I Punti Colorati}: Ogni punto e un cliente Telco proiettato in coordinate sintetiche $(PC_1, PC_2)$. I colori indicano l'appartenenza ai 3 cluster (Rosso = Volatili, Blu = Fedeli, Verde = Low-Cost).
+    \end{itemize}
+    \item \textbf{Come si calcolano le coordinate}: Proiezione sui primi 2 autovettori della matrice di covarianza $\mathbf{X}_{\text{pca}} = \mathbf{X} \mathbf{W}_2$.
+    \item \textbf{Cosa dire all'orale}: ``Gli assi PC1 e PC2 sono le coordinate sintetiche della PCA: lo scatter dimostra chiaramente che i tre gruppi colorati formano nuvole distinte e ben separate nello spazio.''
+\end{itemize}
+
+\vspace{4mm}
+
+\subsection*{5. Diagramma di Flusso della Pipeline Supervisionata (Slide 7)}
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{A cosa serve}: Schematizza il percorso dei dati dall'input grezzo alla valutazione dei tre classificatori.
+    \item \textbf{Come si legge il flusso}:
+    \begin{itemize}[leftmargin=1.2em]
+        \item \textbf{Blocco Iniziale}: Dati preprocessati (7.043 righe).
+        \item \textbf{Biforcazione Split Stratificato}: Separazione 80\% Training Set ($5.634$ righe) e 20\% Test Set ($1.409$ righe).
+        \item \textbf{Ramo Parallelizzato}: I tre algoritmi (Regressione Logistica, CART, MLP) addestrati in parallelo sia con feature ordinarie sia con l'aggiunta della feature \texttt{Cluster\_KMeans}.
+    \end{itemize}
+    \item \textbf{Cosa dire all'orale}: ``Il diagramma di flusso illustra la rigorosa separazione tra Train e Test Set stratificato per evitare data leakage.''
+\end{itemize}
+
+\vspace{4mm}
+
+\subsection*{6. Istogramma/Grafico a Barre delle Prestazioni (Slide 8)}
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{A cosa serve}: Confronta quantitativamente Accuracy e Recall dei tre modelli nelle due configurazioni (Base vs Base + Clustering).
+    \item \textbf{Come si leggono le barre e i valori}:
+    \begin{itemize}[leftmargin=1.2em]
+        \item \textbf{Asse X}: I tre modelli testati (LogReg, CART, MLP).
+        \item \textbf{Asse Y}: Percentuale delle prestazioni (da 0\% a 100\%).
+        \item \textbf{Coppia di Barre per Modello}:
+        \begin{itemize}
+            \item \textbf{Barra Chiara (Configurazione Base)}: Prestazione del modello senza cluster.
+            \item \textbf{Barra Scura (Configurazione + Cluster)}: Prestazione dopo l'aggiunta della feature K-Means.
+        \end{itemize}
+        \item \textbf{Etichette Numeriche sopra le Barre}: Percentuali esatte (es. 80.6\%, 55.9\%, +6.4\%).
+    \end{itemize}
+    \item \textbf{Cosa dire all'orale}: ``L'altezza delle barre mostra immediatamente la superiorita della Logistica in termini assoluti e il balzo in alto della barra dell'MLP (+6.4\% di Recall) grazie al cluster.''
+\end{itemize}
+
+\vspace{4mm}
+
+\subsection*{7. Grafico dell'Albero Decisionale CART (Slide 9)}
+\begin{itemize}[leftmargin=1.5em, itemsep=3pt]
+    \item \textbf{A cosa serve}: Mostra le regole logiche estratte dal modello CART in forma di struttura ad albero gerarchico trasparente (White-Box).
+    \item \textbf{Come si leggono i nodi, i rami e le scritte}:
+    \begin{itemize}[leftmargin=1.2em]
+        \item \textbf{Nodo Radice (in alto)}: Primo split decisionale ($\text{tenure} \le 16.5$).
+        \item \textbf{Rami (Freccie sinistra/destra)}: Sinistra = VERO ($\le 16.5$ mesi), Destra = FALSO ($> 16.5$ mesi).
+        \item \textbf{Testo all'interno dei Nodi}:
+        \begin{itemize}
+            \item \texttt{gini = 0.389}: Impurita del nodo.
+            \item \texttt{samples = 5634}: Numero di clienti in quel nodo.
+            \item \texttt{value = [4138, 1496]}: Conteggio reale [No Churn, Churn].
+        \end{itemize}
+        \item \textbf{Intensita del Colore dei Nodi}: Nodi Arancioni scuri = alta purezza No Churn ($G \rightarrow 0$); Nodi Blu scuri = alta purezza Churn ($G \rightarrow 0$). Nodi trasparenti/chiari = massima incertezza ($G \approx 0.5$).
+    \end{itemize}
+    \item \textbf{Cosa dire all'orale}: ``Ogni rettangolo dell'albero mostra la regola di split, l'Indice di Gini e il colore: piu il blu e scuro, maggiore e la concentrazione di abbandoni.''
+\end{itemize}
+
+\newpage
+
+% =========================================================================
+\section*{PARTE 3: Tavola Completa delle Formule Matematiche dell'Esame}
+% =========================================================================
+
+\vspace{2mm}
+
+Questa sezione raccoglie in una pagina dedicata **tutte le formule matematiche e statistiche** richieste all'esame, corredate di spiegazione delle variabili.
+
+\vspace{4mm}
+
+\subsection*{1. Preprocessing e Normalizzazione (StandardScaler)}
+La trasformazione $z$-score normalizza ogni feature continua affinche abbia media $\mu = 0$ e deviazione standard $\sigma = 1$:
+\[
+z = \frac{x - \mu}{\sigma}
+\]
+dove $\mu = \frac{1}{N} \sum_{i=1}^{N} x_i$ e $\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$.
+
+\vspace{3mm}
+
+\subsection*{2. Clustering K-Means: Funzione Obiettivo WCSS (Inerzia)}
+L'algoritmo K-Means minimizza la Within-Cluster Sum of Squares (WCSS), ovvero la somma delle distanze euclidee al quadrato dei punti dal baricentro del proprio cluster:
+\[
+\text{WCSS} = \sum_{j=1}^{K} \sum_{i \in C_j} \|\mathbf{x}_i - \boldsymbol{\mu}_j\|^2
+\]
+dove $K$ e il numero di cluster, $C_j$ e l'insieme delle istanze nel cluster $j$, e $\boldsymbol{\mu}_j$ e il centroide.
+
+\vspace{3mm}
+
+\subsection*{3. Silhouette Score per la Qualita del Clustering}
+Per ogni punto $i$, il coefficiente di Silhouette $s(i)$ valuta compattezza e separazione:
+\[
+s(i) = \frac{b(i) - a(i)}{\max\big(a(i), b(i)\big)}
+\]
+dove $a(i)$ e la distanza media tra $i$ e gli altri punti dello stesso cluster, e $b(i)$ e la distanza media minima tra $i$ e i punti del cluster piu vicino. Il valore globale e la media $S = \frac{1}{N} \sum_{i=1}^{N} s(i) \in [-1, +1]$.
+
+\vspace{3mm}
+
+\subsection*{4. PCA: Riduzione della Dimensionalita (Componenti Principali)}
+Le componenti principali sono gli autovettori della matrice di covarianza $\mathbf{\Sigma} = \frac{1}{N} \mathbf{X}^T \mathbf{X}$, ottenuti risolvendo l'equazione agli autovalori:
+\[
+\mathbf{\Sigma} \mathbf{v}_k = \lambda_k \mathbf{v}_k
+\]
+La proiezione delle prime $p=2$ componenti e data da $\mathbf{X}_{\text{pca}} = \mathbf{X} \mathbf{W}_p$, dove $\mathbf{W}_p = [\mathbf{v}_1, \mathbf{v}_2]$ contiene gli autovettori con autovalori $\lambda_1 \ge \lambda_2$ piu grandi.
+
+\vspace{3mm}
+
+\subsection*{5. Regressione Logistica: Logit e Funzione Sigmoide}
+La Regressione Logistica modella la probabilita condizionata $P(Y=1 \mid \mathbf{x})$ applicando la funzione sigmoide $\sigma(z)$ al combinatore lineare:
+\[
+P(Y=1 \mid \mathbf{x}) = \sigma(\mathbf{w}^T \mathbf{x} + b) = \frac{1}{1 + e^{-(\mathbf{w}^T \mathbf{x} + b)}}
+\]
+La funzione di perdita minimizzata e la Log-Loss (Cross-Entropy Binaria):
+\[
+\mathcal{L}(\mathbf{w}, b) = -\frac{1}{N} \sum_{i=1}^{N} \Big[ y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \Big]
+\]
+
+\vspace{3mm}
+
+\subsection*{6. Rete Neurale MLP: Attivazione ReLU e Strato di Output}
+Nello strato nascosto si applica la funzione di attivazione non lineare Rectified Linear Unit (\textbf{ReLU}):
+\[
+h_j = \text{ReLU}(z_j) = \max(0, z_j)
+\]
+Lo strato di output binario calcola $\hat{y} = \sigma(\mathbf{w}_{\text{out}}^T \mathbf{h} + b_{\text{out}})$. I pesi vengono aggiornati tramite retropropagazione dell'errore (\textbf{Backpropagation}) e ottimizzatore Adam.
+
+\vspace{3mm}
+
+\subsection*{7. Indice di Impurita di Gini per Alberi CART}
+Nei nodi dell'albero decisionale CART, l'impurita $G_i$ di un nodo $i$ per una classificazione a $K=2$ classi si calcola come:
+\[
+G_i = 1 - \sum_{k=1}^{K} p_{i,k}^2 = 1 - (p_{i,0}^2 + p_{i,1}^2)
+\]
+dove $p_{i,k}$ e la proporzione di elementi della classe $k$ presenti nel nodo $i$. $G_i=0$ indica nodo puro al 100\%.
+
+\vspace{3mm}
+
+\subsection*{8. Metriche della Matrice di Confusione}
+Dati i Falsi Positivi ($FP$), Falsi Negativi ($FN$), Veri Positivi ($TP$) e Veri Negativi ($TN$):
+\[
+\text{Recall (Sensibilita)} = \frac{TP}{TP + FN}
+\]
+\[
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\]
+\[
+\text{Precision} = \frac{TP}{TP + FP}, \qquad \text{F1-Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\]
+
+\vspace{3mm}
+
+\subsection*{9. Statistiche del Boxplot (Intervallo Interquartile e Baffi)}
+L'Intervallo Interquartile e la differenza tra il terzo e il primo quartile:
+\[
+\text{IQR} = Q_3 - Q_1
+\]
+I limiti inferiore e superiore dei baffi (\textit{whiskers}) prima degli outlier sono definiti come:
+\[
+\text{Limite Inf} = \max\Big(\min(X), \, Q_1 - 1.5 \cdot \text{IQR}\Big), \qquad \text{Limite Sup} = \min\Big(\max(X), \, Q_3 + 1.5 \cdot \text{IQR}\Big)
+\]
+
+\newpage
+
+% =========================================================================
+\section*{PARTE 4: Domande Probabili dell'Esaminatore e Risposte Teoriche}
+% =========================================================================
+
+\vspace{2mm}
+
+\subsection*{1. Domande su Epistemologia e Agente PEAS (Slide 1 -- 2)}
+\begin{enumerate}[leftmargin=1.5em, itemsep=6pt]
+    \item \textbf{P: Perché unire clustering non supervisionato e classificazione supervisionata?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} Perché il clustering K-Means raggruppa i clienti in segmenti omogenei senza conoscere l'esito del Churn, creando una mappa spaziale comportamentale. Utilizzando il cluster come nuova feature nel classificatore supervisionato, forniamo al modello una conoscenza a priori che ne migliora le capacita predittive.
+    \end{itemize}
+    \item \textbf{P: Perché l'ambiente CRM e definito stocastico e parzialmente osservabile?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} E \textbf{stocastico} perche la decisione finale del cliente di abbandonare non e deterministica ma incerta; e \textbf{parzialmente osservabile} perche il database del CRM registra solo dati contrattuali, ma non fattori esterni invisibili.
+    \end{itemize}
+\end{enumerate}
+
+\vspace{3mm}
+
+\subsection*{2. Domande su Machine Learning e Probabilita (Slide 3)}
+\begin{enumerate}[leftmargin=1.5em, itemsep=6pt]
+    \item \textbf{P: Perché preferiamo la probabilita $P(\text{Churn} \mid \text{Dati})$ rispetto a una regola secca SE... ALLORA...?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} Perché una probabilita continua permette all'azienda di effettuare un \textbf{ranking} dei clienti a rischio, allocando le risorse promozionali prioritariamente sui clienti a piu alto rischio.
+    \end{itemize}
+\end{enumerate}
+
+\vspace{3mm}
+
+\subsection*{3. Domande su Preprocessing, Data Cleaning e Boxplot (Slide 4)}
+\begin{enumerate}[leftmargin=1.5em, itemsep=6pt]
+    \item \textbf{P: Perché avete imputato 0.0\texteuro{} ai 11 valori vuoti di TotalCharges invece di eliminare le righe o usare la media?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} Perché quei 11 clienti avevano \texttt{tenure = 0} mesi (appena acquisiti), quindi la spesa totale accumulata era logicamente pari a 0.0\texteuro{}. Rimuovere le righe avrebbe causato una perdita di dati non necessaria.
+    \end{itemize}
+    \item \textbf{P: A cosa servono lo StandardScaler e il drop='first' nel One-Hot Encoding?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} Lo \textbf{StandardScaler} porta le feature continue alla stessa scala ($z = \frac{x-\mu}{\sigma}$). Il \textbf{\texttt{drop='first'}} elimina la colonna ridondante per evitare la multicollinearita perfetta.
+    \end{itemize}
+    \item \textbf{P: Come e fatta la struttura del Boxplot e cosa rappresenta la linea centrale?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} La linea centrale e la \textbf{Mediana} (50° percentile). La scatola racchiude il 50\% centrale dei dati (IQR = $Q_3 - Q_1$). I baffi indicano il range non anomalo e i punti esterni gli outlier.
+    \end{itemize}
+\end{enumerate}
+
+\vspace{3mm}
+
+\subsection*{4. Domande su Clustering K-Means e PCA (Slide 5 -- 6)}
+\begin{enumerate}[leftmargin=1.5em, itemsep=6pt]
+    \item \textbf{P: Cos'è la funzione obiettivo minimizzata da K-Means?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} K-Means minimizza la WCSS: $\sum_{j=1}^{K} \sum_{i \in C_j} \|\mathbf{x}_i - \boldsymbol{\mu}_j\|^2$.
+    \end{itemize}
+    \item \textbf{P: Perché abbiamo usato la PCA qui e cos'è X\_pca?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} La PCA riduce la dimensionalita a 2 coordinate sintetiche (\texttt{PC1} e \texttt{PC2} in \texttt{X\_pca}) per dimostrare visivamente che i 3 cluster emersi sono ben separati.
+    \end{itemize}
+\end{enumerate}
+
+\vspace{3mm}
+
+\subsection*{5. Domande su Pipeline Supervisionata e Prestazioni (Slide 7 -- 8)}
+\begin{enumerate}[leftmargin=1.5em, itemsep=6pt]
+    \item \textbf{P: Cosa significa split stratificato e perché e obbligatorio?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} Garantisce che la percentuale del target (26.54\% Churn) sia identica sia nel Train che nel Test Set.
+    \end{itemize}
+    \item \textbf{P: Come mai la Regressione Logistica batte la Rete Neurale su questo dataset?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} I dati tabulari hanno forte separabilita lineare. Per il \textbf{Rasoio di Occam}, il modello lineare non va in overfitting. L'MLP guadagna comunque $+6.4\%$ di Recall col cluster.
+    \end{itemize}
+\end{enumerate}
+
+\vspace{3mm}
+
+\subsection*{6. Domande su Spiegabilita CART (Slide 9 -- 10)}
+\begin{enumerate}[leftmargin=1.5em, itemsep=6pt]
+    \item \textbf{P: Cos'è la formula dell'Indice di Gini e perché si usa?}
+    \begin{itemize}[leftmargin=1em, topsep=1pt]
+        \item \textbf{R:} $G_i = 1 - \sum p_{i,k}^2$. Misura il disordine del nodo per massimizzare il guadagno di purezza.
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+
+% =========================================================================
+\section*{PARTE 5: Glossario Tascabile dei Termini per l'Orale}
+% =========================================================================
+
+\vspace{4mm}
+
+\centering
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l p{12cm}}
+    \toprule
+    \textbf{Termine} & \textbf{Definizione Breve da Usare all'Orale} \\
+    \midrule
+    \textbf{PEAS} & Modello formalizzante dell'agente razionale: \textit{Performance, Environment, Actuators, Sensors}. \\
+    \textbf{CRM} & \textit{Customer Relationship Management}: sistema che gestisce dati e contratti clienti. \\
+    \textbf{CAC} & \textit{Customer Acquisition Cost}: costo sostenuto per trovare un nuovo cliente. \\
+    \textbf{Recall} & Quanti clienti in abbandono reale l'IA e riuscita a scovare (minimizza Falsi Negativi). \\
+    \textbf{AUC-ROC} & Area Sotto la Curva ROC: misura la capacita di separazione delle classi. \\
+    \textbf{K-Means} & Algoritmo di clustering non supervisionato basato sulla minimizzazione di WCSS. \\
+    \textbf{Silhouette Score} & Indice tra $-1$ e $+1$ che misura compattezza del cluster e separazione dagli altri. \\
+    \textbf{PCA} & \textit{Principal Component Analysis}: riduzione della dimensionalita a varianza massima. \\
+    \textbf{StandardScaler} & Trasformazione $z = (x - \mu)/\sigma$ che porta le feature a media 0 e varianza 1. \\
+    \textbf{One-Hot Encoding} & Conversione di variabili categoriali in colonne binarie ($0/1$) con \texttt{drop='first'}. \\
+    \textbf{Indice di Gini} & Misura di impurita di un nodo negli alberi CART ($0=$ puro, $0.5=$ 50/50). \\
+    \textbf{CART} & \textit{Classification and Regression Trees}: albero decisionale binario. \\
+    \textbf{MLP} & \textit{Multi-Layer Perceptron}: rete neurale artificiale feed-forward con Backpropagation. \\
+    \textbf{SMOTE} & \textit{Synthetic Minority Over-sampling Technique}: generatore sintetico classe minoritaria. \\
+    \bottomrule
+\end{tabular}
+
+\end{document}

@@ -215,12 +215,18 @@ Coerentemente con quanto illustrato nelle lezioni del corso (dove si raccomanda 
 \end{itemize}
 
 \subsubsection{Visualizzazione 2D dei Cluster tramite PCA}
-Per verificare visivamente la separazione geometrica dei cluster in uno spazio a due dimensioni (Lezione 06), abbiamo applicato la **Principal Component Analysis (PCA)**, riducendo lo spazio ad alte dimensioni sulle prime due componenti principali $PC_1$ e $PC_2$ (Figura~\ref{fig:clustering_pca}).
+Per verificare visivamente la separazione geometrica dei cluster in uno spazio a due dimensioni (Lezione 06), abbiamo applicato la **Principal Component Analysis (PCA)**, riducendo lo spazio ad alte dimensioni sulle prime due componenti principali $PC_1$ e $PC_2$ (Figura~\ref{fig:clustering_pca}). 
+
+Le prime due componenti spiegano complessivamente il **57.9\% della varianza totale** dei dati ($39.2\%$ per $PC_1$ e $18.7\%$ per $PC_2$). Dall'analisi dei pesi delle feature (*loadings*) si evince che:
+\begin{itemize}
+    \item \textbf{$PC_1$ (Asse Orizzontale)}: Rappresenta l'\textit{Indice di Spesa e Volume dei Servizi}. È dominata positivamente da \texttt{MonthlyCharges} ($+0.50$), \texttt{TotalCharges} ($+0.49$) e \texttt{tenure} ($+0.33$). Spostandosi da sinistra a destra, si passa dai clienti base senza internet agli utenti con abbonamenti ad alto costo.
+    \item \textbf{$PC_2$ (Asse Verticale)}: Rappresenta l'\textit{Indice di Anzianità e Stabilità Contratuale}. È dominata positivamente dai mesi di permanenza \texttt{tenure} ($+0.61$) e dai contratti biennali, mentre registra pesi negativi per i nuovi contratti in Fibra Ottica e pagamenti con assegno elettronico. Spostandosi dal basso verso l'alto, si passa dai nuovi clienti precari ai clienti storici fidelizzati.
+\end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.72\textwidth]{images/clustering_visualizzazione_pca.png}
-    \caption{\textbf{Visualizzazione 2D tramite PCA}: Proiezione dei $7.043$ clienti sulle prime due componenti principali. I tre colori identificano i cluster K-Means.}
+    \caption{\textbf{Visualizzazione 2D tramite PCA}: Proiezione dei $7.043$ clienti sulle prime due componenti principali $PC_1$ (Spesa) e $PC_2$ (Anzianità). I tre colori identificano i cluster K-Means.}
     \label{fig:clustering_pca}
 \end{figure}
 

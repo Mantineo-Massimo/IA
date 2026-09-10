@@ -37,7 +37,7 @@
 \setbeamercolor{normal text}{fg=DarkText}
 
 \setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{footline}{\hfill\footnotesize\color{DarkText!60}\insertframenumber\,/\,\inserttotalframenumber\hspace*{1.5em}\vspace*{0.5ex}}
 \setbeamerfont{frametitle}{series=\bfseries, size=\large}
 
 \captionsetup{font=small, labelfont={bf,color=PrimaryNavy}}
@@ -80,7 +80,7 @@
 % ==========================================
 \begin{frame}[plain]
     \titlepage
-    \note{Buongiorno professore, il mio progetto riguarda la segmentazione comportamentale e la predizione dell'abbandono (churn) dei clienti nel settore Telco, basato sul dataset IBM Telco Customer Churn. L'analisi integra metodologie non supervisionate e supervisionate trattate durante il corso.}
+    \note{Buongiorno professore, il mio progetto riguarda la segmentazione comportamentale e la predizione dell'abbandono (churn) dei clienti nel settore Telco, basato sul dataset IBM Telco Customer Churn. L'analisi integra metodologies non supervisionate e supervisionate trattate durante il corso.}
 \end{frame}
 
 % ==========================================
@@ -203,19 +203,25 @@
 % ==========================================
 % SLIDE 4: PREPROCESSING & SBILANCIAMENTO TARGET
 % ==========================================
-\begin{frame}{Preprocessing dei Dati e Analisi del Churn}
+\begin{frame}{Dataset Telco: Preprocessing e Churn}
+    % Banner di sintesi iniziale del Dataset
+    \colorbox{PrimaryNavy!10}{\parbox{0.98\textwidth}{\centering
+        \small \color{PrimaryNavy} \textbf{Dataset IBM Telco}: $7.043$ clienti, $21$ variabili (Demografiche, Servizi, Contratto/Finanze). Target: Churn (\textbf{26.5\%} abbandona).
+    }}
+    \vspace{2mm}
+
     \begin{columns}[c]
         \begin{column}{0.50\textwidth}
             \textbf{Pulizia Dati e Sbilanciamento}
             \vspace{1.5mm}
             \begin{itemize}
                 \small
-                \setlength{\itemsep}{3pt}
-                \item \textbf{Data Cleaning}: Gli 11 valori vuoti di spesa totale sono stati imputati a \textbf{0.0€} perché relativi a clienti nuovi (0 mesi), salvaguardando dati utili.
-                \item \textbf{Normalizzazione}: I dati numerici sono stati portati sulla stessa scala per evitare che le cifre in Euro schiaccino i mesi di permanenza nei calcoli dell'IA.
-                \item \textbf{One-Hot Encoding}: La conversione dei testi in colonne di $0$ e $1$ impedisce all'IA di creare finti ordini di importanza tra le categorie.
-                \item \textbf{Sbilanciamento Target}: Poiché solo il \textbf{26.5\%} abbandona, dire sempre "No Churn" darebbe il 73.5\% di Accuracy ma una \textbf{Recall pari a zero}.
-                \item \textbf{Priorità alla Recall}: Identificare chi abbandona è la priorità assoluta, perché perdere un cliente costa molto di più che offrire una promozione.
+                \setlength{\itemsep}{3.5pt}
+                \item \textbf{Data Cleaning}: 11 valori vuoti su \texttt{TotalCharges} imputati a \textbf{0.0€} (clienti nuovi con 0 mesi).
+                \item \textbf{Normalizzazione}: Scaling per uniformare Euro e mesi.
+                \item \textbf{One-Hot Encoding}: Conversione testi in colonne $0/1$.
+                \item \textbf{Sbilanciamento Target}: Il 26.5\% abbandona (modello dummy $\rightarrow$ \textbf{Recall = 0}).
+                \item \textbf{Priorità alla Recall}: Fondamentale per minimizzare la perdita del cliente (costo CAC).
             \end{itemize}
         \end{column}
 
@@ -225,21 +231,20 @@
             
             \vspace{1.5mm}
             \colorbox{LightBg}{\parbox{\textwidth}{
-                \footnotesize \color{DarkText}
-                \textbf{Lettura e Pattern dei Boxplot}:
+                \small \color{DarkText}
+                \textbf{Pattern dei Boxplot}:
                 \begin{itemize}
                     \footnotesize
                     \setlength{\itemsep}{2pt}
-                    \item \textbf{Struttura}: Linea = Mediana | Scatola = 50\% dati | Baffi = Min/Max | Pallini = Outlier.
-                    \item \textbf{Permanenza}: Chi abbandona dura solo \textbf{10 mesi} (vs \textbf{38} chi resta).
-                    \item \textbf{Spesa Mensile}: Chi abbandona paga \textbf{80€/mese} (vs \textbf{64€} chi resta).
+                    \item \textbf{Permanenza}: Chi abbandona dura solo \textbf{10 mesi} (vs \textbf{38}).
+                    \item \textbf{Spesa Mensile}: Chi abbandona paga \textbf{80€/mese} (vs \textbf{64€}).
                 \end{itemize}
-                \textbf{Esito}: Churn su \textbf{nuovi clienti con contratti ad alto costo}.
+                \textbf{Esito}: Churn su \textbf{nuovi clienti ad alto costo}.
             }}
         \end{column}
     \end{columns}
 
-    \note{Nella Slide 4 analizziamo la preparazione dei dati e lo sbilanciamento delle classi. Abbiamo pulito 11 valori nulli su TotalCharges imputando 0.0 per i clienti appena arrivati con tenure 0. Abbiamo applicato StandardScaler e One-Hot Encoding. Il target è sbilanciato: solo il 26.5\% abbandona. Se usassimo un classificatore banale avremmo il 73.5\% di accuratezza ma Recall 0\%. Poiché perdere un cliente ha un costo di acquisizione CAC elevato, la Recall è la nostra metrica prioritaria. A destra il grafico a scatola (Boxplot) confronta permanenza e spesa: la linea a metà è la mediana, la scatola contiene il 50\% dei dati centrali e le linee esterne i limiti. Dimostra che chi abbandona ha una permanenza molto più bassa e costi mensili più alti.}
+    \note{Nella Slide 4 introduciamo il dataset IBM Telco Customer Churn (7.043 clienti, 21 variabili) e analizziamo la preparazione dei dati e lo sbilanciamento delle classi. Abbiamo pulito 11 valori nulli su TotalCharges imputando 0.0 per i clienti appena arrivati con tenure 0. Abbiamo applicato StandardScaler e One-Hot Encoding. Il target è sbilanciato: solo il 26.5\% abbandona. Se usassimo un classificatore banale avremmo il 73.5\% di accuratezza ma Recall 0\%. Poiché perdere un cliente ha un costo di acquisizione CAC elevato, la Recall è la nostra metrica prioritaria. A destra il grafico a scatola (Boxplot) dimostra che chi abbandona ha una permanenza molto più bassa e costi mensili più alti.}
 \end{frame}
 
 % ==========================================
@@ -267,18 +272,19 @@
 
         \begin{column}{0.48\textwidth}
             \centering
-            \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{images/clustering_scelta_k.png}
+            \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{images/clustering_scelta_k.png}
             
             \vspace{1.5mm}
             \colorbox{LightBg}{\parbox{\textwidth}{
                 \small \color{DarkText}
-                \textbf{Come leggere il grafico a destra}:
+                \textbf{Come leggere le due metriche nel grafico}:
                 \begin{itemize}
                     \small
-                    \setlength{\itemsep}{1pt}
-                    \item \textbf{Inerzia (Curva Blu)}: Errore interno. Mostra un evidente punto di "gomito" a \textbf{$K=3$}.
-                    \item \textbf{Silhouette (Curva Arancione)}: Misura la separazione dei gruppi. \textbf{$K=3$} ($s=0.286$) è la scelta migliore.
+                    \setlength{\itemsep}{2pt}
+                    \item \textbf{Inerzia (Linea Blu - Errore Interno)}: Misura la compattezza. Mostra un netto punto di "gomito" a \textbf{$K=3$}.
+                    \item \textbf{Silhouette (Linea Arancione - Separazione)}: Misura la distanza tra i gruppi ($[-1, +1]$). Crolla da $K \ge 4$ per sovrapposizione.
                 \end{itemize}
+                \textbf{Esito}: \textbf{$K=3$} ($s=0.286$) è il punto di equilibrio ideale.
             }}
         \end{column}
     \end{columns}
@@ -292,7 +298,7 @@
 \begin{frame}{Segmentazione PCA e Profilo dei Segmenti}
     \centering
     \small
-    \setlength{\tabcolsep}{6pt}
+    \setlength{\tabcolsep}{8pt}
     \begin{tabular}{ccccc}
         \toprule
         \textbf{Cluster} & \textbf{Tenure Media} & \textbf{Spesa Mensile} & \textbf{Spesa Totale} & \textbf{Tasso Churn} \\
@@ -305,25 +311,28 @@
     
     \vspace{2mm}
     \begin{columns}[c]
-        \begin{column}{0.52\textwidth}
-            \textbf{Profilo dei Segmenti e Ruolo della PCA}
+        \begin{column}{0.44\textwidth}
+            \small
+            \textbf{Profilo dei Segmenti \& PCA}
             \vspace{1mm}
             \begin{itemize}
                 \small
-                \setlength{\itemsep}{3pt}
-                \item \textbf{Cluster 0 (Volatili)}: Nuovi clienti ad alta spesa con il \textbf{47.1\% di abbandono}. Rappresenta il \textbf{target prioritario} per la retention dell'agente.
-                \item \textbf{Cluster 1 e 2}: Clienti storici ed utenti con offerte base, altamente stabili.
-                \item \textbf{Grafico PCA (Destra)}: Riduce le variabili a 2 dimensioni e \textbf{conferma visivamente che i 3 cluster sono ben separati}.
+                \setlength{\itemsep}{2.5pt}
+                \item \textbf{Cluster 0 (Volatili)}: Nuovi ad alta spesa, \textbf{churn 47.1\%}.
+                \item \textbf{Cluster 1 \& 2}: Fedeli e base.
+                \item \textbf{Grafico PCA 2D (58\% Inf.)}:
+                \item \textbf{Asse X ($PC_1$ - 39.2\%)}: \textit{Spesa/Servizi}.
+                \item \textbf{Asse Y ($PC_2$ - 18.7\%)}: \textit{Anzianità}.
             \end{itemize}
         \end{column}
 
-        \begin{column}{0.44\textwidth}
+        \begin{column}{0.54\textwidth}
             \centering
-            \includegraphics[width=\textwidth,height=0.48\textheight,keepaspectratio]{images/clustering_visualizzazione_pca.png}
+            \includegraphics[width=1.08\textwidth,height=0.54\textheight,keepaspectratio]{images/clustering_visualizzazione_pca.png}
         \end{column}
     \end{columns}
 
-    \note{Nella Slide 6 analizziamo il profilo commerciale dei 3 cluster e la visualizzazione PCA. In alto la tabella mostra i 3 profili: il Cluster 0 (Volatili) ha permanenza bassa di 13 mesi, spesa alta di 75€ ed un tasso di churn record del 47.1\% (quasi il doppio della media). Questo è il target prioritario per l'agente IA! Il Cluster 1 riguarda i clienti storici ad alta spesa e il Cluster 2 gli utenti economici a basso rischio. A destra, la PCA (Principal Component Analysis) riduce le variabili a 2 dimensioni per confermare visivamente la netta separazione spaziale dei 3 gruppi.}
+    \note{Nella Slide 6 analizziamo il profilo commerciale dei 3 cluster e la decodifica delle componenti PCA. In alto la tabella mostra i 3 profili: il Cluster 0 (Volatili) ha permanenza bassa di 13 mesi, spesa alta di 75€ ed un tasso di churn record del 47.1\%. A destra, la PCA riduce lo spazio 20D a 2 componenti principali spiegate in 2 assi: PC1 sull'asse X misura la spesa e il volume dei servizi; PC2 sull'asse Y misura l'anzianità e stabilità contrattuale. Questo dimostra la netta separazione spaziale dei 3 cluster nei 3 quadranti.}
 \end{frame}
 
 % ==========================================

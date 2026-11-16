@@ -16,7 +16,7 @@
 
 | File | Titolo Lezione | Fonte | Argomenti Principali | Applicazione nel Progetto Telco Churn |
 | :--- | :--- | :--- | :--- | :--- |
-| [`01-Introduzione.pdf`](01-Introduzione.pdf) | **Introduzione all'IA** | Russell & Norvig, Cap. 1 | Definizione di IA, 4 approcci, fondamenti storici, Turing test, Beneficial AI | Inquadramento epistemologico e motivazione dell'Agire Razionalmente |
+| [`01-Introduzione.pdf`](01-Introduzione.pdf) | **Introduzione all'IA** | Russell & Norvig, Cap. 1 | Definizione di IA, 4 approcci, fondamenti storici, Turing test, Beneficial AI | Approcci alla Definizione di IA e motivazione dell'Agire Razionalmente |
 | [`02-Agenti_intelligenti.pdf`](02-Agenti_intelligenti.pdf) | **Agenti Intelligenti** | Russell & Norvig, Cap. 2 | Agente e ambiente, PEAS, proprietà degli ambienti, tassonomia agenti | Modellizzazione PEAS dell'Agente CRM per la fidelizzazione clienti |
 | [`03-Introduzione_al_ML.pdf`](03-Introduzione_al_ML.pdf) | **Machine Learning Landscape** | Géron, Cap. 1 | Definizione $\langle T, E, P \rangle$, tipologie ML, pipeline, rischi (overfitting/bias) | Formulazione del task di apprendimento, gestione sbilanciamento e cleaning |
 | [`04-Classificazione.pdf`](04-Classificazione.pdf) | **Classificazione** | Géron, Cap. 3 | MNIST, confusion matrix, Precision, Recall, F1, curve PR e ROC-AUC | Selezione metriche, curve ROC e calibrazione soglia ($\tau=0.35$) su sbilanciamento |

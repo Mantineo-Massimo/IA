@@ -49,7 +49,7 @@ graph TD
 > - **Data Cleaning**: Gli 11 spazi vuoti in `TotalCharges` appartengono a clienti nuovi con `tenure = 0` e vengono imputati a `0.0€`; rimuoviamo `customerID`.
 > - **Split Stratificato 80/20**: Eseguito **prima** di scaling e clustering (`5.634` train, `1.409` test).
 > - **Standardizzazione Z-Score** (`StandardScaler` fit solo su train) e **One-Hot Encoding** (`drop='first'`) $\rightarrow$ **30 feature**.
-> - **Sbilanciamento**: Solo il **26.54%** abbandona (modello *dummy*: 73.5% Accuracy ma **Recall = 0%**). I boxplot mostrano permanenza mediana **10.0 mesi** (vs **38.0**) e spesa mensile **79.65€** (vs **64.43€**).
+> - **Sbilanciamento**: Solo il **26.54%** abbandona (modello *dummy*: 73.46% Accuracy ma **Recall = 0%**). I boxplot mostrano permanenza mediana **10.0 mesi** (vs **38.0**) e spesa mensile **79.65€** (vs **64.43€**).
 
 ## Slide 5: Apprendimento Non Supervisionato: Clustering K-Means
 * **Transizione:** *"Sul solo Training Set standardizzato esploriamo la struttura latente tramite K-Means..."*
@@ -122,3 +122,5 @@ graph TD
    Perché gli alberi CART sono invarianti alle trasformazioni monotone (Lezione 05): le metriche non cambiano, ma le soglie restano direttamente leggibili in mesi ed Euro.
 5. **Perché calibrare la soglia decisionale?**  
    Con target sbilanciato (26.5%), $\tau=0.50$ limita la Recall al 55.9%. Con $\tau=0.35$ o `class_weight='balanced'`, la Recall sale al 70.3%--78.3%, migliorando anche l'F1-Score (`0.614`).
+6. **Perché avete scelto K-Means invece di DBSCAN?**  
+   Per scalabilità lineare, centroidi interpretabili nel CRM e disponibilità di `.predict()` *out-of-sample* sul Test Set senza causare *data leakage* (non supportato nativamente da DBSCAN).

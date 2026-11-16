@@ -233,7 +233,7 @@
                 \item \textbf{Data Cleaning}: 11 valori vuoti su \texttt{TotalCharges} imputati a \textbf{0.0\,\texteuro} (clienti nuovi con \texttt{tenure = 0}).
                 \item \textbf{Zero Data Leakage}: Split stratificato 80/20 \textbf{prima} di scaling e clustering.
                 \item \textbf{Standardizzazione Z-Score} (\texttt{StandardScaler}) e \textbf{One-Hot Encoding} (\texttt{drop='first'}) $\rightarrow$ \textbf{30 feature}.
-                \item \textbf{Sbilanciamento}: 26.54\% Churn (modello \textit{dummy}: 73.5\% Accuracy ma \textbf{Recall = 0\%}).
+                \item \textbf{Sbilanciamento}: 26.54\% Churn (modello \textit{dummy}: 73.46\% Accuracy ma \textbf{Recall = 0\%}).
             \end{itemize}
         \end{column}
 
@@ -256,7 +256,7 @@
         \end{column}
     \end{columns}
 
-    \note{Sul dataset IBM Telco (7.043 righe) rimuoviamo customerID e imputiamo a 0.0 gli 11 spazi vuoti di TotalCharges perché hanno tutti tenure=0. Applichiamo lo split stratificato 80/20 prima di qualsiasi trasformazione parametrica per prevenire data leakage, poi Standardizzazione Z-Score (non normalizzazione Min-Max) e One-Hot Encoding con drop='first' ottenendo 30 feature. Lo sbilanciamento (26.54\% Churn) rende insufficiente l'Accuracy: un classificatore banale avrebbe 73.5\% Accuracy ma Recall 0\%.}
+    \note{Sul dataset IBM Telco (7.043 righe) rimuoviamo customerID e imputiamo a 0.0 gli 11 spazi vuoti di TotalCharges perché hanno tutti tenure=0. Applichiamo lo split stratificato 80/20 prima di qualsiasi trasformazione parametrica per prevenire data leakage, poi Standardizzazione Z-Score (non normalizzazione Min-Max) e One-Hot Encoding con drop='first' ottenendo 30 feature. Lo sbilanciamento (26.54\% Churn) rende insufficiente l'Accuracy: un classificatore banale avrebbe 73.46\% Accuracy ma Recall 0\%.}
 \end{frame}
 
 % ==========================================
@@ -269,8 +269,9 @@
             \vspace{1.5mm}
             \begin{itemize}
                 \small
-                \setlength{\itemsep}{2.8pt}
+                \setlength{\itemsep}{2.4pt}
                 \item \textbf{Obiettivo}: Segmentare i $5.634$ clienti del Training Set (30 feature) senza usare l'etichetta \texttt{Churn}.
+                \item \textbf{Scelta di K-Means (vs DBSCAN)}: Centroidi medi interpretabili, scalabilità lineare e \texttt{.predict()} \textit{out-of-sample} sul Test Set senza leakage.
                 \item \textbf{Confronto per $K \in \{2, 3, 4, 5, 6\}$}:
                 \begin{itemize}
                     \small
@@ -427,11 +428,11 @@
             \begin{tabular}{l c c c}
                 \toprule
                 \rowcolor{PrimaryNavy}
-                \color{white}\textbf{Modello} & \color{white}\textbf{Recall (Base $\rightarrow$ +Cl)} & \color{white}\textbf{F1} & \color{white}\textbf{AUC} \\
+                \color{white}\textbf{Modello} & \color{white}\textbf{Recall (Base $\rightarrow$ +Cl)} & \color{white}\textbf{F1 (Base $\rightarrow$ +Cl)} & \color{white}\textbf{AUC (Base $\rightarrow$ +Cl)} \\
                 \midrule
-                \textbf{Reg.\ Logistica} & \textbf{55.9\%} $\rightarrow$ 55.1\% & \textbf{0.605} & 0.842 \\
-                \textbf{Decision Tree} & 54.0\% $\rightarrow$ 54.0\% & 0.582 & 0.827 \\
-                \textbf{MLP (L2 + ES)} & 51.9\% $\rightarrow$ \textbf{52.1\%} & 0.585 & \textbf{0.843} \\
+                \textbf{Reg.\ Logistica} & \textbf{55.9\%} $\rightarrow$ 55.1\% & \textbf{0.605} $\rightarrow$ 0.598 & 0.842 $\rightarrow$ 0.842 \\
+                \textbf{Decision Tree} & 54.0\% $\rightarrow$ 54.0\% & 0.582 $\rightarrow$ 0.582 & 0.827 $\rightarrow$ 0.827 \\
+                \textbf{MLP (L2 + ES)} & 51.9\% $\rightarrow$ \textbf{52.1\%} & 0.579 $\rightarrow$ 0.585 & 0.842 $\rightarrow$ \textbf{0.843} \\
                 \bottomrule
             \end{tabular}
             }

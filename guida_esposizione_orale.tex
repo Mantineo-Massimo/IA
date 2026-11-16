@@ -125,7 +125,7 @@ Nel preprocessing garantiamo l'assenza di \textbf{data leakage}:
     \item \textbf{Split Stratificato 80/20}: Eseguito \textbf{prima} di qualsiasi fitting parametrico ($5.634$ train, $1.409$ test).
     \item \textbf{Standardizzazione Z-Score e One-Hot Encoding}: \texttt{StandardScaler} (solo su train) e \texttt{OneHotEncoder(drop='first')} producono \textbf{30 feature}.
 \end{itemize}
-Lo sbilanciamento del target mostra il \textbf{26.54\%} di abbandoni: un classificatore banale otterrebbe il 73.5\% di Accuracy ma \textbf{Recall = 0\%}. I boxplot mostrano chiaramente che chi abbandona ha permanenza mediana di \textbf{10.0 mesi} (vs 38.0) e spesa mensile di \textbf{79.65\,\texteuro} (vs 64.43\,\texteuro).
+Lo sbilanciamento del target mostra il \textbf{26.54\%} di abbandoni: un classificatore banale otterrebbe il 73.46\% di Accuracy ma \textbf{Recall = 0\%}. I boxplot mostrano chiaramente che chi abbandona ha permanenza mediana di \textbf{10.0 mesi} (vs 38.0) e spesa mensile di \textbf{79.65\,\texteuro} (vs 64.43\,\texteuro).
 \end{quote}
 
 \subsection*{Slide 5: Apprendimento Non Supervisionato: Clustering K-Means}
@@ -259,6 +259,9 @@ F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \te
 
     \item \textbf{D: Cosa succederebbe all'MLP senza \textit{early stopping} e L2?}\\
     \textbf{R:} Su dati tabellari di medie dimensioni tenderebbe all'\textit{overfitting} sulle 500 epoche (calo di Accuracy verso il $75\%$ e AUC verso $0.78$). Con L2 ($\alpha=0.1$) ed \textit{early stopping}, l'MLP generalizza bene ($\text{AUC}=0.843$), ma per il \textbf{Rasoio di Occam} la Regressione Logistica resta preferibile.
+
+    \item \textbf{D: Perché avete scelto K-Means invece di DBSCAN (o GMM)?}\\
+    \textbf{R:} Per tre motivi: scalabilità lineare, centroidi medi immediatamente interpretabili per la profilazione CRM e presenza in \texttt{scikit-learn} del metodo induttivo \texttt{.predict()} applicabile al Test Set senza ricalcolare i cluster e quindi senza \textit{data leakage} (cosa non supportata nativamente da DBSCAN).
 \end{enumerate}
 
 \section*{PARTE 5: Glossario Tascabile}

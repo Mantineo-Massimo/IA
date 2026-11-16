@@ -125,8 +125,8 @@ Il fenomeno del \textit{churn} (abbandono dei clienti) rappresenta una delle pri
     \item Segmentare la base utenti in profili comportamentali omogenei per differenziare le azioni di \textit{retention}.
 \end{enumerate}
 
-\subsection{Inquadramento Epistemologico e Modello PEAS}
-In accordo con i fondamenti di Russell \& Norvig (Lezioni 01--02, illustrati in Figura~\ref{fig:epistemologia}), il problema si colloca nel quadrante dell'\textbf{Agire Razionalmente}: il sistema è progettato non per imitare processi cognitivi umani, ma per selezionare azioni che massimizzino il valore atteso della misura di prestazione, adottando un approccio consequenzialista in condizioni di incertezza (senza richiedere onniscienza).
+\subsection{Approcci alla Definizione di IA e Modello PEAS}
+In accordo con i fondamenti di Russell \& Norvig (Lezioni 01--02, illustrati in Figura~\ref{fig:epistemologia}), il problema si colloca nel quadrante dell'\textbf{Agire Razionalmente}: il sistema è progettato non per imitare processi cognitivi umani, ma per selezionare azioni che massimizzino il valore atteso della misura di prestazione ($P$), adottando un approccio consequenzialista in condizioni di incertezza (senza richiedere onniscienza).
 
 \begin{figure}[htbp]
     \centering
@@ -160,14 +160,14 @@ In accordo con i fondamenti di Russell \& Norvig (Lezioni 01--02, illustrati in 
         \draw[NavyBlue!80, thick] (hub.south) |- (bl.east);
         \draw[NavyBlue!80, thick] (hub.south) |- (br.west);
     \end{tikzpicture}
-    \caption{\textbf{Epistemologia dell'IA (Russell \& Norvig, Lezione 01)}: I quattro approcci principali lungo gli assi \textit{Pensiero/Comportamento} e \textit{Umanamente/Razionalmente}, con evidenza del paradigma dell'Agire Razionalmente adottato dal sistema.}
+    \caption{\textbf{Approcci alla Definizione di IA (Russell \& Norvig, Lezione 01)}: I quattro approcci lungo gli assi \textit{Pensiero/Comportamento} e \textit{Umanamente/Razionalmente}, con evidenza dell'Agire Razionalmente adottato dal sistema.}
     \label{fig:epistemologia}
 \end{figure}
 
-In particolare, il sistema CRM si configura come un \textbf{agente basato su utilità con apprendimento} (\textit{utility-based learning agent}), formalizzato tramite il modello \textbf{PEAS}:
+In particolare, il sistema CRM si configura come un \textbf{agente basato su utilità con apprendimento} (\textit{utility-based learning agent}, Lezione 02): utilizza una funzione di utilità per bilanciare obiettivi conflittuali (ridurre gli abbandoni rispetto al costo delle promozioni) e apprende dai dati storici nel modello \textbf{PEAS}:
 \begin{itemize}
-    \item \textbf{Performance Measure (P)}: Criterio oggettivo esterno che valuta la sequenza di stati prodotta nell'ambiente aziendale, ossia la massimizzazione del valore netto di fidelizzazione (riduzione del tasso di abbandono e salvaguardia del margine, bilanciando il costo del CAC perso rispetto al costo delle promozioni di \textit{retention}).
-    \item \textbf{Environment (E)}: L'ecosistema operativo della clientela Telco con cui l'azienda interagisce tramite il CRM. Secondo la tassonomia di Russell \& Norvig, l'ambiente è \textit{parzialmente osservabile} (variabili esterne come offerte della concorrenza o insoddisfazione latente non compaiono nei log), \textit{stocastico} (la decisione del cliente presenta incertezza modellabile probabilisticamente), \textit{dinamico}, \textit{multi-agente} e \textit{sequenziale} nel ciclo temporale delle campagne di fidelizzazione (pur risultando \textit{episodico} nella singola predizione statica su istanza).
+    \item \textbf{Performance Measure (P)}: Criterio oggettivo esterno che valuta la sequenza di stati prodotta nell'ambiente aziendale, ossia la massimizzazione del valore netto di fidelizzazione (riduzione del tasso di abbandono e salvaguardia del margine rispetto al CAC).
+    \item \textbf{Environment (E)}: L'ecosistema operativo della clientela Telco interagente tramite CRM. Secondo la tassonomia di Russell \& Norvig, l'ambiente è \textit{parzialmente osservabile} (offerte della concorrenza o insoddisfazione latente restano fuori dai log), \textit{nondeterministico} e modellato in modo \textit{stocastico} (probabilistico), \textit{multi-agente}, \textit{continuo} (su importi e durata), \textit{sconosciuto} a priori (appreso via ML), nonché \textit{dinamico} e \textit{sequenziale} nelle campagne reali (pur essendo \textit{statico} ed \textit{episodico} nella singola predizione batch).
     \item \textbf{Actuators (A)}: Erogazione di offerte promozionali mirate, sconti personalizzati, adeguamenti tariffari e attivazione prioritaria del supporto tecnico.
     \item \textbf{Sensors (S)}: Flussi di percezioni estratti dal database CRM: registri di fatturazione, durata del rapporto (\textit{tenure}), tipologia contrattuale, servizi attivi (es.\ Fibra Ottica, \textit{TechSupport}) e modalità di pagamento.
 \end{itemize}

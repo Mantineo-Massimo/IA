@@ -10,8 +10,8 @@
 
 ```mermaid
 graph TD
-    A["1. Epistemologia & Agente PEAS<br/>(Russell & Norvig: Agire Razionalmente)<br/>P: Valore netto retention vs CAC | E: Stocastico | A: Sconti/Supporto | S: Log CRM"] --> C["3. Split Stratificato 80/20 (Zero Leakage) & Preprocessing<br/>- Imputazione TotalCharges=0.0€ (tenure=0)<br/>- StandardScaler (z = (x-μ)/σ) solo su Train<br/>- One-Hot Encoding (drop='first') -> 30 feature"]
-    B["2. ML & Approccio Probabilistico<br/>(Mitchell: ⟨T, E, P⟩)<br/>Classificatori discriminativi: P(Churn=1 | x)"] --> C
+    A["1. Definizione IA & Agente PEAS<br/>(Russell & Norvig: Agire Razionalmente)<br/>P: Valore netto retention vs CAC | E: Nondet./Stocastico"] --> C["3. Split Stratificato 80/20 (Zero Leakage) & Preprocessing<br/>- Imputazione TotalCharges=0.0€ (tenure=0)<br/>- StandardScaler (z = (x-μ)/σ) solo su Train<br/>- One-Hot Encoding (drop='first') -> 30 feature"]
+    B["2. Task ML & Approccio Probabilistico<br/>(Batch/Model-Based: Mitchell ⟨T, E, P⟩ + K-Means)<br/>Classificatori discriminativi: P(Churn=1 | x)"] --> C
 
     C --> D["4. Unsupervised: K-Means (K=3 su Train)<br/>- Inerzia WCSS (Gomito) + Silhouette (s=0.282)<br/>- Profili: Volatili (43.4%), High-Value (15.9%), Low-Cost (7.2%)<br/>- PCA 2D centrata: PC1 (39.4%), PC2 (18.5%)"]
     C --> E["5. Supervised: Base (30D) vs +Cluster (32D)<br/>- LogReg: Best Base (80.6% Acc, 55.9% Rec, 0.605 F1)<br/>- CART (non scalato): White-Box (85.5% Churn Fibra)<br/>- MLP (L2 + Early Stopping): 0.843 AUC con +Cluster"]
@@ -28,21 +28,20 @@ graph TD
 ## Slide 1: Titolo e Copertina
 > "Buongiorno professore, il mio progetto riguarda la **Churn Prediction e Segmentazione Comportamentale** applicata al settore Telco, basata sul dataset IBM Telco Customer Churn. L'analisi integra metodologie di apprendimento non supervisionato e supervisionato trattate durante il corso."
 
-## Slide 2: Inquadramento Teorico: Epistemologia e Agente PEAS
-* **Transizione:** *"Inquadriamo il problema secondo i fondamenti epistemologici di Russell e Norvig e definiamo l'Agente Razionale tramite il modello PEAS..."*
-> L'IA si articola su due dimensioni: Pensiero vs Comportamento e Umanamente vs Razionalmente, individuando i quattro approcci (*modellazione cognitiva*, *leggi del pensiero*, *Test di Turing* e *agente razionale*). Il progetto adotta il paradigma dell'**Agire Razionalmente** (agente basato su utilità con apprendimento): massimizzare l'utilità attesa in condizioni di incertezza, senza richiedere onniscienza.
-> - **Performance (P)**: Massimizzare il valore netto di fidelizzazione (ridurre gli abbandoni contenendo il costo delle promozioni rispetto al CAC).
-> - **Environment (E)**: Ecosistema operativo dei clienti Telco: *parzialmente osservabile*, *stocastico*, *dinamico*, *multi-agente*; *sequenziale* nel ciclo delle campagne, *episodico* nella singola predizione statica.
+## Slide 2: Inquadramento Teorico: Definizione di IA e Agente PEAS
+* **Transizione:** *"Inquadriamo il problema secondo i quattro approcci alla definizione di IA di Russell e Norvig e definiamo l'Agente Razionale tramite il modello PEAS..."*
+> L'IA si articola su due assi: Pensiero vs Comportamento e Umanamente vs Razionalmente, individuando i quattro approcci (*modellazione cognitiva*, *leggi del pensiero*, *Test di Turing* e *agente razionale*). Adottiamo l'**Agire Razionalmente** (agente con apprendimento basato su utilità): selezionare azioni che massimizzano il valore atteso della misura di prestazione ($P$) in condizioni di incertezza, senza onniscienza, bilanciando tramite utilità churn evitato e costo offerte.
+> - **Performance (P)**: Valore netto di fidelizzazione (ridurre gli abbandoni contenendo i costi rispetto al CAC).
+> - **Environment (E)**: Ecosistema operativo dei clienti Telco: *parzialmente osservabile*, *nondeterministico* (modellato *stocasticamente*), *multi-agente*, *continuo* su tempo/importi e *sconosciuto* prima del training ML; *sequenziale*/*dinamico* nel ciclo reale, *episodico*/*statico* nella singola predizione batch.
 > - **Actuators (A)**: Offerte promozionali mirate, sconti e supporto tecnico prioritario.
 > - **Sensors (S)**: Log CRM di fatturazione, *tenure*, contratti e servizi attivi.
 
-## Slide 3: Fondamenti di Machine Learning e Approccio Probabilistico
-* **Transizione:** *"Come fa l'agente a mappare le percezioni dei Sensori nelle decisioni degli Attuatori? Apprendendo dai dati storici tramite il Machine Learning..."*
-> Formalizziamo il task secondo Tom Mitchell $\langle T, E, P \rangle$:
-> - **Task ($T$)**: Classificazione binaria probabilistica del rischio di abbandono.
-> - **Experience ($E$)**: 5.634 istanze storiche etichettate di training (da 7.043 clienti IBM Telco).
-> - **Performance ($P$)**: Metriche robuste allo sbilanciamento (`Recall`, `Precision`, `F1-Score`, `AUC-ROC`).
-> Con 19 feature grezze (30 dopo encoding) e fattori esterni inosservati, regole booleane fisse non scalano. Usiamo **classificatori probabilistici discriminativi** per stimare direttamente $P(\text{Churn}=1 \mid \mathbf{x}) \in [0,1]$, ordinare i clienti per rischio e tarare la soglia decisionale.
+## Slide 3: Formulazione dei Task ML e Approccio Probabilistico
+* **Transizione:** *"Come fa l'agente a mappare le percezioni dei Sensori nelle decisioni degli Attuatori? Apprendendo dai dati storici tramite due task integrati..."*
+> Adottiamo un sistema **Batch** e **Model-Based** (Lezione 03) su due task:
+> - **Task Supervisionato (Mitchell $\langle T, E, P \rangle$)**: Compito $T$ di classificazione binaria probabilistica di `Churn`, Esperienza $E$ su `5.634` istanze etichettate (da `7.043` clienti), Prestazione $P$ valutata con `Recall`, `Precision`, `F1-Score`, `AUC-ROC`.
+> - **Task Non Supervisionato**: Clustering **K-Means** su `30` feature senza usare `Churn` (Inerzia WCSS + Silhouette) + **PCA** 2D, verificandone l'impatto come feature.
+> Rispetto a regole booleane manuali (fragili e non scalabili), i nostri classificatori **probabilistici discriminativi** stimano direttamente $P(\text{Churn}=1 \mid \mathbf{x}) \in [0,1]$ per ordinare i clienti per rischio e tarare la soglia decisionale rispetto al CAC.
 
 ## Slide 4: Dataset Telco: Preprocessing e Sbilanciamento del Target
 * **Transizione:** *"Passiamo alla preparazione rigorosa dei dati e all'analisi esplorativa..."*

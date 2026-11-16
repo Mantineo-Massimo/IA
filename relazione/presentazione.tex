@@ -53,11 +53,12 @@
     \vspace{0.4cm}
 
     {\footnotesize \color{DarkText} Dipartimento MIFT -- Corso di Laurea in Informatica (L-31)}\\[1.5mm]
-    {\small \textbf{\color{PrimaryNavy} Laboratorio di Intelligenza Artificiale}}
+    {\small \textbf{\color{PrimaryNavy} Laboratorio di Intelligenza Artificiale -- Progetto 1}}
 
-    \vspace{0.6cm}
+    \vspace{0.5cm}
 
-    {\Large \textbf{\color{PrimaryNavy} Churn Prediction e Segmentazione Comportamentale}}\\[2mm]
+    {\Large \textbf{\color{PrimaryNavy} Churn Prediction e Segmentazione Comportamentale}}\\[1.5mm]
+    {\footnotesize \color{DarkText!80} Segmentazione Clienti e Predizione dell'Abbandono (Dataset IBM Telco Customer Churn)}\\[2mm]
     {\color{SecondaryBlue}\rule{0.55\textwidth}{1.2pt}}
 
     \vspace{0.8cm}
@@ -79,25 +80,25 @@
 \end{frame}
 
 % ==========================================
-% SLIDE 2: EPISTEMOLOGIA DELL'IA & PEAS
+% SLIDE 2: DEFINIZIONE DI IA & PEAS
 % ==========================================
-\begin{frame}{Inquadramento Teorico: Epistemologia e Agente PEAS}
+\begin{frame}{Inquadramento Teorico: Definizione di IA e Agente PEAS}
     \begin{columns}[T,onlytextwidth]
         \begin{column}{0.48\textwidth}
-            \textbf{Epistemologia dell'IA (Russell \& Norvig)}
+            \textbf{Approcci alla Definizione di IA (R\&N)}
             \vspace{1mm}
 
             \small
-            L'IA si articola lungo due assi: \textit{Pensiero} vs.\ \textit{Comportamento} e \textit{Umanamente} vs.\ \textit{Razionalmente}. Il progetto adotta l'\textbf{Agire Razionalmente} (agente basato su utilità con apprendimento): massimizzare l'utilità attesa sotto incertezza, senza onniscienza.
+            L'IA si articola lungo due assi: \textit{Pensiero} vs.\ \textit{Comportamento} e \textit{Umanamente} vs.\ \textit{Razionalmente}. Adottiamo l'\textbf{Agire Razionalmente} (agente con apprendimento basato su utilità): massimizzare il valore atteso della prestazione ($P$) sotto incertezza (senza onniscienza), bilanciando via utilità churn evitato e costo offerte.
 
-            \vspace{2mm}
+            \vspace{1.5mm}
             \centering
-            \resizebox{0.99\linewidth}{!}{%
+            \resizebox{0.98\linewidth}{!}{%
             \begin{tikzpicture}[
                 qbox/.style={
                     rectangle, rounded corners=2pt,
                     draw=PrimaryNavy!65, fill=LightBg, line width=0.6pt,
-                    text width=3.05cm, minimum height=1.08cm,
+                    text width=3.05cm, minimum height=1.06cm,
                     align=center, font=\scriptsize, inner sep=3pt
                 },
                 qactive/.style={
@@ -107,15 +108,15 @@
                 chub/.style={
                     rectangle, rounded corners=2pt,
                     draw=PrimaryNavy!85, fill=PrimaryNavy!12, line width=0.8pt,
-                    text width=3.55cm, minimum height=0.80cm,
+                    text width=3.55cm, minimum height=0.78cm,
                     align=center, font=\scriptsize, inner sep=3pt
                 }
             ]
                 \node[chub] (hub) at (0,0) {\textbf{Quattro Approcci Principali}\\\textbf{all'Intelligenza Artificiale}};
-                \node[qbox] (tl) at (-2.22, 1.28) {\textbf{Pensare Umanamente}\\[1pt]\textit{\tiny Approccio della modellazione cognitiva}};
-                \node[qbox] (tr) at ( 2.22, 1.28) {\textbf{Pensare Razionalmente}\\[1pt]\textit{\tiny Approccio delle leggi del pensiero}};
-                \node[qbox] (bl) at (-2.22,-1.28) {\textbf{Agire Umanamente}\\[1pt]\textit{\tiny Approccio del Test di Turing}};
-                \node[qactive] (br) at ( 2.22,-1.28) {\textbf{Agire Razionalmente}\\[1pt]\textit{\tiny Approccio dell'agente razionale}};
+                \node[qbox] (tl) at (-2.22, 1.26) {\textbf{Pensare Umanamente}\\[1pt]\textit{\tiny Approccio della modellazione cognitiva}};
+                \node[qbox] (tr) at ( 2.22, 1.26) {\textbf{Pensare Razionalmente}\\[1pt]\textit{\tiny Approccio delle leggi del pensiero}};
+                \node[qbox] (bl) at (-2.22,-1.26) {\textbf{Agire Umanamente}\\[1pt]\textit{\tiny Approccio del Test di Turing}};
+                \node[qactive] (br) at ( 2.22,-1.26) {\textbf{Agire Razionalmente}\\[1pt]\textit{\tiny Approccio dell'agente razionale}};
 
                 \draw[PrimaryNavy!80, thick] (hub.north) |- (tl.east);
                 \draw[PrimaryNavy!80, thick] (hub.north) |- (tr.west);
@@ -127,83 +128,90 @@
 
         \begin{column}{0.49\textwidth}
             \textbf{Modello dell'Agente Razionale (PEAS)}
-            \vspace{1.5mm}
+            \vspace{1mm}
 
-            \small
+            \footnotesize
             \begin{itemize}
-                \small
-                \setlength{\itemsep}{2pt}
-                \item \textbf{Performance (P)}: Massimizzare il valore netto di fidelizzazione (ridurre il churn contenendo i costi rispetto al CAC).
-                \item \textbf{Environment (E)}: Clientela Telco (\textit{parzialmente osservabile}, \textit{stocastico}, \textit{dinamico}, \textit{multi-agente}; \textit{sequenziale} nelle campagne, \textit{episodico} per singola predizione).
-                \item \textbf{Actuators (A)}: Offerte promozionali mirate, sconti e supporto tecnico prioritario.
-                \item \textbf{Sensors (S)}: Log CRM (fatturazione, \textit{tenure}, contratti, servizi attivi).
+                \footnotesize
+                \setlength{\itemsep}{1.8pt}
+                \item \textbf{Performance (P)}: Valore netto di fidelizzazione (ridurre il churn contenendo i costi rispetto al CAC).
+                \item \textbf{Environment (E)}: Clientela Telco: \textit{parzialmente osservabile}, \textit{nondeterministico / stocastico}, \textit{multi-agente}, \textit{continuo}, \textit{sconosciuto} (appreso dai dati); \textit{sequenziale}/\textit{dinamico} nelle campagne (\textit{episodico}/\textit{statico} su snapshot batch).
+                \item \textbf{Actuators (A)}: Offerte mirate, sconti e supporto prioritario.
+                \item \textbf{Sensors (S)}: Log CRM (fatturazione, \textit{tenure}, contratti, servizi).
             \end{itemize}
 
             \vspace{0.5mm}
             \centering
-            \begin{tikzpicture}[scale=0.60, every node/.style={transform shape}, node distance=0.6cm, auto, >=stealth]
-                \node [draw=PrimaryNavy, fill=PrimaryNavy!10, rectangle, rounded corners=3pt, minimum width=2.4cm, minimum height=0.6cm, align=center] (agent) {\scriptsize \textbf{Agente CRM (ML)}};
-                \node [draw=SecondaryBlue, fill=SecondaryBlue!10, rectangle, rounded corners=3pt, minimum width=2.4cm, minimum height=0.6cm, align=center, below=0.6cm of agent] (env) {\scriptsize \textbf{Ambiente Clienti Telco}};
-                \draw[->, thick, PrimaryNavy] (env.west) to[out=140,in=220] node[left, font=\tiny\bfseries] {\tiny S (Sensori)} (agent.west);
-                \draw[->, thick, AccentHighlight] (agent.east) to[out=320,in=40] node[right, font=\tiny\bfseries] {\tiny A (Attuatori)} (env.east);
-            \end{tikzpicture}
+            \resizebox{0.92\linewidth}{!}{%
+            \begin{tikzpicture}[>=stealth]
+                \node [draw=PrimaryNavy, fill=PrimaryNavy!10, rectangle, rounded corners=3pt, text width=3.85cm, align=center, font=\scriptsize, inner sep=3.5pt] (agent) {\textbf{Agente Razionale (CRM)}\\[-1pt]\tiny Esecuzione (ML + Utilità) $\cdot$ Apprendimento};
+                \node [draw=SecondaryBlue, fill=SecondaryBlue!10, rectangle, rounded corners=3pt, text width=3.85cm, align=center, font=\scriptsize, below=0.52cm of agent, inner sep=3.5pt] (env) {\textbf{Ambiente Clienti Telco}\\[-1pt]\tiny \textit{Valutato esternamente da P (Retention vs CAC)}};
+                \draw[->, thick, PrimaryNavy] (env.168) to[out=160,in=200] node[left, font=\tiny\bfseries, align=right] {S (Sensori)\\Log CRM} (agent.192);
+                \draw[->, thick, AccentHighlight] (agent.348) to[out=340,in=20] node[right, font=\tiny\bfseries, align=left] {A (Attuatori)\\Azioni CRM} (env.12);
+            \end{tikzpicture}%
+            }
         \end{column}
     \end{columns}
 
-    \note{Inquadriamo il problema secondo Russell e Norvig (Lezioni 01-02). Scegliamo il quadrante dell'Agire Razionalmente: un approccio consequenzialista che seleziona l'azione capace di massimizzare l'utilità attesa (fidelizzazione netta rispetto al costo CAC), senza richiedere onniscienza. Nel modello PEAS distinguiamo la Performance P dell'ambiente (valore netto di retention) dall'Ambiente E (la clientela Telco, parzialmente osservabile, stocastica, dinamica e multi-agente; sequenziale nel ciclo di retention, anche se la singola predizione è episodica).}
+    \note{Inquadriamo il problema secondo i quattro approcci alla definizione di IA di Russell e Norvig (Lezioni 01-02). Scegliamo l'Agire Razionalmente: l'agente seleziona azioni che massimizzano il valore atteso della misura di prestazione P sotto incertezza (senza onniscienza), usando una funzione di utilità per bilanciare churn evitato e costi delle offerte e apprendendo dai dati storici. Nel PEAS distinguiamo P (esito economico esterno nell'ambiente), E (parzialmente osservabile, nondeterministico/stocastico, multi-agente, continuo e sconosciuto a priori; sequenziale e dinamico nel ciclo reale, episodico e statico nella singola predizione batch), A (offerte e supporto) e S (log CRM).}
 \end{frame}
 
 % ==========================================
-% SLIDE 3: FONDAMENTI DI ML & APPROCCIO PROBABILISTICO
+% SLIDE 3: FORMULAZIONE TASK ML & APPROCCIO PROBABILISTICO
 % ==========================================
-\begin{frame}{Fondamenti di Machine Learning e Approccio Probabilistico}
+\begin{frame}{Formulazione dei Task ML e Approccio Probabilistico}
     \centering
     \colorbox{LightBg}{\parbox{0.96\textwidth}{\centering
-        \small \color{PrimaryNavy}\textbf{Dal PEAS al Machine Learning}: L'agente trasforma le percezioni dei \textbf{Sensori (S)} in decisioni degli \textbf{Attuatori (A)} apprendendo dai dati storici.
+        \small \color{PrimaryNavy}\textbf{Dal PEAS al Machine Learning (Lezione 03)}: Sistema \textit{Batch} e \textit{Model-Based} che integra apprendimento Supervisionato e Non Supervisionato.
     }}
-    \vspace{2mm}
+    \vspace{1.8mm}
 
-    \begin{columns}[T]
+    \begin{columns}[T,onlytextwidth]
         \begin{column}{0.48\textwidth}
-            \textbf{Definizione di T.\ Mitchell $\langle T, E, P \rangle$}
-            \vspace{1.5mm}
+            \textbf{Definizione dei Due Task di Progetto}
+            \vspace{1mm}
 
-            \small
-            Il sistema migliora sul compito $T$ misurato da $P$ grazie all'esperienza $E$:
-
+            \footnotesize
+            \textbf{1. Task Supervisionato} (T.\ Mitchell $\langle T, E, P \rangle$):
             \begin{itemize}
-                \small
-                \setlength{\itemsep}{2.5pt}
-                \item \textbf{Task ($T$)}: Classificazione binaria probabilistica del rischio di abbandono (\texttt{Churn}).
-                \item \textbf{Experience ($E$)}: 5.634 record storici etichettati di training (da 7.043 clienti IBM Telco).
-                \item \textbf{Performance ($P$)}: Metriche robuste allo sbilanciamento (\textit{Recall}, \textit{Precision}, \textit{F1}, \textit{AUC-ROC}).
+                \footnotesize
+                \setlength{\itemsep}{1.5pt}
+                \item \textbf{Task ($T$)}: Classificazione binaria probabilistica di \texttt{Churn}.
+                \item \textbf{Experience ($E$)}: $5.634$ istanze di training etichettate (su $7.043$).
+                \item \textbf{Performance ($P$)}: \textit{Recall}, \textit{Precision}, \textit{F1-Score}, \textit{AUC-ROC}.
+            \end{itemize}
+            \vspace{1.5mm}
+            \textbf{2. Task Non Supervisionato} (Esplorativo):
+            \begin{itemize}
+                \footnotesize
+                \setlength{\itemsep}{1.5pt}
+                \item Clustering \textbf{K-Means} (30 feature senza \texttt{Churn}, valutato con Inerzia WCSS e \textit{Silhouette}) + proiezione \textbf{PCA} 2D, verificandone l'effetto come feature sui classificatori.
             \end{itemize}
         \end{column}
 
         \begin{column}{0.48\textwidth}
             \textbf{Approccio Probabilistico Discriminativo}
-            \vspace{1.5mm}
+            \vspace{1mm}
 
-            \small
-            \textit{Perché non usare regole booleane fisse (\texttt{SE... ALLORA...})?}
-
+            \footnotesize
+            \textit{Programmazione Tradizionale vs.\ Machine Learning:}
             \vspace{1mm}
             \begin{itemize}
-                \small
-                \setlength{\itemsep}{2.5pt}
-                \item \textbf{Complessità e Incertezza}: Con 19 feature grezze (30 dopo encoding) le combinazioni non sono gestibili a mano e fattori esterni restano inosservati.
-                \item \textbf{Stima Diretta $P(\text{Churn}=1 \mid \mathbf{x})$}: I modelli discriminativi stimano uno score continuo in $[0,1]$ per fare \textit{ranking} dei clienti e tarare la soglia decisionale.
+                \footnotesize
+                \setlength{\itemsep}{2pt}
+                \item \textbf{Limiti delle Regole Manuali}: Regole booleane (\textit{if-then}) su $30$ feature sono fragili, non scalano ai cambi di mercato e non quantificano il rischio.
+                \item \textbf{Stima Diretta $P(\text{Churn}=1 \mid \mathbf{x})$}: I modelli discriminativi (\texttt{LogReg}, \texttt{CART}, \texttt{MLP}) apprendono uno score continuo in $[0,1]$ per fare \textit{ranking} dei clienti e tarare la soglia decisionale in funzione del CAC.
             \end{itemize}
         \end{column}
     \end{columns}
 
-    \vspace{2.5mm}
+    \vspace{2mm}
     \centering
     \colorbox{LightBg}{\parbox{0.96\textwidth}{\centering
         \small \color{DarkText} \textbf{Nota Teorica}: $P$ nel PEAS misura l'impatto economico nell'ambiente; $P$ in Mitchell misura la qualità predittiva del modello.
     }}
 
-    \note{Per trasformare le percezioni in azioni adottiamo la definizione di Mitchell <T, E, P> (Lezione 03). In un ambiente stocastico e parzialmente osservabile, regole booleane rigide non bastano: stimiamo la probabilità a posteriori P(Churn=1 | x) con classificatori probabilistici discriminativi (Regressione Logistica, CART, MLP). Questo score continuo consente sia di ordinare i clienti per rischio sia di calibrare la soglia di intervento.}
+    \note{Per mappare i Sensori S negli Attuatori A adottiamo un sistema ML Batch e Model-Based (Lezione 03) articolato su due task: 1) Task supervisionato secondo Mitchell <T, E, P> per stimare la probabilità di Churn con metriche robuste allo sbilanciamento; 2) Task non supervisionato (K-Means + PCA) per scoprire segmenti latenti senza usare l'etichetta Churn e verificarne l'impatto come feature. Rispetto alle regole if-then tradizionali, i classificatori probabilistici discriminativi offrono uno score continuo per ordinare il rischio e tarare la soglia decisionale.}
 \end{frame}
 
 % ==========================================

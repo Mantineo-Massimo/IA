@@ -460,58 +460,37 @@
 % SLIDE 9: SPIEGABILITÀ BUSINESS: ALBERO CART
 % ==========================================
 \begin{frame}{Spiegabilità Business: Regole dell'Albero Decisionale (CART)}
-    \colorbox{PrimaryNavy!10}{\parbox{0.98\textwidth}{\centering
-        \small \color{PrimaryNavy} \textbf{Modello White-Box}: Albero non scalato sul Training Set ($N=5.634$) per estrarre regole in mesi ed Euro.
-    }}
+    \centering
+    \includegraphics[width=0.98\textwidth,height=0.61\textheight,keepaspectratio]{images/albero_decisionale.png}
+
     \vspace{1.5mm}
-
-    \begin{columns}[T]
-        \begin{column}{0.46\textwidth}
-            \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{PASSO 1: Indice di Gini ($K=2$ classi)}
-                \vspace{0.5mm}
-                \scriptsize \color{DarkText}\\
-                $G_i = 1 - \sum_{k} p_{i,k}^2 \in [0, 0.5]$ misura l'impurità del nodo:
-                \begin{itemize}
-                    \scriptsize
-                    \setlength{\itemsep}{0.5pt}
-                    \item \textbf{$G = 0$ (Tinta Scura)}: Nodo puro al 100\%.
-                    \item \textbf{$G = 0.5$ (Tinta Chiara)}: Massima confusione (50/50).
-                \end{itemize}
-            }}
-
-            \vspace{1mm}
-            \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{PASSO 2: Lettura dei Colori}
-                \begin{itemize}
-                    \scriptsize
-                    \setlength{\itemsep}{0.5pt}
-                    \item \textcolor{orange!90!black}{\textbf{Arancione}}: Prevale la classe \textbf{Rimasto}.
-                    \item \textcolor{SecondaryBlue}{\textbf{Blu}}: Prevale la classe \textbf{Abbandono}.
-                \end{itemize}
-            }}
-
-            \vspace{1mm}
-            \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{PASSO 3: Regola Critica Estratta}
-                \begin{itemize}
-                    \scriptsize
-                    \setlength{\itemsep}{0.5pt}
-                    \item \textbf{Radice}: \texttt{tenure <= 16.5} mesi.
-                    \item \textbf{Percorso Blu}: Fibra Ottica (\textbf{68.3\% churn}) + \texttt{TotalCharges <= 120\,\texteuro} + no \texttt{TechSupport} $\rightarrow$ \textbf{85.5\% Churn} (165/193, $G=0.248$).
-                \end{itemize}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.32\textwidth}
+            \colorbox{PrimaryNavy!7}{\parbox{\linewidth}{
+                \footnotesize \color{PrimaryNavy}\textbf{1. Indice di Gini ($K=2$)}\\[0.5mm]
+                \scriptsize \color{DarkText}
+                $G_i = 1 - \sum_{k} p_{i,k}^2 \in [0, 0.5]$:\\
+                • \textbf{$G=0$ (Scura)}: Nodo puro al 100\%.\\
+                • \textbf{$G=0.5$ (Chiara)}: Massima confusione.
             }}
         \end{column}
 
-        \begin{column}{0.52\textwidth}
-            \centering
-            \includegraphics[width=\textwidth,height=0.50\textheight,keepaspectratio]{images/albero_decisionale.png}
+        \begin{column}{0.32\textwidth}
+            \colorbox{PrimaryNavy!7}{\parbox{\linewidth}{
+                \footnotesize \color{PrimaryNavy}\textbf{2. Lettura White-Box ($N=5.634$)}\\[0.5mm]
+                \scriptsize \color{DarkText}
+                Dati non scalati (mesi ed Euro):\\
+                • \textcolor{orange!90!black}{\textbf{Arancione}}: Rimasto $|$ \textcolor{SecondaryBlue}{\textbf{Blu}}: Churn.\\
+                • \texttt{value=[Rim, Abb]}, radice \texttt{[4139, 1495]}.
+            }}
+        \end{column}
 
-            \vspace{1mm}
-            \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \centering \scriptsize \color{DarkText}
-                \textbf{Voci del Nodo}: \texttt{gini} (impurità) $|$ \texttt{samples} ($5.634$ in radice)\\
-                \texttt{value}: [\textit{Rimasti}, \textit{Abbandoni}] ($[4139, 1495]$) $|$ \texttt{class}: Classe maggioritaria
+        \begin{column}{0.33\textwidth}
+            \colorbox{SecondaryBlue!12}{\parbox{\linewidth}{
+                \footnotesize \color{PrimaryNavy}\textbf{3. Regola Critica (85.5\% Churn)}\\[0.5mm]
+                \scriptsize \color{DarkText}
+                • \textbf{Radice}: \texttt{tenure <= 16.5} mesi.\\
+                • \textbf{Fibra Ottica} (68.3\%) + \texttt{TotalCharges <= 120\,\texteuro} + no \texttt{TechSupport} $\rightarrow$ \textbf{165/193} ($G=0.248$).
             }}
         \end{column}
     \end{columns}

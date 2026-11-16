@@ -46,6 +46,9 @@ htmlcov/
 *.ist
 *.lol
 
+# Delivery archives
+*.zip
+
 # IDE and OS files
 .vscode/
 .idea/

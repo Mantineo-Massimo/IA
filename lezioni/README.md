@@ -19,9 +19,9 @@
 | [`01-Introduzione.pdf`](01-Introduzione.pdf) | **Introduzione all'IA** | Russell & Norvig, Cap. 1 | Definizione di IA, 4 approcci, fondamenti storici, Turing test, Beneficial AI | Inquadramento epistemologico e motivazione dell'Agire Razionalmente |
 | [`02-Agenti_intelligenti.pdf`](02-Agenti_intelligenti.pdf) | **Agenti Intelligenti** | Russell & Norvig, Cap. 2 | Agente e ambiente, PEAS, proprietà degli ambienti, tassonomia agenti | Modellizzazione PEAS dell'Agente CRM per la fidelizzazione clienti |
 | [`03-Introduzione_al_ML.pdf`](03-Introduzione_al_ML.pdf) | **Machine Learning Landscape** | Géron, Cap. 1 | Definizione $\langle T, E, P \rangle$, tipologie ML, pipeline, rischi (overfitting/bias) | Formulazione del task di apprendimento, gestione sbilanciamento e cleaning |
-| [`04-Classificazione.pdf`](04-Classificazione.pdf) | **Classificazione** | Géron, Cap. 3 | MNIST, confusion matrix, Precision, Recall, F1, curve PR e ROC-AUC | Selezione metriche (priorità a Recall e AUC-ROC rispetto ad Accuracy) |
-| [`05-Decision Trees.pdf`](05-Decision Trees.pdf) | **Decision Trees** | Géron, Cap. 6 | Algoritmo CART, impurità di Gini, regolarizzazione, White-Box models | Modello CART interpretabile (`max_depth=5`), regole su tenure e fibra |
-| [`06-Unsupervised_Learning.pdf`](06-Unsupervised_Learning.pdf) | **Unsupervised Learning** | Géron, Cap. 9 | K-Means, inerzia WCSS, Silhouette score, Elbow method, PCA, DBSCAN, GMM | Segmentazione clienti ($K=3$), visualizzazione 2D con PCA (57.9% var.) |
+| [`04-Classificazione.pdf`](04-Classificazione.pdf) | **Classificazione** | Géron, Cap. 3 | MNIST, confusion matrix, Precision, Recall, F1, curve PR e ROC-AUC | Selezione metriche, curve ROC e calibrazione soglia ($\tau=0.35$) su sbilanciamento |
+| [`05-Decision Trees.pdf`](05-Decision Trees.pdf) | **Decision Trees** | Géron, Cap. 6 | Algoritmo CART, impurità di Gini, regolarizzazione, White-Box, cenni su PCA | Modello CART interpretabile (`max_depth=5`, feature non scalate), regole su tenure e fibra |
+| [`06-Unsupervised_Learning.pdf`](06-Unsupervised_Learning.pdf) | **Unsupervised Learning** | Géron, Cap. 9 | K-Means, inerzia WCSS, Silhouette score, Elbow method, DBSCAN, GMM, Anomaly Detection | Segmentazione clienti ($K=3$) con K-Means e profilazione cluster |
 | [`07-Introduction_to_NNs.pdf`](07-Introduction_to_NNs.pdf) | **Reti Neurali con Keras** | Géron, Cap. 10 | TLU, Perceptron, XOR, MLP, attivazioni (ReLU, Sigmoide), Backpropagation | Rete Neurale MLP feedforward per la classificazione non lineare |
 | [`08-Training_DeepNeuralNetworks.pdf`](08-Training_DeepNeuralNetworks.pdf) | **Training Deep Neural Networks** | Géron, Cap. 11 | Vanishing/Exploding gradients, He/Glorot init, Adam, Batch Normalization, Dropout | Regolarizzazione L2, Early Stopping e ottimizzatore Adam nell'MLP |
 
@@ -36,12 +36,12 @@
 * **Riferimento:** Stuart Russell & Peter Norvig, *Artificial Intelligence: A Modern Approach*, Capitolo 1.
 
 #### 1. I Quattro Approcci alla Definizione di IA
-Russell & Norvig categorizzano le definizioni storiche di IA lungo due direttrici: **Fidelizzazione ai processi umani** vs. **Razionalità**, e **Pensiero** vs. **Azione**:
+Russell & Norvig categorizzano le definizioni storiche di IA lungo due direttrici: **Aderenza alle prestazioni umane** vs. **Razionalità**, e **Pensiero** vs. **Comportamento**:
 
 | Dimensione | Umanamente (Human-centric) | Razionalmente (Ideal Rationality) |
 | :--- | :--- | :--- |
 | **Pensiero** | **Pensare Umanamente (Thinking Humanly):** Scienze cognitive, modelli computazionali dei processi cerebrali e introspezione psicologica. | **Pensare Razionalmente (Thinking Rationally):** "Leggi del pensiero" aristoteliche, logica formale e sillogismi inconfutabili. |
-| **Azione** | **Agire Umanamente (Acting Humanly):** Il Test di Turing (1950); un computer supera il test se un interrogatore umano non distingue le sue risposte da quelle umane. | **Agire Razionalmente (Acting Rationally):** Il paradigma dell'**Agente Razionale** che opera in modo da massimizzare il valore atteso della misura di prestazione. |
+| **Comportamento** | **Agire Umanamente (Acting Humanly):** Il Test di Turing (1950); un computer supera il test se un interrogatore umano non distingue le sue risposte da quelle umane. | **Agire Razionalmente (Acting Rationally):** Il paradigma dell'**Agente Razionale** che opera in modo da massimizzare il valore atteso della misura di prestazione. |
 
 #### 2. Fondamenti Disciplinari dell'IA
 * **Filosofia (428 a.C.–presente):** Teorie della mente, logica deduttiva, epistemologia, empirismo e connessione mente-corpo.
@@ -409,7 +409,7 @@ Rispetto alla discesa del gradiente standard (SGD):
 * **D:** *Qual è la differenza fondamentale tra razionalità e onniscienza?*  
   **R:** L'onniscienza implica la conoscenza a priori di tutti gli eventi futuri e degli esiti effettivi di ogni azione. La razionalità massimizza invece l'utilità attesa in base alle sole percezioni passate, alla conoscenza del mondo e all'incertezza intrinseca dell'ambiente.
 * **D:** *Come si descrive un ambiente PEAS per un sistema di Churn Telco?*  
-  **R:** $P$ = massimizzazione Recall e riduzione clienti persi; $E$ = ambiente CRM aziendale; $A$ = offerte promozionali e retention team; $S$ = log di fatturazione, contratti, tenure.
+  **R:** $P$ = massimizzazione del valore netto di fidelizzazione (riduzione del churn bilanciata rispetto al costo delle promozioni e al CAC — distinta dalla metrica predittiva $P$ di Mitchell); $E$ = ecosistema della clientela Telco interagente via CRM (parzialmente osservabile, stocastico, dinamico, multi-agente; sequenziale nelle campagne di retention, episodico nella singola predizione); $A$ = offerte promozionali mirate, sconti e supporto tecnico prioritario; $S$ = log di fatturazione, contratti, *tenure* e servizi attivi.
 
 ### 2. Machine Learning & Classificazione (Lezioni 03 & 04)
 * **D:** *Perché l'accuratezza non è affidabile con dataset sbilanciati?*  

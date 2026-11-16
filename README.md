@@ -1,46 +1,46 @@
 # Progetto Laboratorio IA 2025/2026 - Segmentazione Clienti e Churn Prediction
 
-Questo repository contiene il codice e la relazione per il **Progetto 1: Segmentazione clienti + churn prediction (Telco Customer Churn)**, sviluppato da Massimo Mantineo per il corso di Laboratorio di Intelligenza Artificiale.
+Questo repository contiene il codice e la documentazione per il **Progetto 1: Segmentazione clienti + churn prediction (Telco Customer Churn)**, sviluppato da Massimo Mantineo (Matricola: 541924) per il corso di Laboratorio di Intelligenza Artificiale (Università degli Studi di Messina).
 
 ## 📂 Struttura del Progetto
-La struttura del repository è organizzata come segue:
 ```
-IA2026/
+IA/
 │
 ├── data/
-│   └── Telco-Customer-Churn.csv   # Dataset originale IBM
+│   └── Telco-Customer-Churn.csv       # Dataset originale IBM (7.043 clienti, 21 colonne)
 │
 ├── notebooks/
-│   └── churn_analysis.ipynb       # Jupyter Notebook con l'intera pipeline eseguita
+│   └── churn_analysis.ipynb           # Pipeline completa eseguita (zero data leakage)
 │
-├── lezioni/                       # Slide ufficiali del corso e compendio teorico
-│   ├── README.md                  # Compendio dettagliato delle 8 lezioni
-│   └── *.pdf                      # Slide delle lezioni 01-08
+├── lezioni/                           # Slide ufficiali del corso e compendio teorico
+│   ├── README.md                      # Compendio dettagliato delle 8 lezioni
+│   └── *.pdf                          # Slide delle lezioni 01-08
 │
 ├── relazione/
-│   ├── relazione.pdf              # Relazione finale
-│   └── presentazione.pdf          # Slide d'esame
+│   ├── images/                        # Grafici generati direttamente dal notebook
+│   ├── relazione.tex / relazione.pdf  # Relazione finale in LaTeX
+│   └── presentazione.tex / .pdf       # Slide d'esame (10 slide Beamer)
 │
-├── documenti_progetto/             # PDF con le specifiche e le linee guida del corso
+├── documenti_progetto/                # Linee guida e schede ufficiali del corso
 │   ├── Progetti.pdf
 │   └── Descrizione_progetti.pdf
 │
-├── requirements.txt               # Dipendenze Python richieste
-└── README.md                      # Questo file
+├── guida_esposizione_orale.md         # Traccia e mappa concettuale per l'esame orale
+├── guida_esposizione_orale.tex / .pdf # Versione stampabile in bianco e nero
+├── requirements.txt                   # Dipendenze Python richieste
+└── README.md                          # Questo file
 ```
 
 ---
 
 ## 🚀 Come Riprodurre il Progetto
 
-Il progetto è stato sviluppato in ambiente Linux utilizzando **Python 3.12** ed è completamente riproducibile seguendo i passi indicati di seguito.
+Il progetto è stato sviluppato in ambiente Linux utilizzando **Python 3.14** (`venv/` locale) ed è completamente riproducibile eseguendo i passi seguenti.
 
 ### 1. Prerequisiti
-Assicurati di avere Python 3 e il gestore pacchetti `pip` installati sul tuo sistema.
+Assicurati di avere Python 3 e `pip` installati sul sistema.
 
 ### 2. Configurazione dell'Ambiente Virtuale
-Si consiglia l'uso di un virtual environment per non interferire con le librerie globali del sistema:
-
 ```bash
 # Creazione dell'ambiente virtuale
 python3 -m venv venv
@@ -53,21 +53,21 @@ pip install -r requirements.txt
 ```
 
 ### 3. Esecuzione del Jupyter Notebook
-Avvia il server Jupyter e apri il notebook di analisi:
-
 ```bash
 jupyter notebook notebooks/churn_analysis.ipynb
 ```
-Puoi eseguire tutte le celle in sequenza selezionando **Kernel -> Restart & Run All**. Il notebook contiene già tutti gli output e i grafici pronti per la consultazione (elaborati durante l'ultimo addestramento).
+Seleziona **Kernel -> Restart & Run All** (oppure esegui `jupyter nbconvert --to notebook --execute --inplace notebooks/churn_analysis.ipynb`). Tutti i grafici in `relazione/images/` e tutte le tabelle dei risultati vengono rigenerati in modo deterministico (`random_state=42`) senza *data leakage* (split stratificato 80/20 eseguito prima di scaling, K-Means e PCA).
 
 ---
 
 ## 📈 Sintesi dei Risultati Principali
-1. **Segmentazione (K-Means, K=3):**
-   * **Cluster 0 (Clienti Volatili):** Breve permanenza (~15 mesi), tassi di abbandono altissimi (~43.2%).
-   * **Cluster 1 (Clienti High-Value):** Lunga permanenza (~58 mesi), spesa elevata (~90€/mese), abbandono basso (~15.4%).
-   * **Cluster 2 (Clienti Low-Cost):** Spesa minima (~21€/mese), stabilità massima, abbandono trascurabile (~7.4%).
-2. **Classificazione (Churn Prediction):**
-   * **Regressione Logistica (Baseline):** Ottiene l'accuratezza bilanciata migliore (~80.6%) e un'area sotto la curva ROC (AUC) di ~0.842.
-   * **Decision Tree (max_depth=5):** Ottiene ~79.4% di accuratezza. È il modello ideale da presentare all'esame per l'altissima interpretabilità delle sue regole decisionali.
-   * **Impatto del Clustering:** L'inclusione dei cluster non altera significativamente le performance di modelli lineari o ad albero poiché le informazioni di partenza sono già catturate, ma offre un leggero miglioramento nella stabilità della Recall per la rete neurale MLP.
+
+1. **Segmentazione (K-Means sul Training Set, $K=3$, Silhouette $= 0.2817$):**
+   * **Cluster 0 (Volatili):** Permanenza media ~15.2 mesi, spesa ~67.87€/mese, tasso di churn critico (**43.4%** su train, 43.3% su test).
+   * **Cluster 1 (Fedeli High-Value):** Lunga permanenza (~57.7 mesi), spesa elevata (~89.44€/mese), churn contenuto (**15.9%**).
+   * **Cluster 2 (Low-Cost):** Servizi base (~21.12€/mese), permanenza media (~30.2 mesi), churn minimo (**7.2%**).
+2. **Classificazione (Test Set, 1.409 istanze, soglia standard $\tau=0.50$):**
+   * **Regressione Logistica (Baseline):** Miglior modello complessivo alla soglia standard (**Accuracy 80.62%**, **Recall 55.88%**, **F1-Score 0.6049**, **AUC-ROC 0.8422**). Con calibrazione della soglia ($\tau=0.35$) o `class_weight='balanced'`, la Recall sale al **70.32%--78.34%** (`F1 ~ 0.614`).
+   * **Decision Tree CART (`max_depth=5`, feature non scalate):** **Accuracy 79.42%**, **Recall 54.01%**, **AUC-ROC 0.8267**; fornisce regole *White-Box* leggibili in mesi ed Euro (nuovi clienti in Fibra Ottica con `tenure <= 16.5` mesi, `TotalCharges <= 120€` e senza supporto tecnico raggiungono l'**85.5% di churn**).
+   * **MLP (`(64, 32)`, L2 $\alpha=0.1$, *early stopping*):** Raggiunge **AUC-ROC 0.8424** (base) e **0.8429** (+Cluster, miglior AUC assoluta; Recall `51.87% -> 52.14%`, Accuracy `79.99% -> 80.34%`).
+   * **Impatto del Clustering:** Il valore principale del K-Means è descrittivo/strategico; come feature aggiuntiva apporta un lieve miglioramento sull'MLP mentre risulta ridondante su Regressione Logistica e CART (confermando il **Rasoio di Occam** a favore della Regressione Logistica).

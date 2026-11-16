@@ -4,7 +4,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[italian]{babel}
+\usepackage{babel}
+\babelprovide[import,main]{italian}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{amsmath}
@@ -16,14 +17,14 @@
 \usepackage{microtype}
 \usepackage{caption}
 
-% --- Definizione della Tavolozza Colori Professionale (Stile Docente: Clean & Modern) ---
+% --- Tavolozza Colori Professionale ---
 \definecolor{PrimaryNavy}{RGB}{20, 45, 85}
 \definecolor{SecondaryBlue}{RGB}{45, 95, 150}
 \definecolor{DarkText}{RGB}{25, 30, 40}
 \definecolor{LightBg}{RGB}{248, 249, 252}
 \definecolor{AccentHighlight}{RGB}{190, 45, 45}
 
-% --- Personalizzazione Tema Beamer Elegante e Discorsivo ---
+% --- Tema Beamer ---
 \usetheme{Boadilla}
 \usecolortheme{rose}
 
@@ -42,34 +43,28 @@
 
 \captionsetup{font=small, labelfont={bf,color=PrimaryNavy}}
 
-% --- Personalizzazione Title Page Elegante e Professionale ---
+% --- Title Page ---
 \setbeamertemplate{title page}{
     \centering
     \vfill
-    
-    % Logo Università degli Studi di Messina
+
     \includegraphics[height=1.4cm]{images/logo_unime_orizontale.png}
-    
+
     \vspace{0.4cm}
-    
-    % Dipartimento e Corso di Laurea
+
     {\footnotesize \color{DarkText} Dipartimento MIFT -- Corso di Laurea in Informatica (L-31)}\\[1.5mm]
     {\small \textbf{\color{PrimaryNavy} Laboratorio di Intelligenza Artificiale}}
-    
+
     \vspace{0.6cm}
-    
-    % Titolo Principale e Riga d'Accento
+
     {\Large \textbf{\color{PrimaryNavy} Churn Prediction e Segmentazione Comportamentale}}\\[2mm]
     {\color{SecondaryBlue}\rule{0.55\textwidth}{1.2pt}}
-    
+
     \vspace{0.8cm}
-    
-    % Autore e Matricola
+
     {\small \textbf{Massimo Mantineo} \quad (Matricola: 541924)}\\[2.5mm]
-    
-    % Anno Accademico centrato sotto l'autore
     {\small \color{DarkText!80} Anno Accademico 2025/2026}
-    
+
     \vfill
 }
 
@@ -80,67 +75,82 @@
 % ==========================================
 \begin{frame}[plain]
     \titlepage
-    \note{Buongiorno professore, il mio progetto riguarda la segmentazione comportamentale e la predizione dell'abbandono (churn) dei clienti nel settore Telco, basato sul dataset IBM Telco Customer Churn. L'analisi integra metodologies non supervisionate e supervisionate trattate durante il corso.}
+    \note{Buongiorno professore, il mio progetto riguarda la Churn Prediction e Segmentazione Comportamentale applicata al settore Telco, basata sul dataset IBM Telco Customer Churn. L'analisi integra metodologie non supervisionate e supervisionate trattate durante il corso.}
 \end{frame}
 
 % ==========================================
 % SLIDE 2: EPISTEMOLOGIA DELL'IA & PEAS
 % ==========================================
 \begin{frame}{Inquadramento Teorico: Epistemologia e Agente PEAS}
-    \begin{columns}[T]
+    \begin{columns}[T,onlytextwidth]
         \begin{column}{0.48\textwidth}
             \textbf{Epistemologia dell'IA (Russell \& Norvig)}
-            \vspace{1.5mm}
-            
+            \vspace{1mm}
+
             \small
-            L'Intelligenza Artificiale si struttura su due assi portanti: \textit{Pensare} vs. \textit{Agire} e \textit{Umanamente} vs. \textit{Razionalmente}.
-            
-            Il presente progetto opera nel quadrante dell'\textbf{Agire Razionalmente}: l'obiettivo non è emulare il pensiero umano, ma massimizzare l'utilità attesa di fidelizzazione dei clienti.
+            L'IA si articola lungo due assi: \textit{Pensiero} vs.\ \textit{Comportamento} e \textit{Umanamente} vs.\ \textit{Razionalmente}. Il progetto adotta l'\textbf{Agire Razionalmente} (agente basato su utilità con apprendimento): massimizzare l'utilità attesa sotto incertezza, senza onniscienza.
 
             \vspace{2mm}
             \centering
-            \renewcommand{\arraystretch}{1.2}
-            \setlength{\arrayrulewidth}{0.8pt}
-            \arrayrulecolor{PrimaryNavy}
-            \tiny
-            \begin{tabular}{|c|c|}
-                \hline
-                \textbf{Pensare Umanamente} & \textbf{Pensare Razionalmente} \\
-                \hline
-                \textbf{Agire Umanamente} & \cellcolor{SecondaryBlue!20}\textbf{Agire Razionalmente} \\
-                & \cellcolor{SecondaryBlue!20}\textbf{(L'Agente Razionale)} \\
-                \hline
-            \end{tabular}
+            \resizebox{0.99\linewidth}{!}{%
+            \begin{tikzpicture}[
+                qbox/.style={
+                    rectangle, rounded corners=2pt,
+                    draw=PrimaryNavy!65, fill=LightBg, line width=0.6pt,
+                    text width=3.05cm, minimum height=1.08cm,
+                    align=center, font=\scriptsize, inner sep=3pt
+                },
+                qactive/.style={
+                    qbox,
+                    draw=PrimaryNavy, fill=SecondaryBlue!20, line width=1.2pt
+                },
+                chub/.style={
+                    rectangle, rounded corners=2pt,
+                    draw=PrimaryNavy!85, fill=PrimaryNavy!12, line width=0.8pt,
+                    text width=3.55cm, minimum height=0.80cm,
+                    align=center, font=\scriptsize, inner sep=3pt
+                }
+            ]
+                \node[chub] (hub) at (0,0) {\textbf{Quattro Approcci Principali}\\\textbf{all'Intelligenza Artificiale}};
+                \node[qbox] (tl) at (-2.22, 1.28) {\textbf{Pensare Umanamente}\\[1pt]\textit{\tiny Approccio della modellazione cognitiva}};
+                \node[qbox] (tr) at ( 2.22, 1.28) {\textbf{Pensare Razionalmente}\\[1pt]\textit{\tiny Approccio delle leggi del pensiero}};
+                \node[qbox] (bl) at (-2.22,-1.28) {\textbf{Agire Umanamente}\\[1pt]\textit{\tiny Approccio del Test di Turing}};
+                \node[qactive] (br) at ( 2.22,-1.28) {\textbf{Agire Razionalmente}\\[1pt]\textit{\tiny Approccio dell'agente razionale}};
+
+                \draw[PrimaryNavy!80, thick] (hub.north) |- (tl.east);
+                \draw[PrimaryNavy!80, thick] (hub.north) |- (tr.west);
+                \draw[PrimaryNavy!80, thick] (hub.south) |- (bl.east);
+                \draw[PrimaryNavy!80, thick] (hub.south) |- (br.west);
+            \end{tikzpicture}%
+            }
         \end{column}
 
-        \begin{column}{0.48\textwidth}
+        \begin{column}{0.49\textwidth}
             \textbf{Modello dell'Agente Razionale (PEAS)}
             \vspace{1.5mm}
-            
+
             \small
-            Il modello \textbf{PEAS} (\textit{Performance, Environment, Actuators, Sensors}) formalizza l'agente razionale definendo il suo ambiente e le sue capacità:
-            
             \begin{itemize}
                 \small
-                \setlength{\itemsep}{2.5pt}
-                \item \textbf{Performance (P)}: Massimizzazione della Recall per la fidelizzazione dei clienti.
-                \item \textbf{Environment (E)}: CRM Telco stocastico, parzialmente osservabile e sequenziale.
-                \item \textbf{Actuators (A)}: Offerte promozionali, sconti mirati e supporto tecnico.
-                \item \textbf{Sensors (S)}: Registri di fatturazione, tenure e tipo di abbonamento.
+                \setlength{\itemsep}{2pt}
+                \item \textbf{Performance (P)}: Massimizzare il valore netto di fidelizzazione (ridurre il churn contenendo i costi rispetto al CAC).
+                \item \textbf{Environment (E)}: Clientela Telco (\textit{parzialmente osservabile}, \textit{stocastico}, \textit{dinamico}, \textit{multi-agente}; \textit{sequenziale} nelle campagne, \textit{episodico} per singola predizione).
+                \item \textbf{Actuators (A)}: Offerte promozionali mirate, sconti e supporto tecnico prioritario.
+                \item \textbf{Sensors (S)}: Log CRM (fatturazione, \textit{tenure}, contratti, servizi attivi).
             \end{itemize}
-            
-            \vspace{1mm}
+
+            \vspace{0.5mm}
             \centering
-            \begin{tikzpicture}[scale=0.65, every node/.style={transform shape}, node distance=0.7cm, auto, >=stealth]
-                \node [draw=PrimaryNavy, fill=PrimaryNavy!10, rectangle, rounded corners=3pt, minimum width=2.4cm, minimum height=0.65cm, align=center] (agent) {\scriptsize \textbf{Agente IA Telco}};
-                \node [draw=SecondaryBlue, fill=SecondaryBlue!10, rectangle, rounded corners=3pt, minimum width=2.4cm, minimum height=0.65cm, align=center, below=0.7cm of agent] (env) {\scriptsize \textbf{Ambiente CRM}};
+            \begin{tikzpicture}[scale=0.60, every node/.style={transform shape}, node distance=0.6cm, auto, >=stealth]
+                \node [draw=PrimaryNavy, fill=PrimaryNavy!10, rectangle, rounded corners=3pt, minimum width=2.4cm, minimum height=0.6cm, align=center] (agent) {\scriptsize \textbf{Agente CRM (ML)}};
+                \node [draw=SecondaryBlue, fill=SecondaryBlue!10, rectangle, rounded corners=3pt, minimum width=2.4cm, minimum height=0.6cm, align=center, below=0.6cm of agent] (env) {\scriptsize \textbf{Ambiente Clienti Telco}};
                 \draw[->, thick, PrimaryNavy] (env.west) to[out=140,in=220] node[left, font=\tiny\bfseries] {\tiny S (Sensori)} (agent.west);
                 \draw[->, thick, AccentHighlight] (agent.east) to[out=320,in=40] node[right, font=\tiny\bfseries] {\tiny A (Attuatori)} (env.east);
             \end{tikzpicture}
         \end{column}
     \end{columns}
 
-    \note{Iniziamo dall'inquadramento teorico del problema basato su Russell e Norvig. L'Intelligenza Artificiale viene definita su due assi: Pensare vs. Agire e Umanamente vs. Razionalmente. Il mio lavoro si colloca saldamente nel quadrante dell'Agire Razionalmente: l'obiettivo non è simulare i processi cognitivi umani, ma massimizzare l'utilità attesa (la fidelizzazione dei clienti) sulla base dei dati storici CRM. A destra vediamo la modellizzazione PEAS dell'agente. In basso nel diagramma si nota il ciclo di percezione-azione: l'agente legge i dati dal CRM tramite i Sensori (sinistra) e interviene sull'ambiente tramite gli Attuatori (destra) erogando offerte e sconti per la retention.}
+    \note{Inquadriamo il problema secondo Russell e Norvig (Lezioni 01-02). Scegliamo il quadrante dell'Agire Razionalmente: un approccio consequenzialista che seleziona l'azione capace di massimizzare l'utilità attesa (fidelizzazione netta rispetto al costo CAC), senza richiedere onniscienza. Nel modello PEAS distinguiamo la Performance P dell'ambiente (valore netto di retention) dall'Ambiente E (la clientela Telco, parzialmente osservabile, stocastica, dinamica e multi-agente; sequenziale nel ciclo di retention, anche se la singola predizione è episodica).}
 \end{frame}
 
 % ==========================================
@@ -148,103 +158,97 @@
 % ==========================================
 \begin{frame}{Fondamenti di Machine Learning e Approccio Probabilistico}
     \centering
-    \colorbox{LightBg}{\parbox{0.95\textwidth}{\centering
-        \small \color{PrimaryNavy}\textbf{Raccordo col PEAS}: L'Agente impara a mappare i dati dei \textbf{Sensori (S)} in azioni degli \textbf{Attuatori (A)} analizzando i dati del CRM tramite il Machine Learning.
+    \colorbox{LightBg}{\parbox{0.96\textwidth}{\centering
+        \small \color{PrimaryNavy}\textbf{Dal PEAS al Machine Learning}: L'agente trasforma le percezioni dei \textbf{Sensori (S)} in decisioni degli \textbf{Attuatori (A)} apprendendo dai dati storici.
     }}
     \vspace{2mm}
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \textbf{Inquadramento del Machine Learning}
-            \vspace{1mm}
-            
+            \textbf{Definizione di T.\ Mitchell $\langle T, E, P \rangle$}
+            \vspace{1.5mm}
+
             \small
-            L'agente impara dai dati passati ($E$) per svolgere il compito ($T$) valutando le prestazioni ($P$):
-            
+            Il sistema migliora sul compito $T$ misurato da $P$ grazie all'esperienza $E$:
+
             \begin{itemize}
                 \small
                 \setlength{\itemsep}{2.5pt}
-                \item \textbf{Task (T)}: Prevedere chi abbandonerà l'azienda (Churn).
-                \item \textbf{Experience (E)}: 7.043 dati storici di clienti IBM Telco.
-                \item \textbf{Performance (P)}: Massimizzare la Recall.
+                \item \textbf{Task ($T$)}: Classificazione binaria probabilistica del rischio di abbandono (\texttt{Churn}).
+                \item \textbf{Experience ($E$)}: 5.634 record storici etichettati di training (da 7.043 clienti IBM Telco).
+                \item \textbf{Performance ($P$)}: Metriche robuste allo sbilanciamento (\textit{Recall}, \textit{Precision}, \textit{F1}, \textit{AUC-ROC}).
             \end{itemize}
-            
-            \vspace{1.5mm}
-            \centering
-            \small \color{PrimaryNavy} \textbf{T} $\leftarrow$ \textbf{E} $\rightarrow$ \textbf{P}
         \end{column}
 
         \begin{column}{0.48\textwidth}
-            \textbf{Perché usare la Probabilità?}
-            \vspace{1mm}
-            
+            \textbf{Approccio Probabilistico Discriminativo}
+            \vspace{1.5mm}
+
             \small
-            \textit{Perché non usare semplici regole fisse (SE... ALLORA...)?}
-            
+            \textit{Perché non usare regole booleane fisse (\texttt{SE... ALLORA...})?}
+
             \vspace{1mm}
             \begin{itemize}
                 \small
                 \setlength{\itemsep}{2.5pt}
-                \item \textbf{Regole Fisse (Logica Booleana)}: Troppo rigide. Con 21+ variabili le combinazioni sono troppe da gestire a mano.
-                \item \textbf{Approccio Probabilistico}: Calcola la percentuale di rischio abbandono per ogni cliente: $P(\text{Churn} \mid \text{Dati})$.
+                \item \textbf{Complessità e Incertezza}: Con 19 feature grezze (30 dopo encoding) le combinazioni non sono gestibili a mano e fattori esterni restano inosservati.
+                \item \textbf{Stima Diretta $P(\text{Churn}=1 \mid \mathbf{x})$}: I modelli discriminativi stimano uno score continuo in $[0,1]$ per fare \textit{ranking} dei clienti e tarare la soglia decisionale.
             \end{itemize}
         \end{column}
     \end{columns}
 
-    \vspace{2mm}
+    \vspace{2.5mm}
     \centering
-    \colorbox{LightBg}{\parbox{0.95\textwidth}{\centering
-        \small \color{DarkText} \textbf{Conclusione}: Le scelte dei clienti sono imprevedibili. La probabilità è indispensabile per calcolare il rischio reale di abbandono nel CRM.
+    \colorbox{LightBg}{\parbox{0.96\textwidth}{\centering
+        \small \color{DarkText} \textbf{Nota Teorica}: $P$ nel PEAS misura l'impatto economico nell'ambiente; $P$ in Mitchell misura la qualità predittiva del modello.
     }}
 
-    \note{Come si passa dal PEAS al Machine Learning? Nella Slide 2 abbiamo definito l'Agente Razionale in termini di PEAS: sensori, attuatori, ambiente CRM e performance. Ma come fa l'agente a trasformare quello che legge dai sensori nelle decisioni degli attuatori? In un ambiente reale non può usare semplici regole fisse: le combinazioni di clienti sono troppe e il comportamento umano è imprevedibile. Impara quindi dai dati del passato per calcolare una percentuale di rischio di abbandono P(Churn|Dati).}
+    \note{Per trasformare le percezioni in azioni adottiamo la definizione di Mitchell <T, E, P> (Lezione 03). In un ambiente stocastico e parzialmente osservabile, regole booleane rigide non bastano: stimiamo la probabilità a posteriori P(Churn=1 | x) con classificatori probabilistici discriminativi (Regressione Logistica, CART, MLP). Questo score continuo consente sia di ordinare i clienti per rischio sia di calibrare la soglia di intervento.}
 \end{frame}
 
 % ==========================================
 % SLIDE 4: PREPROCESSING & SBILANCIAMENTO TARGET
 % ==========================================
-\begin{frame}{Dataset Telco: Preprocessing e Churn}
-    % Banner di sintesi iniziale del Dataset
+\begin{frame}{Dataset Telco: Preprocessing e Sbilanciamento del Target}
     \colorbox{PrimaryNavy!10}{\parbox{0.98\textwidth}{\centering
-        \small \color{PrimaryNavy} \textbf{Dataset IBM Telco}: $7.043$ clienti, $21$ variabili (Demografiche, Servizi, Contratto/Finanze). Target: Churn (\textbf{26.5\%} abbandona).
+        \small \color{PrimaryNavy} \textbf{Dataset IBM Telco}: $7.043$ clienti, $21$ colonne ($19$ feature utili + \texttt{customerID} rimosso + target \texttt{Churn} al \textbf{26.54\%}).
     }}
     \vspace{2mm}
 
     \begin{columns}[c]
         \begin{column}{0.50\textwidth}
-            \textbf{Pulizia Dati e Sbilanciamento}
+            \textbf{Pulizia, Pipeline Senza Leakage e Sbilanciamento}
             \vspace{1.5mm}
             \begin{itemize}
                 \small
-                \setlength{\itemsep}{3.5pt}
-                \item \textbf{Data Cleaning}: 11 valori vuoti su \texttt{TotalCharges} imputati a \textbf{0.0€} (clienti nuovi con 0 mesi).
-                \item \textbf{Normalizzazione}: Scaling per uniformare Euro e mesi.
-                \item \textbf{One-Hot Encoding}: Conversione testi in colonne $0/1$.
-                \item \textbf{Sbilanciamento Target}: Il 26.5\% abbandona (modello dummy $\rightarrow$ \textbf{Recall = 0}).
-                \item \textbf{Priorità alla Recall}: Fondamentale per minimizzare la perdita del cliente (costo CAC).
+                \setlength{\itemsep}{2.8pt}
+                \item \textbf{Data Cleaning}: 11 valori vuoti su \texttt{TotalCharges} imputati a \textbf{0.0\,\texteuro} (clienti nuovi con \texttt{tenure = 0}).
+                \item \textbf{Zero Data Leakage}: Split stratificato 80/20 \textbf{prima} di scaling e clustering.
+                \item \textbf{Standardizzazione Z-Score} (\texttt{StandardScaler}) e \textbf{One-Hot Encoding} (\texttt{drop='first'}) $\rightarrow$ \textbf{30 feature}.
+                \item \textbf{Sbilanciamento}: 26.54\% Churn (modello \textit{dummy}: 73.5\% Accuracy ma \textbf{Recall = 0\%}).
             \end{itemize}
         \end{column}
 
         \begin{column}{0.48\textwidth}
             \centering
             \includegraphics[width=\textwidth,height=0.36\textheight,keepaspectratio]{images/boxplot_permanenza_costi.png}
-            
+
             \vspace{1.5mm}
             \colorbox{LightBg}{\parbox{\textwidth}{
                 \small \color{DarkText}
-                \textbf{Pattern dei Boxplot}:
+                \textbf{Evidenze dai Boxplot}:
                 \begin{itemize}
                     \footnotesize
-                    \setlength{\itemsep}{2pt}
-                    \item \textbf{Permanenza}: Chi abbandona dura solo \textbf{10 mesi} (vs \textbf{38}).
-                    \item \textbf{Spesa Mensile}: Chi abbandona paga \textbf{80€/mese} (vs \textbf{64€}).
+                    \setlength{\itemsep}{1.5pt}
+                    \item \textbf{Permanenza}: Mediana \textbf{10.0 mesi} per chi abbandona (vs \textbf{38.0}).
+                    \item \textbf{Spesa Mensile}: Mediana \textbf{79.65\,\texteuro} per chi abbandona (vs \textbf{64.43\,\texteuro}).
                 \end{itemize}
-                \textbf{Esito}: Churn su \textbf{nuovi clienti ad alto costo}.
+                \textbf{Esito}: Rischio concentrato sui \textbf{nuovi clienti ad alto costo}.
             }}
         \end{column}
     \end{columns}
 
-    \note{Nella Slide 4 introduciamo il dataset IBM Telco Customer Churn (7.043 clienti, 21 variabili) e analizziamo la preparazione dei dati e lo sbilanciamento delle classi. Abbiamo pulito 11 valori nulli su TotalCharges imputando 0.0 per i clienti appena arrivati con tenure 0. Abbiamo applicato StandardScaler e One-Hot Encoding. Il target è sbilanciato: solo il 26.5\% abbandona. Se usassimo un classificatore banale avremmo il 73.5\% di accuratezza ma Recall 0\%. Poiché perdere un cliente ha un costo di acquisizione CAC elevato, la Recall è la nostra metrica prioritaria. A destra il grafico a scatola (Boxplot) dimostra che chi abbandona ha una permanenza molto più bassa e costi mensili più alti.}
+    \note{Sul dataset IBM Telco (7.043 righe) rimuoviamo customerID e imputiamo a 0.0 gli 11 spazi vuoti di TotalCharges perché hanno tutti tenure=0. Applichiamo lo split stratificato 80/20 prima di qualsiasi trasformazione parametrica per prevenire data leakage, poi Standardizzazione Z-Score (non normalizzazione Min-Max) e One-Hot Encoding con drop='first' ottenendo 30 feature. Lo sbilanciamento (26.54\% Churn) rende insufficiente l'Accuracy: un classificatore banale avrebbe 73.5\% Accuracy ma Recall 0\%.}
 \end{frame}
 
 % ==========================================
@@ -253,19 +257,19 @@
 \begin{frame}{Apprendimento Non Supervisionato: Clustering K-Means}
     \begin{columns}[c]
         \begin{column}{0.50\textwidth}
-            \textbf{Scopo del Clustering e Scelta di K}
+            \textbf{Scopo del Clustering e Selezione di $K$}
             \vspace{1.5mm}
             \begin{itemize}
                 \small
-                \setlength{\itemsep}{3pt}
-                \item \textbf{Obiettivo}: Raggruppare spontaneamente i clienti in segmenti omogenei senza usare l'etichetta Churn.
-                \item \textbf{Scelta del numero di gruppi ($K$)}:
+                \setlength{\itemsep}{2.8pt}
+                \item \textbf{Obiettivo}: Segmentare i $5.634$ clienti del Training Set (30 feature) senza usare l'etichetta \texttt{Churn}.
+                \item \textbf{Confronto per $K \in \{2, 3, 4, 5, 6\}$}:
                 \begin{itemize}
                     \small
                     \setlength{\itemsep}{2pt}
-                    \item \textbf{$K=2$}: Divisione troppo banale (solo clienti con/senza internet).
-                    \item \textbf{$K=3$ (Scelta Ottimale)}: Perfetto equilibrio tra separazione geometrica e utilità commerciale.
-                    \item \textbf{$K \ge 4$}: I gruppi iniziano a sovrapporsi e la qualità crolla.
+                    \item \textbf{$K=2$} ($s=0.293$): Divisione banale (solo presenza/assenza internet).
+                    \item \textbf{$K=3$ (Scelto)}: Punto di gomito dell'Inerzia WCSS ($33.485 \rightarrow 24.642$) con Silhouette pressoché invariata ($s=0.282$).
+                    \item \textbf{$K \ge 4$}: Netto calo della Silhouette ($0.230 \rightarrow 0.185$) per frammentazione.
                 \end{itemize}
             \end{itemize}
         \end{column}
@@ -273,23 +277,22 @@
         \begin{column}{0.48\textwidth}
             \centering
             \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{images/clustering_scelta_k.png}
-            
+
             \vspace{1.5mm}
             \colorbox{LightBg}{\parbox{\textwidth}{
                 \small \color{DarkText}
-                \textbf{Come leggere le due metriche nel grafico}:
+                \textbf{Lettura delle due metriche}:
                 \begin{itemize}
-                    \small
+                    \footnotesize
                     \setlength{\itemsep}{2pt}
-                    \item \textbf{Inerzia (Linea Blu - Errore Interno)}: Misura la compattezza. Mostra un netto punto di "gomito" a \textbf{$K=3$}.
-                    \item \textbf{Silhouette (Linea Arancione - Separazione)}: Misura la distanza tra i gruppi. Crolla da $K \ge 4$ per sovrapposizione.
+                    \item \textbf{Inerzia WCSS (Blu)}: Somma delle distanze quadratiche dai centroidi; mostra il gomito a \textbf{$K=3$}.
+                    \item \textbf{Silhouette (Arancione)}: Combina coesione intra-cluster ($a_i$) e separazione inter-cluster ($b_i$). In 30D misto $s=0.282$ indica separazione moderata ma utile.
                 \end{itemize}
-                \textbf{Esito}: \textbf{$K=3$} ($s=0.286$) è il punto di equilibrio ideale.
             }}
         \end{column}
     \end{columns}
 
-    \note{Nella Slide 5 passiamo all'apprendimento non supervisionato usando K-Means per raggruppare i clienti in segmenti senza usare le etichette di Churn. Per scegliere il numero ottimale di cluster K abbiamo usato due metriche: il Metodo del Gomito sull'Inerzia (curva blu) e lo Silhouette Score (curva arancione). Anche se K=2 ha uno score leggermente alto, crea una divisione banale tra chi ha internet e chi no. Abbiamo scelto K=3 perché rappresenta il punto di gomito ideale e distingue 3 profili di business chiari. Per K maggiore o uguale a 4 la silhouette crolla perché i gruppi si sovrappongono.}
+    \note{Applichiamo K-Means sul solo Training Set standardizzato (5.634 istanze, 30 feature) senza data leakage. Per scegliere K combiniamo Inerzia WCSS (compattezza interna, metodo del gomito) e Silhouette Score, che bilancia coesione intra-cluster a_i e separazione b_i. K=2 ha score 0.293 ma separa solo chi ha internet da chi no. K=3 coincide con il gomito dell'Inerzia mantenendo s=0.282 (valore moderato ma fisiologico in 30 dimensioni con feature binarie one-hot), mentre per K>=4 la Silhouette crolla.}
 \end{frame}
 
 % ==========================================
@@ -297,42 +300,43 @@
 % ==========================================
 \begin{frame}{Segmentazione PCA e Profilo dei Segmenti}
     \centering
-    \small
-    \setlength{\tabcolsep}{8pt}
-    \begin{tabular}{ccccc}
+    \resizebox{0.96\textwidth}{!}{
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabular}{cccccc}
         \toprule
-        \textbf{Cluster} & \textbf{Tenure Media} & \textbf{Spesa Mensile} & \textbf{Spesa Totale} & \textbf{Tasso Churn} \\
+        \textbf{Cluster} & \textbf{Clienti (Train)} & \textbf{Tenure Media} & \textbf{Spesa Mensile} & \textbf{Spesa Totale} & \textbf{Tasso Churn} \\
         \midrule
-        \textbf{0 (Volatili)} & 13 mesi & 75€ & 1.031€ & \textbf{47.1\%} \\
-        \textbf{1 (Fedeli High-Value)} & 59 mesi & 90€ & 5.246€ & 15.4\% \\
-        \textbf{2 (Low-Cost)} & 30 mesi & 27€ & 809€ & \textbf{12.3\%} \\
+        \textbf{0 (Volatili)} & 2.557 & 15.2 mesi & 67.87\,\texteuro & 1005.53\,\texteuro & \textbf{43.4\%} \\
+        \textbf{1 (Fedeli High-Value)} & 1.863 & 57.7 mesi & 89.44\,\texteuro & 5145.23\,\texteuro & 15.9\% \\
+        \textbf{2 (Low-Cost)} & 1.214 & 30.2 mesi & 21.12\,\texteuro & 657.12\,\texteuro & 7.2\% \\
         \bottomrule
     \end{tabular}
-    
+    }
+
     \vspace{2mm}
     \begin{columns}[c]
         \begin{column}{0.44\textwidth}
             \small
-            \textbf{Profilo dei Segmenti \& PCA}
+            \textbf{Profili \& Proiezione PCA (57.9\% Var.)}
             \vspace{1mm}
             \begin{itemize}
                 \small
-                \setlength{\itemsep}{2.5pt}
-                \item \textbf{Cluster 0 (Volatili)}: Nuovi ad alta spesa, \textbf{churn 47.1\%}.
-                \item \textbf{Cluster 1 \& 2}: Fedeli e base.
-                \item \textbf{Grafico PCA 2D (58\% Inf.)}:
-                \item \textbf{Asse X ($PC_1$ - 39.2\%)}: \textit{Spesa/Servizi}.
-                \item \textbf{Asse Y ($PC_2$ - 18.7\%)}: \textit{Anzianità}.
+                \setlength{\itemsep}{2.2pt}
+                \item \textbf{Cluster 0 (Volatili)}: Clienti recenti, spesa medio-alta, \textbf{43.4\% churn} (43.3\% sul Test).
+                \item \textbf{Cluster 1}: Storici ad alta spesa (\textbf{15.9\%}).
+                \item \textbf{Cluster 2}: Servizi base (\textbf{7.2\%}).
+                \item \textbf{$PC_1$ (39.4\% var.)}: \textit{Spesa e Servizi}.
+                \item \textbf{$PC_2$ (18.5\% var.)}: \textit{Anzianità contrattuale}.
             \end{itemize}
         \end{column}
 
         \begin{column}{0.54\textwidth}
             \centering
-            \includegraphics[width=1.08\textwidth,height=0.54\textheight,keepaspectratio]{images/clustering_visualizzazione_pca.png}
+            \includegraphics[width=1.06\textwidth,height=0.54\textheight,keepaspectratio]{images/clustering_visualizzazione_pca.png}
         \end{column}
     \end{columns}
 
-    \note{Nella Slide 6 analizziamo il profilo commerciale dei 3 cluster e la decodifica delle componenti PCA. In alto la tabella mostra i 3 profili: il Cluster 0 (Volatili) ha permanenza bassa di 13 mesi, spesa alta di 75€ ed un tasso di churn record del 47.1\%. A destra, la PCA riduce lo spazio 20D a 2 componenti principali spiegate in 2 assi: PC1 sull'asse X misura la spesa e il volume dei servizi; PC2 sull'asse Y misura l'anzianità e stabilità contrattuale. Questo dimostra la netta separazione spaziale dei 3 cluster nei 3 quadranti.}
+    \note{La tabella mostra i tre segmenti appresi sul Training Set e verificati in coerenza sul Test Set (dove il Cluster 0 mantiene il 43.3\% di churn). La PCA sui dati centrati a 30 dimensioni cattura il 57.87\% della varianza totale: PC1 (39.4\%) riflette spesa mensile/totale e servizi attivi; PC2 (18.5\%) riflette tenure e stabilità dei contratti biennali rispetto ai nuovi utenti in fibra ottica.}
 \end{frame}
 
 % ==========================================
@@ -340,280 +344,234 @@
 % ==========================================
 \begin{frame}{Pipeline Sperimentale Supervisionata}
     \centering
-    \colorbox{LightBg}{\parbox{0.95\textwidth}{\centering
-        \small \color{PrimaryNavy}\textbf{Obiettivo}: Trovare il bilanciamento ideale tra \textbf{capacità predittiva} (precisione) e \textbf{spiegabilità aziendale} (trasparenza).
+    \colorbox{LightBg}{\parbox{0.96\textwidth}{\centering
+        \small \color{PrimaryNavy}\textbf{Obiettivo}: Confrontare modelli lineari, ad albero e neurali (Base vs \texttt{+Cluster}) in assenza di \textit{data leakage}.
     }}
     \vspace{2mm}
 
     \begin{columns}[c]
-        \begin{column}{0.45\textwidth}
+        \begin{column}{0.46\textwidth}
             \centering
-            \begin{tikzpicture}[scale=0.64, every node/.style={transform shape}, node distance=1.1cm, auto, >=stealth, 
-                block/.style={draw=PrimaryNavy, fill=PrimaryNavy!10, rectangle, rounded corners=3pt, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
-                splitblock/.style={draw=SecondaryBlue, fill=SecondaryBlue!10, rectangle, rounded corners=3pt, minimum width=2.8cm, minimum height=0.65cm, align=center, font=\small},
+            \begin{tikzpicture}[scale=0.62, every node/.style={transform shape}, node distance=1.0cm, auto, >=stealth,
+                block/.style={draw=PrimaryNavy, fill=PrimaryNavy!10, rectangle, rounded corners=3pt, minimum width=2.8cm, minimum height=0.65cm, align=center, font=\small},
+                splitblock/.style={draw=SecondaryBlue, fill=SecondaryBlue!10, rectangle, rounded corners=3pt, minimum width=3.1cm, minimum height=0.65cm, align=center, font=\small},
                 modelblock/.style={draw=AccentHighlight, fill=AccentHighlight!10, rectangle, rounded corners=3pt, minimum width=2.6cm, minimum height=0.65cm, align=center, font=\small}]
-                
-                \node [block] (raw) {\textbf{Dati Preprocessati}};
-                \node [splitblock, below=0.8cm of raw] (split) {\textbf{Split Stratificato 80/20}\\[-2pt]\tiny (Mantiene il 26.5\% di churn)};
-                
+
+                \node [block] (raw) {\textbf{Split Stratificato 80/20}\\[-2pt]\tiny Train: 5.634 $|$ Test: 1.409 (26.5\% Churn)};
+                \node [splitblock, below=0.75cm of raw] (split) {\textbf{Preprocessing \& K-Means}\\[-2pt]\tiny Fit solo su Train $\rightarrow$ \texttt{Orig} (30D) vs \texttt{+Clust} (32D)};
+
                 \node [modelblock, below=0.8cm of split] (lr) {\textbf{Reg. Logistica}\\[-2pt]\tiny Baseline Lineare};
-                \node [modelblock, left=0.3cm of lr] (cart) {\textbf{Decision Tree}\\[-2pt]\tiny Modello White-Box};
-                \node [modelblock, right=0.3cm of lr] (mlp) {\textbf{Rete Neurale}\\[-2pt]\tiny Modello Black-Box};
-                
+                \node [modelblock, left=0.25cm of lr] (cart) {\textbf{Decision Tree}\\[-2pt]\tiny CART Non Scalato};
+                \node [modelblock, right=0.25cm of lr] (mlp) {\textbf{MLP (64, 32)}\\[-2pt]\tiny L2 + Early Stopping};
+
                 \draw[->, thick, PrimaryNavy] (raw) -- (split);
                 \draw[->, thick, SecondaryBlue] (split.south) -- ++(0,-0.3) -| (cart.north);
                 \draw[->, thick, SecondaryBlue] (split.south) -- (lr.north);
                 \draw[->, thick, SecondaryBlue] (split.south) -- ++(0,-0.3) -| (mlp.north);
             \end{tikzpicture}
-            \captionof{figure}{Flusso di Addestramento dei Modelli.}
+            \captionof{figure}{Pipeline Priva di Leakage (Base vs +Cluster).}
         \end{column}
 
-        \begin{column}{0.54\textwidth}
-            \textbf{Problema, Approccio e Motivazione Modelli}
+        \begin{column}{0.52\textwidth}
+            \textbf{I Tre Classificatori Probabilistici}
             \vspace{1.5mm}
             \begin{itemize}
                 \small
                 \setlength{\itemsep}{2.5pt}
-                \item \textbf{Il Problema}: Serve bilanciare l'accuratezza predittiva con la trasparenza delle decisioni di business.
-                \item \textbf{L'Approccio}: Split stratificato 80/20 (preserva il 26.5\% di churn in train/test).
-                \item \textbf{Perché questi 3 Modelli (Soluzione)}:
-                \begin{itemize}
-                    \small
-                    \setlength{\itemsep}{1.5pt}
-                    \item \textbf{Reg. Logistica}: Baseline per testare la separabilità lineare iniziale dei dati.
-                    \item \textbf{Albero CART (White-Box)}: Scelto per estrarre regole aziendali trasparenti (\textit{SE... ALLORA...}).
-                    \item \textbf{Rete MLP (Black-Box)}: Scelta per catturare relazioni complesse e non lineari tra le 21 variabili.
-                \end{itemize}
+                \item \textbf{Regressione Logistica}: Baseline convessa basata su sigmoide e Log-Loss; testa la separabilità lineare dei dati.
+                \item \textbf{Albero CART (\texttt{max\_depth=5})}: Modello \textit{White-Box} addestrato su feature numeriche non scalate (invarianza alle trasformazioni monotone, soglie in mesi ed Euro).
+                \item \textbf{Rete Neurale MLP}: Strati $(64, 32)$ ReLU, output sigmoideo, ottimizzatore Adam, regolarizzazione L2 ($\alpha=0.1$) ed \textit{early stopping}.
             \end{itemize}
         \end{column}
     \end{columns}
 
-    \note{Nella Slide 7 presentiamo la pipeline supervisionata spiegando problema, approccio e soluzione. Il problema è che in azienda serve sia precisione predittiva che trasparenza nelle decisioni. L'approccio consiste nello split stratificato 80/20 per conservare il 26.5\% di churn. La soluzione è mettere a confronto tre famiglie di modelli: la Regressione Logistica come baseline lineare; l'Albero CART come modello White-Box trasparente per estrarre regole trasparenti; e la Rete Neurale MLP come modello Black-Box profondo per catturare schemi complessi.}
+    \note{La pipeline esegue lo split stratificato prima di ogni fitting. Confrontiamo tre classificatori probabilistici discriminativi sulle 30 feature base e sulle 32 feature arricchite con i cluster K-Means: la Regressione Logistica (baseline lineare), il Decision Tree CART con max_depth=5 su feature numeriche non scalate (perché gli alberi sono invarianti allo scaling e danno regole direttamente leggibili) e la rete MLP con regolarizzazione L2 (alpha=0.1) ed early stopping per prevenire l'overfitting.}
 \end{frame}
 
 % ==========================================
 % SLIDE 8: CONFRONTO PRESTAZIONI SPERIMENTALI
 % ==========================================
 \begin{frame}{Confronto delle Prestazioni Sperimentali}
-    % Banner di sintesi in alto
     \colorbox{PrimaryNavy!10}{\parbox{0.98\textwidth}{\centering
-        \small \color{PrimaryNavy} \textbf{Analisi Comparativa}: Impatto della feature di Clustering ($K=3$) sulle prestazioni dei modelli.
+        \small \color{PrimaryNavy} \textbf{Analisi Comparativa sul Test Set ($1.409$ clienti)}: Impatto del Clustering ($K=3$) e della Calibrazione di Soglia.
     }}
     \vspace{2mm}
 
     \begin{columns}[T]
-        % COLONNA DI SINISTRA: GRAFICO A BARRE VISIVO
         \begin{column}{0.48\textwidth}
             \centering
-            \includegraphics[width=\textwidth,height=0.55\textheight,keepaspectratio]{images/confronto_prestazioni_barre.png}
-            
+            \includegraphics[width=\textwidth,height=0.54\textheight,keepaspectratio]{images/confronto_prestazioni_barre.png}
+
             \vspace{1mm}
             \colorbox{LightBg}{\parbox{\textwidth}{
                 \centering \scriptsize \color{DarkText}
-                \textbf{Legenda}: \textcolor{SecondaryBlue}{\textbf{Blu}} = Base $|$ \textcolor{AccentHighlight}{\textbf{Rosso}} = +Cluster.\\
-                \textbf{Recall}: Scova i clienti in fuga $|$ \textbf{AUC-ROC}: Stabilità e separazione globale ($0.842$).
+                \textbf{Soglia standard $\tau=0.50$}: \textcolor{SecondaryBlue}{\textbf{Blu}} = Base $|$ \textcolor{AccentHighlight}{\textbf{Rosso}} = +Cluster.\\
+                \textbf{AUC-ROC}: Probabilità di ordinare correttamente un positivo sopra un negativo ($0.842$--$0.843$).
             }}
         \end{column}
 
-        % COLONNA DI DESTRA: TABELLA SINTETICA & CARD DEI RISULTATI
-        \begin{column}{0.49\textwidth}
-            % Tabella Chiara con Resizebox
+        \begin{column}{0.50\textwidth}
             \centering
             \resizebox{\columnwidth}{!}{
             \rowcolors{2}{PrimaryNavy!5}{white}
             \setlength{\tabcolsep}{4pt}
-            \renewcommand{\arraystretch}{1.25}
-            \begin{tabular}{l c c}
+            \renewcommand{\arraystretch}{1.22}
+            \begin{tabular}{l c c c}
                 \toprule
                 \rowcolor{PrimaryNavy}
-                \color{white}\textbf{Modello} & \color{white}\textbf{Recall (Base $\rightarrow$ +Cluster)} & \color{white}\textbf{Accuracy} \\
+                \color{white}\textbf{Modello} & \color{white}\textbf{Recall (Base $\rightarrow$ +Cl)} & \color{white}\textbf{F1} & \color{white}\textbf{AUC} \\
                 \midrule
-                \textbf{Reg. Logistica (Best)} & \textbf{55.9\%} $\rightarrow$ 54.8\% & \textbf{80.6\%} \\
-                \textbf{Decision Tree (CART)} & 54.0\% $\rightarrow$ 54.0\% & 79.4\% \\
-                \textbf{Rete Neurale (MLP)} & 42.8\% $\rightarrow$ \textbf{49.2\%} \textcolor{AccentHighlight}{\textbf{(+6.4\%)}} & 75.7\% \\
+                \textbf{Reg.\ Logistica} & \textbf{55.9\%} $\rightarrow$ 55.1\% & \textbf{0.605} & 0.842 \\
+                \textbf{Decision Tree} & 54.0\% $\rightarrow$ 54.0\% & 0.582 & 0.827 \\
+                \textbf{MLP (L2 + ES)} & 51.9\% $\rightarrow$ \textbf{52.1\%} & 0.585 & \textbf{0.843} \\
                 \bottomrule
             \end{tabular}
             }
-            
-            \vspace{2.5mm}
-            % Card 1: Top Model
+
+            \vspace{2mm}
             \colorbox{SecondaryBlue!12}{\parbox{\textwidth}{
                 \small \color{DarkText}
-                \textbf{1. Miglior Modello Globale: Reg. Logistica}
+                \textbf{1. Rasoio di Occam \& Impatto Clustering}
                 \begin{itemize}
                     \scriptsize
-                    \setlength{\itemsep}{1.5pt}
-                    \item Accuracy \textbf{80.6\%}, Recall \textbf{55.9\%}.
-                    \item Conferma l'elevata separabilità lineare dei dati Telco.
+                    \setlength{\itemsep}{1pt}
+                    \item LogReg (\textbf{80.6\% Acc}, F1 \textbf{0.605}) e MLP regolarizzata (\textbf{0.843 AUC}) si equivalgono: il problema ha forte struttura lineare.
+                    \item +Cluster migliora lievemente MLP (\textit{Acc} $80.0 \rightarrow 80.3\%$, \textit{AUC} $0.843$); su LogReg crea lieve ridondanza.
                 \end{itemize}
             }}
 
-            \vspace{2mm}
-            % Card 2: Cluster Impact
+            \vspace{1.5mm}
             \colorbox{AccentHighlight!10}{\parbox{\textwidth}{
                 \small \color{DarkText}
-                \textbf{2. Impatto Cluster: Rete Neurale (MLP)}
+                \textbf{2. Trade-off Soglia (Lezione 04)}
                 \begin{itemize}
                     \scriptsize
-                    \setlength{\itemsep}{1.5pt}
-                    \item Recall: \textbf{42.8\% $\rightarrow$ 49.2\% (+6.4\%)} di clienti salvati!
-                    \item Il cluster agisce come \textit{Feature Engineering non supervisionato}.
+                    \setlength{\itemsep}{1pt}
+                    \item Con $\tau=0.35$ (CV) o \texttt{class\_weight='balanced'} la Recall della LogReg sale a \textbf{70.3\%--78.3\%} (F1 \textbf{0.614}).
                 \end{itemize}
             }}
         \end{column}
     \end{columns}
 
-    \note{In questa slide confrontiamo le prestazioni dei tre modelli sia sul dataset base che con la feature di clustering. 
-    Da spiegare all'esame in 2 punti chiave:
-    1) La Regressione Logistica è il miglior modello globale (Accuracy 80.6\%, Recall 55.9\%): per il Rasoio di Occam, il modello lineare semplice evita l'overfitting a cui le reti neurali sono soggette su dati tabulari con forte separabilità lineare.
-    2) L'effetto del clustering è invece straordinario per la Rete Neurale MLP: la conoscenza a priori del cluster sblocca l'ottimizzatore Adam aumentandone la Recall dal 42.8\% al 49.2\% (+6.4\%).}
+    \note{Questa slide presenta i risultati reali sul Test Set. Con la regolarizzazione L2 ed early stopping l'MLP non va in overfitting e raggiunge AUC 0.842-0.843, migliorando lievemente col cluster su tutte le metriche; tuttavia la Regressione Logistica resta superiore in Accuracy (80.6\%), Recall (55.9\%) e F1 (0.605), confermando il Rasoio di Occam su dati lineari e mostrando che il valore principale del clustering è descrittivo. Infine, abbassando la soglia a 0.35 o usando class\_weight='balanced', la Recall sale fino al 78.3\%.}
 \end{frame}
 
 % ==========================================
 % SLIDE 9: SPIEGABILITÀ BUSINESS: ALBERO CART
 % ==========================================
 \begin{frame}{Spiegabilità Business: Regole dell'Albero Decisionale (CART)}
-    % Banner di sintesi in alto
     \colorbox{PrimaryNavy!10}{\parbox{0.98\textwidth}{\centering
-        \small \color{PrimaryNavy} \textbf{Modello White-Box}: Regole aziendali trasparenti estratte per guidare l'Agente CRM.
+        \small \color{PrimaryNavy} \textbf{Modello White-Box}: Albero non scalato sul Training Set ($N=5.634$) per estrarre regole in mesi ed Euro.
     }}
     \vspace{1.5mm}
 
     \begin{columns}[T]
-        % COLONNA DI SINISTRA: GUIDA IN 3 PASSI SEMPLICI (SFONDI NEUTRI)
-        \begin{column}{0.48\textwidth}
-            % PASSO 1: INDICE DI GINI
+        \begin{column}{0.46\textwidth}
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{PASSO 1: Come Ragiona l'Albero? (Gini)}
+                \small \color{PrimaryNavy}\textbf{PASSO 1: Indice di Gini ($K=2$ classi)}
                 \vspace{0.5mm}
                 \scriptsize \color{DarkText}\\
-                Usa l'\textbf{Indice di Gini} ($G \in [0, 0.5]$) per misurare la confusione:
+                $G_i = 1 - \sum_{k} p_{i,k}^2 \in [0, 0.5]$ misura l'impurità del nodo:
                 \begin{itemize}
                     \scriptsize
                     \setlength{\itemsep}{0.5pt}
-                    \item \textbf{$G = 0$ (Tinta Scura)}: Gruppo \textbf{puro al 100\%} (certezza max).
-                    \item \textbf{$G = 0.5$ (Tinta Chiara)}: Gruppo \textbf{confuso 50/50} (disordine).
+                    \item \textbf{$G = 0$ (Tinta Scura)}: Nodo puro al 100\%.
+                    \item \textbf{$G = 0.5$ (Tinta Chiara)}: Massima confusione (50/50).
                 \end{itemize}
             }}
 
             \vspace{1mm}
-            % PASSO 2: GUIDA AI COLORI DEI RETTANGOLI
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{PASSO 2: Come Leggere i Colori?}
+                \small \color{PrimaryNavy}\textbf{PASSO 2: Lettura dei Colori}
                 \begin{itemize}
                     \scriptsize
                     \setlength{\itemsep}{0.5pt}
-                    \item \textcolor{orange!90!black}{\textbf{Arancione}}: Prevalgono i clienti che \textbf{RESTANO}.
-                    \item \textcolor{SecondaryBlue}{\textbf{Blu}}: Prevalgono i clienti che \textbf{ABBANDONANO}.
-                    \item \textbf{Tinta Scura} = Sicuro al 100\% $|$ \textbf{Chiara} = Gruppo misto.
+                    \item \textcolor{orange!90!black}{\textbf{Arancione}}: Prevale la classe \textbf{Rimasto}.
+                    \item \textcolor{SecondaryBlue}{\textbf{Blu}}: Prevale la classe \textbf{Abbandono}.
                 \end{itemize}
             }}
 
             \vspace{1mm}
-            % PASSO 3: LA REGOLA DI BUSINESS SCOPERTA
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{PASSO 3: La Regola di Churn (Nodi Blu)}
+                \small \color{PrimaryNavy}\textbf{PASSO 3: Regola Critica Estratta}
                 \begin{itemize}
                     \scriptsize
                     \setlength{\itemsep}{0.5pt}
-                    \item \textbf{Regola}: Cliente recente ($\text{Tenure} \le 16.5 \text{ mesi}$) + \textbf{Fibra Ottica}.
-                    \item \textbf{Esito}: Finisce nei \textbf{nodi blu scuri} ($>70\%$ Churn!).
-                    \item \textbf{Azione}: Promo e assistenza sui contratti Fibra recenti.
+                    \item \textbf{Radice}: \texttt{tenure <= 16.5} mesi.
+                    \item \textbf{Percorso Blu}: Fibra Ottica (\textbf{68.3\% churn}) + \texttt{TotalCharges <= 120\,\texteuro} + no \texttt{TechSupport} $\rightarrow$ \textbf{85.5\% Churn} (165/193, $G=0.248$).
                 \end{itemize}
             }}
         \end{column}
 
-        % COLONNA DI DESTRA: GRAFICO DELL'ALBERO E DECODIFICA LEGGIBILE
-        \begin{column}{0.50\textwidth}
+        \begin{column}{0.52\textwidth}
             \centering
-            \includegraphics[width=\textwidth,height=0.48\textheight,keepaspectratio]{images/albero_decisionale.png}
-            
+            \includegraphics[width=\textwidth,height=0.50\textheight,keepaspectratio]{images/albero_decisionale.png}
+
             \vspace{1mm}
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
                 \centering \scriptsize \color{DarkText}
-                \textbf{Guida alle Voci del Nodo}:\\
-                • \textbf{tenure}: Mesi permanenza $|$ \textbf{Fiber optic}: Abbonamento Fibra\\
-                • \textbf{gini}: Impurità ($0=$ puro) $|$ \textbf{samples}: N° clienti\\
-                • \textbf{value}: [\textit{Rimasti}, \textit{Abbandoni}] $|$ \textbf{class}: Classe vincente
+                \textbf{Voci del Nodo}: \texttt{gini} (impurità) $|$ \texttt{samples} ($5.634$ in radice)\\
+                \texttt{value}: [\textit{Rimasti}, \textit{Abbandoni}] ($[4139, 1495]$) $|$ \texttt{class}: Classe maggioritaria
             }}
         \end{column}
     \end{columns}
 
-    \note{Spiegazione ultra-semplice della Slide 9 in 3 passi:
-    1) Passo 1 - L'Albero misura la confusione con il Gini: 0 significa 100\% certezza (tinta scura), 0.5 significa confusione 50/50 (tinta chiara).
-    2) Passo 2 - I colori dei rettangoli: Arancione = clienti che restano, Blu = clienti che abbandonano. Più è scuro, più il modello è sicuro.
-    3) Passo 3 - La regola estratta: Chi ha una tenure <= 16.5 mesi ed ha la Fibra Ottica finisce nei nodi blu scuri ad alto abbandono (>70\%), permettendo all'Agente IA di intervenire con promozioni mirate.}
+    \note{L'albero CART fornisce piena spiegabilità White-Box. Misura l'impurità con l'Indice di Gini tra 0 e 0.5 (essendo classificazione binaria K=2). Poiché lo abbiamo addestrato sui dati non standardizzati del Training Set (5.634 clienti), leggiamo soglie reali: il primo split è tenure <= 16.5 mesi; proseguendo su Fibra Ottica (68.3\% churn), spesa totale <= 120€ (primi mesi) e assenza di TechSupport si raggiunge un nodo blu scuro con l'85.5\% di abbandoni (165 su 193).}
 \end{frame}
 
 % ==========================================
 % SLIDE 10: DISCUSSIONE CRITICA & CONCLUSIONI
 % ==========================================
 \begin{frame}{Discussione Critica, Conclusioni \& Sviluppi Futuri}
-    % Banner di sintesi in alto (con spiegazione del concetto)
     \colorbox{PrimaryNavy!10}{\parbox{0.98\textwidth}{\centering
-        \small \color{PrimaryNavy} \textbf{Sintesi Finale}: L'IA non supervisionata scopre i pattern nei dati,\\[0.5mm]
-        mentre l'Albero CART li rende interpretabili ed espliciti per la guida del CRM.
+        \small \color{PrimaryNavy} \textbf{Sintesi Finale}: Segmentazione K-Means per la strategia CRM, Regressione Logistica per il ranking,\\[0.5mm]
+        Albero CART per la spiegabilità e calibrazione di soglia per la razionalità economica.
     }}
     \vspace{1.5mm}
 
     \begin{columns}[T]
-        % COLONNA DI SINISTRA: RISULTATI & RAZIONALITÀ ECONOMICA
         \begin{column}{0.48\textwidth}
-            % Riquadro 1: Perché ha funzionato?
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{1. Perché il Clustering Aiuta?}\\[1mm]
+                \small \color{PrimaryNavy}\textbf{1. Ruolo Reale del Clustering}\\[1mm]
                 \scriptsize \color{DarkText}
-                • \textbf{Mappa Spaziale}: Il cluster fornisce una rappresentazione pre-calcolata che aiuta la Rete Neurale (MLP).\\[0.5mm]
-                • \textbf{Risultato}: Guadagno netto del \textbf{+6.4\% in Recall}.
+                • \textbf{Valore Descrittivo}: Isola il segmento critico \textit{Volatili} (43.4\% churn).\\[0.5mm]
+                • \textbf{Feature Engineering}: Lieve beneficio su MLP (\textit{AUC} \textbf{0.843}); ridondante su modelli lineari/CART.
             }}
 
-            \vspace{1mm}
-            % Riquadro 2: Valore Economico & CAC
+            \vspace{1.5mm}
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{2. Impatto CRM \& Costo CAC}\\[1mm]
+                \small \color{PrimaryNavy}\textbf{2. Razionalità Economica \& Soglia CAC}\\[1mm]
                 \scriptsize \color{DarkText}
-                • \textbf{Cos'è il CAC}: \textbf{Customer Acquisition Cost} (costo per acquisire un nuovo cliente).\\[0.5mm]
-                • \textbf{Priorità Recall}: Trattenere un cliente costa molto meno del suo CAC.
+                • \textbf{Asimmetria dei Costi}: Perdere un cliente (CAC) costa più di un'offerta di \textit{retention}.\\[0.5mm]
+                • \textbf{Calibrazione}: Con $\tau=0.35$ o \texttt{balanced} la Recall sale da \textbf{55.9\%} fino a \textbf{78.3\%}.
             }}
         \end{column}
 
-        % COLONNA DI DESTRA: IL TRIO DEI MODELLI & SVILUPPI FUTURI
         \begin{column}{0.48\textwidth}
-            % Riquadro 3: Sintesi Modelli
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
-                \small \color{PrimaryNavy}\textbf{3. Il Ruolo dei 3 Modelli}\\[1mm]
+                \small \color{PrimaryNavy}\textbf{3. Confronto Modelli \& Limiti}\\[1mm]
                 \scriptsize \color{DarkText}
-                • \textbf{Regr. Logistica}: Miglior modello globale.\\[0.5mm]
-                • \textbf{Rete Neurale}: Massima spinta dal clustering.\\[0.5mm]
-                • \textbf{Albero CART}: Massima trasparenza (White-Box).
+                • \textbf{LogReg}: Miglior compromesso (Rasoio di Occam).\\[0.5mm]
+                • \textbf{Limiti}: Cluster sferici K-Means, dataset statico, requisito di conformità \textbf{GDPR} e \textit{fairness}.
             }}
 
-            \vspace{1mm}
-            % Riquadro 4: Prossimi Passi (Sviluppi Futuri)
+            \vspace{1.5mm}
             \colorbox{PrimaryNavy!7}{\parbox{\textwidth}{
                 \small \color{PrimaryNavy}\textbf{4. Sviluppi Futuri (Next Steps)}\\[1mm]
                 \scriptsize \color{DarkText}
-                • \textbf{SMOTE}: Dati sintetici per bilanciare la classe Churn.\\[0.5mm]
-                • \textbf{Random Forest}: 100 alberi in parallelo (voto a maggioranza).\\[0.5mm]
-                • \textbf{XGBoost}: Alberi in sequenza (ognuno corregge l'errore del precedente).\\[0.5mm]
-                • \textbf{Cost-Sensitive}: Loss pesata in Euro (€) su costo CAC.
+                • \textbf{Ensemble}: \textit{Random Forest} e \textit{XGBoost} per interazioni non lineari.\\[0.5mm]
+                • \textbf{Soft Clustering}: Distanze dai centroidi via \texttt{transform()}.\\[0.5mm]
+                • \textbf{SMOTE \& Cost-Sensitive}: Loss pesata in Euro sul CAC reale.
             }}
         \end{column}
     \end{columns}
 
-    \vspace{1.5mm}
-    % Banner di ringraziamento finale
+    \vspace{1.8mm}
     \colorbox{PrimaryNavy}{\parbox{0.98\textwidth}{\centering
         \small \color{white} \textbf{Grazie per l'Attenzione!}
     }}
 
-    \note{Discorso orale finale per la Slide 10:
-    Per concludere la presentazione, ricapitoliamo 4 punti fondamentali:
-    1) L'integrazione del clustering ha dato nuova linfa alla Rete Neurale, aumentando la Recall del +6.4\% grazie alle informazioni spaziali pre-calcolate.
-    2) CAC sta per Customer Acquisition Cost (Costo di Acquisizione Cliente): in ambito Telco la Recall è prioritaria perché fidelizzare costa molto meno di un nuovo CAC.
-    3) Abbiamo trovato un equilibrio perfetto: la Regr. Logistica offre le migliori prestazioni generali, la Rete Neurale beneficia maggiormente del clustering, e l'Albero CART offre la trasparenza per spiegare le regole.
-    4) Sviluppi Futuri: SMOTE per dati sintetici di churn; Random Forest (100 alberi in parallelo a maggioranza); XGBoost (alberi in sequenza che si correggono a vicenda); Cost-Sensitive Learning (loss in Euro su CAC).
-    Grazie per l'attenzione! Sono aperto alle vostre domande.}
+    \note{Per concludere: 1) Il K-Means ha soprattutto valore strategico/descrittivo nel segmentare i Volatili (43.4\% churn) e dà solo un lieve incremento di AUC all'MLP (0.843). 2) La razionalità economica (CAC superiore al costo di retention) giustifica la calibrazione della soglia decisionale fino al 78.3\% di Recall. 3) La Regressione Logistica vince per il Rasoio di Occam, mentre CART spiega le regole chiave. 4) Sviluppi futuri: Random Forest, XGBoost, soft clustering con transform(), SMOTE in CV e cost-sensitive learning nel rispetto di GDPR e fairness.}
 \end{frame}
 
 \end{document}

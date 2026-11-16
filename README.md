@@ -13,8 +13,12 @@ IA2026/
 ├── notebooks/
 │   └── churn_analysis.ipynb       # Jupyter Notebook con l'intera pipeline eseguita
 │
+├── lezioni/                       # Slide ufficiali del corso e compendio teorico
+│   ├── README.md                  # Compendio dettagliato delle 8 lezioni
+│   └── *.pdf                      # Slide delle lezioni 01-08
+│
 ├── relazione/
-│   ├── relaztexione.pdf              # Relazione finale
+│   ├── relazione.pdf              # Relazione finale
 │   └── presentazione.pdf          # Slide d'esame
 │
 ├── documenti_progetto/             # PDF con le specifiche e le linee guida del corso

@@ -1,0 +1,222 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{babel}
+\babelprovide[import,main]{italian}
+\usepackage[a4paper, left=18mm, right=18mm, top=20mm, bottom=18mm, headheight=15pt]{geometry}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs, tabularx}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{PrimaryNavy}{RGB}{20, 45, 85}
+\definecolor{SecondaryBlue}{RGB}{45, 95, 150}
+\definecolor{LightBg}{RGB}{244, 246, 250}
+\definecolor{CueBg}{RGB}{248, 244, 236}
+\definecolor{AccentRed}{RGB}{170, 40, 40}
+
+\titleformat{\section}{\large\bfseries\color{PrimaryNavy}}{}{0em}{}[\vspace{-2pt}\color{SecondaryBlue}\hrule height 1pt]
+\titleformat{\subsection}{\normalsize\bfseries\color{SecondaryBlue}}{}{0em}{}
+\titlespacing*{\section}{0pt}{10pt plus 2pt minus 2pt}{4pt}
+\titlespacing*{\subsection}{0pt}{7pt plus 1pt minus 1pt}{2pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textbf{Foglio 1 --- Discorso Completo (Slide 1--10)}}
+\fancyhead[R]{\footnotesize M. Mantineo (541924) -- Laboratorio di IA}
+\fancyfoot[C]{\footnotesize Pagina \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\emergencystretch 1.5em
+
+\newcommand{\cue}[1]{%
+  \par\vspace{2pt}\noindent\colorbox{CueBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{\footnotesize\textit{\color{PrimaryNavy}\textbf{Regia / Indicazione visiva:} #1}}}\par\vspace{3pt}%
+}
+\newcommand{\transition}[1]{%
+  \par\vspace{2pt}\noindent\colorbox{LightBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{\small\textbf{\color{SecondaryBlue}Transizione:} \textit{``#1''}}}\par\vspace{4pt}%
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \bfseries \color{PrimaryNavy} Foglio 1 --- Discorso Completo Parola per Parola}\\[4pt]
+    {\large Dalla Slide 1 alla Slide 10 (\texttt{relazione/presentazione.pdf})}\\[3pt]
+    {\small \textbf{Progetto:} Churn Prediction e Segmentazione Comportamentale (IBM Telco Customer Churn)\\
+    \textbf{Studente:} Massimo Mantineo (Matricola: 541924) \quad|\quad \textbf{Corso:} Laboratorio di IA -- Prof.\ G.\ Fiumara}
+\end{center}
+
+\vspace{2mm}
+\noindent\colorbox{LightBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{
+\small\textbf{Consigli pratici prima di iniziare:} Durata consigliata \textbf{10--12 minuti} (circa 1 minuto a slide, 1:30 sulla Slide 8). Non leggere la slide come una lista: parla in modo discorsivo indicando grafici e tabelle nei punti segnalati e fai 1--2 secondi di pausa a ogni cambio slide.
+}}
+
+\vspace{2mm}
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{c l c >{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{PrimaryNavy}
+\color{white}\textbf{Slide} & \color{white}\textbf{Titolo} & \color{white}\textbf{Tempo} & \color{white}\textbf{Messaggio chiave da lasciare al docente} \\
+\midrule
+1 & Copertina & 0:30 & Presentazione chiara del progetto (non supervisionato + supervisionato). \\
+2 & IA \& Agente PEAS & 1:15 & Agire Razionalmente (no onniscienza), agente utility-based e proprietà PEAS. \\
+3 & Task ML \& Probabilità & 1:10 & Batch/Model-Based, Mitchell $\langle T,E,P\rangle$ vs PEAS, approccio discriminativo. \\
+4 & Dataset \& Preprocessing & 1:15 & Zero leakage, pulizia \texttt{TotalCharges}, 30 feature, sbilanciamento e boxplot. \\
+5 & Clustering K-Means & 1:15 & Scelta K-Means (\texttt{.predict()}), Elbow + Silhouette $\rightarrow$ $K=3$ ($s=0.282$). \\
+6 & PCA \& Profili Segmenti & 1:10 & 3 profili (Volatili 43,4\% confermati sul Test) e significato $PC_1$, $PC_2$ (57,9\%). \\
+7 & Pipeline Supervisionata & 1:10 & Pipeline pulita 30D vs 32D, LogReg, CART non scalato, MLP (L2 + Early Stop). \\
+8 & Confronto Prestazioni & 1:30 & Test Set reale, Rasoio di Occam, impatto cluster, soglia $\tau=0.35$/\texttt{balanced}. \\
+9 & Spiegabilità CART & 1:15 & Gini in $[0, 0.5]$, lettura White-Box in mesi/Euro, regola Fibra (85,5\% churn). \\
+10 & Conclusioni \& Sviluppi & 1:10 & Sintesi matura: limiti, GDPR/fairness, ensemble, soft clustering, SMOTE, CAC. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section*{Slide 1 --- Titolo e Copertina}
+\cue{Guarda il professore con tono sicuro e naturale.}
+\noindent <<Buongiorno professore, sono Massimo Mantineo e oggi presento il mio progetto di Laboratorio di Intelligenza Artificiale, intitolato \textbf{``Churn Prediction e Segmentazione Comportamentale''}, applicato al settore delle telecomunicazioni sul dataset pubblico \textbf{IBM Telco Customer Churn}.
+
+L'obiettivo del lavoro è progettare una pipeline completa e rigorosa che integri le due anime del Machine Learning affrontate durante il corso: da un lato l'\textbf{apprendimento non supervisionato}, per scoprire segmenti comportamentali latenti nella base clienti, e dall'altro l'\textbf{apprendimento supervisionato}, per stimare la probabilità di abbandono --- il cosiddetto \textit{churn} --- e verificare criticamente se e quanto l'informazione di clustering migliori davvero le prestazioni predittive.>>
+\transition{Prima di entrare nei dati e nei modelli, vorrei inquadrare il problema dal punto di vista teorico dell'Intelligenza Artificiale, partendo dai fondamenti di Russell e Norvig visti nelle prime due lezioni.}
+
+\section*{Slide 2 --- Inquadramento Teorico: Definizione di IA e Agente PEAS}
+\cue{Indica prima lo schema a 4 quadranti sulla sinistra, poi passa alla colonna destra e al ciclo PEAS in basso.}
+\noindent <<Secondo l'impostazione di Russell e Norvig, le definizioni storiche di Intelligenza Artificiale si distribuiscono lungo due assi: \textbf{Pensiero contro Comportamento} e \textbf{aderenza al modello Umano contro Razionalità ideale}. Ne nascono quattro approcci: pensare umanamente, cioè la modellazione cognitiva; pensare razionalmente, basato sulle leggi formali della logica; agire umanamente, legato al Test di Turing; e infine \textbf{agire razionalmente}, evidenziato in basso a destra nello schema.
+
+Il nostro progetto si colloca proprio nel quadrante dell'\textbf{Agire Razionalmente}. Non vogliamo imitare il ragionamento di un operatore umano, bensì costruire un \textbf{agente con apprendimento basato su utilità} (\textit{utility-based learning agent}): un sistema capace di scegliere azioni che massimizzino il valore atteso della misura di prestazione $P$ in condizioni di incertezza. Qui è fondamentale distinguere \textbf{razionalità} e \textbf{onniscienza}: l'agente non può prevedere con certezza assoluta il futuro di ogni cliente, ma agisce in modo razionale utilizzando una funzione di utilità per bilanciare obiettivi conflittuali, ossia evitare l'abbandono contenendo al tempo stesso il costo delle offerte promozionali.
+
+Formalizzando il sistema CRM tramite il modello \textbf{PEAS}:
+\begin{itemize}
+    \item la \textbf{Performance ($P$)} è un criterio oggettivo esterno definito sull'ambiente aziendale: massimizzare il valore netto di fidelizzazione, riducendo il churn senza sprecare budget rispetto al \textbf{CAC}, cioè il \textit{Customer Acquisition Cost}, il costo di acquisizione di un nuovo cliente;
+    \item l'\textbf{Environment ($E$)} è l'ecosistema operativo della clientela Telco. Secondo la tassonomia di Russell e Norvig, è un ambiente \textbf{parzialmente osservabile} --- perché i log non vedono le offerte della concorrenza o l'insoddisfazione latente del cliente --- \textbf{nondeterministico} e quindi modellato \textbf{stocasticamente} tramite probabilità, \textbf{multi-agente}, \textbf{continuo} su variabili come tempo e importi di spesa, e \textbf{sconosciuto} a priori nelle sue leggi, motivo per cui lo apprendiamo dai dati. È inoltre cruciale distinguere il piano operativo da quello sperimentale: nel ciclo reale delle campagne di retention l'ambiente è \textbf{sequenziale e dinamico}, perché un'offerta oggi influenza il comportamento futuro del cliente; nella singola predizione \textit{batch} su uno snapshot del dataset, invece, viene trattato come \textbf{episodico e statico};
+    \item gli \textbf{Actuators ($A$)} sono le leve di intervento del CRM: offerte mirate, sconti personalizzati e attivazione prioritaria del supporto tecnico;
+    \item i \textbf{Sensors ($S$)} sono i dati estratti dai log aziendali: fatturazione, durata contrattuale o \textit{tenure}, tipologia di contratto e servizi attivi.
+\end{itemize}
+Come riassume lo schema in basso a destra, i sensori alimentano l'agente razionale --- che combina i modelli di Machine Learning con la logica di utilità --- e gli attuatori agiscono sull'ambiente, il cui esito viene poi valutato esternamente tramite $P$.>>
+\transition{A questo punto la domanda naturale è: come fa concretamente l'agente a tradurre le percezioni dei sensori in decisioni efficaci sugli attuatori? Lo fa apprendendo dai dati storici attraverso due task di Machine Learning integrati.}
+
+\section*{Slide 3 --- Formulazione dei Task ML e Approccio Probabilistico}
+\cue{Indica il banner in alto, poi la colonna sinistra, la colonna destra e infine la nota teorica in basso.}
+\noindent <<Passando dal PEAS al Machine Learning della Lezione 03, progettiamo un sistema di tipo \textbf{Batch}, addestrato offline sullo storico disponibile, e \textbf{Model-Based}, perché costruisce modelli matematici predittivi anziché limitarsi a memorizzare le istanze. Il progetto integra due task complementari:
+
+Il primo è il \textbf{Task Supervisionato}, che formalizziamo con la definizione classica $\langle T, E, P \rangle$ di Tom Mitchell: il \textbf{Task ($T$)} è una classificazione binaria probabilistica sulla variabile target \texttt{Churn}; l'\textbf{Experience ($E$)} è costituita dalle \textbf{5.634 istanze etichettate} del Training Set, estratte dai 7.043 clienti complessivi; la \textbf{Performance ($P$)} è valutata con metriche robuste allo sbilanciamento: \textbf{Recall}, \textbf{Precision}, \textbf{F1-Score} e \textbf{AUC-ROC}.
+
+Il secondo è il \textbf{Task Non Supervisionato}, di natura esplorativa: applichiamo il clustering \textbf{K-Means} sulle \textbf{30 feature} del cliente escludendo completamente l'etichetta \texttt{Churn}, valutando i gruppi con \textbf{Inerzia WCSS} e \textbf{Silhouette Score} e ispezionandoli in 2D tramite \textbf{PCA}, per poi verificare sperimentalmente se l'etichetta di cluster come feature aiuti i classificatori supervisionati.
+
+Sulla destra confrontiamo programmazione tradizionale e Machine Learning: scrivere a mano regole booleane \textit{if-then} su 30 variabili interagenti porta a sistemi fragili, difficili da mantenere al variare delle tariffe di mercato e incapaci di graduare il rischio. Adottiamo invece un approccio \textbf{probabilistico discriminativo}: modelli come la Regressione Logistica, l'albero CART e la rete neurale MLP stimano direttamente la probabilità a posteriori $P(\text{Churn}=1 \mid \mathbf{x}) \in [0, 1]$. Disporre di uno score continuo ci consente di fare \textbf{ranking} dei clienti per urgenza e, soprattutto, di tarare la soglia decisionale in funzione del CAC.
+
+Sottolineo infine la nota teorica in basso: la \textbf{$P$ del PEAS} misura l'impatto economico esterno nell'ambiente aziendale, mentre la \textbf{$P$ di Mitchell} misura la qualità predittiva del modello sul proprio task.>>
+\transition{Definito il quadro metodologico, passiamo ora ai dati reali: vediamo la struttura del dataset IBM Telco, le scelte di pulizia, la prevenzione del data leakage e le prime evidenze esplorative.}
+
+\section*{Slide 4 --- Dataset Telco: Preprocessing e Sbilanciamento del Target}
+\cue{Indica il banner in alto, scorri i 4 punti a sinistra e poi indica i due boxplot sulla destra.}
+\noindent <<Lavoriamo sul dataset \textbf{IBM Telco Customer Churn}, composto da \textbf{7.043 clienti} e \textbf{21 colonne} originali: 19 feature utili --- 3 numeriche (\texttt{tenure}, \texttt{MonthlyCharges}, \texttt{TotalCharges}) e 16 categoriali --- più \texttt{customerID}, che rimuoviamo subito perché identificativo univoco privo di potere generalizzante, e la variabile target \texttt{Churn}, codificata in binario \texttt{1} per abbandono e \texttt{0} per permanenza.
+
+Nella preparazione abbiamo applicato quattro principi di rigore:
+\begin{enumerate}
+    \item \textbf{Data Cleaning:} ispezionando i tipi di dato, \texttt{TotalCharges} risultava importata come stringa a causa di \textbf{11 righe con uno spazio vuoto}. Verificando quei record abbiamo constatato che appartengono tutti a clienti nuovi con \textbf{\texttt{tenure = 0}}, che non hanno ancora maturato la prima fattura. Imputarli a \textbf{0,0\,\texteuro} e convertire la colonna in \texttt{float64} è quindi la scelta semanticamente esatta: non perdiamo dati e non introduciamo distorsioni come avverrebbe con media o mediana.
+    \item \textbf{Zero Data Leakage:} per evitare qualsiasi contaminazione tra addestramento e valutazione, eseguiamo lo \textbf{split stratificato 80/20} --- ottenendo 5.634 istanze di Training e 1.409 di Test, entrambe con esattamente il 26,54\% di Churn --- \textbf{prima} di qualsiasi trasformazione parametrica (scaling, encoding, clustering e PCA).
+    \item \textbf{Standardizzazione e Encoding:} addestriamo \texttt{StandardScaler} (Z-Score a media 0 e deviazione standard 1) sulle 3 numeriche e \texttt{OneHotEncoder} con \textbf{\texttt{drop='first'}} sulle 16 categoriali esclusivamente sul Training Set, evitando la trappola delle variabili dummy e ottenendo \textbf{30 feature} finali.
+    \item \textbf{Sbilanciamento del target:} solo il \textbf{26,54\%} dei clienti abbandona, contro il 73,46\% che resta. Come visto nella Lezione 04, un classificatore \textit{dummy} che predicesse sempre ``Rimasto'' otterrebbe il \textbf{73,46\% di Accuracy} ma con \textbf{Recall = 0\%}, dimostrando perché l'Accuracy da sola è insufficiente.
+\end{enumerate}
+Osservando i due boxplot sulla destra --- dove il verde indica i clienti rimasti, il rosso gli abbandoni e la linea nera la mediana --- emergono subito due segnali fortissimi: chi abbandona ha una \textbf{permanenza mediana di soli 10,0 mesi} contro \textbf{38,0 mesi} per chi resta, e paga una \textbf{spesa mensile mediana di 79,65\,\texteuro} contro \textbf{64,43\,\texteuro}. Il rischio di churn si concentra chiaramente sui \textbf{nuovi clienti ad alta spesa}.>>
+\transition{Sulle 30 feature standardizzate del solo Training Set, passiamo ora alla prima grande fase sperimentale: l'apprendimento non supervisionato tramite clustering K-Means.}
+
+\section*{Slide 5 --- Apprendimento Non Supervisionato: Clustering K-Means}
+\cue{Indica prima i punti a sinistra, poi segui con il dito le due curve (blu e arancione) sul grafico a destra.}
+\noindent <<Il nostro obiettivo nella fase non supervisionata è segmentare i \textbf{5.634 clienti del Training Set}, nello spazio standardizzato a 30 feature, \textbf{senza mai utilizzare l'etichetta \texttt{Churn}}, per scoprire raggruppamenti puramente comportamentali e contrattuali.
+
+Tra gli algoritmi della Lezione 06 abbiamo scelto \textbf{K-Means} (con inizializzazione \textit{K-Means++}) invece di DBSCAN per tre ragioni: scalabilità lineare, produzione di centroidi medi immediatamente interpretabili in termini di profilo cliente per il CRM, e soprattutto la disponibilità in \textit{scikit-learn} del metodo induttivo \textbf{\texttt{.predict()}}, che permette di assegnare i clienti del Test Set ai centroidi appresi sul Training Set \textbf{senza ri-addestrare e senza data leakage} --- cosa che DBSCAN non supporta nativamente.
+
+Per scegliere il numero ottimale di cluster abbiamo valutato $K$ da 2 a 6 combinando le due metriche nel grafico a doppio asse sulla destra:
+\begin{itemize}
+    \item la \textbf{curva blu} sull'asse sinistro è l'\textbf{Inerzia WCSS}, cioè la somma delle distanze quadratiche dai centroidi: cala monotonicamente con $K$, quindi cerchiamo il punto di gomito (\textit{elbow});
+    \item la \textbf{curva arancione tratteggiata} sull'asse destro è il \textbf{Silhouette Score}, che varia in $[-1, +1]$ bilanciando coesione intra-cluster $a_i$ e separazione dal cluster vicino $b_i$.
+\end{itemize}
+Confrontando i valori: per \textbf{$K=2$} la Silhouette è leggermente superiore (\texttt{0,293}), ma divide banalmente solo chi ha internet da chi non ce l'ha; per \textbf{$K=3$} osserviamo il \textbf{gomito netto dell'Inerzia} (da \texttt{33.485} a \texttt{24.642}) con Silhouette pressoché invariata a \textbf{\texttt{0,282}} --- un valore fisiologico e moderato in uno spazio 30D con molte feature binarie one-hot, ma sufficiente a isolare macro-segmenti reali; da \textbf{$K \ge 4$} la Silhouette crolla rapidamente (\texttt{0,230} fino a \texttt{0,185}) per frammentazione (\textit{over-clustering}). La scelta più solida è quindi \textbf{$K = 3$}.>>
+\transition{Vediamo ora che volto hanno questi tre segmenti dal punto di vista aziendale e come si dispongono geometricamente proiettati in due dimensioni tramite PCA.}
+
+\section*{Slide 6 --- Segmentazione PCA e Profilo dei Segmenti}
+\cue{Leggi le tre righe della tabella in alto, poi indica le tre nuvole di punti (verde, blu, arancione) nello scatter plot PCA.}
+\noindent <<Dopo aver addestrato K-Means con $K=3$ sul Training Set, abbiamo riordinato deterministicamente gli ID dei cluster per tasso di churn decrescente così da facilitarne la lettura. Ricordo che l'etichetta \texttt{Churn} è stata usata \textit{solo a posteriori} per profilare i gruppi, mai per crearli.
+
+I tre segmenti emersi sono nettamente differenziati:
+\begin{itemize}
+    \item il \textbf{Cluster 0 (Volatili)} raccoglie 2.557 clienti con anzianità breve (media \textbf{15,2 mesi}), spesa mensile medio-alta (\textbf{67,87\,\texteuro}, totale 1.005,53\,\texteuro) e un tasso di abbandono critico del \textbf{43,4\%}; applicando \texttt{.predict()} sul Test Set questo stesso segmento mantiene un churn quasi identico del \textbf{43,3\%}, prova che la segmentazione generalizza in modo molto stabile;
+    \item il \textbf{Cluster 1 (Fedeli High-Value)} conta 1.863 clienti storici con permanenza media di \textbf{57,7 mesi} e la spesa mensile più alta (\textbf{89,44\,\texteuro}, oltre 5.145\,\texteuro{} totali), ma con un churn contenuto al \textbf{15,9\%};
+    \item il \textbf{Cluster 2 (Low-Cost)} comprende 1.214 clienti con anzianità intermedia (\textbf{30,2 mesi}) e spesa minima (\textbf{21,12\,\texteuro/mese}, tipicamente sola telefonia senza internet), con appena il \textbf{7,2\%} di abbandoni.
+\end{itemize}
+Per visualizzare i gruppi in 2D abbiamo applicato la \textbf{Principal Component Analysis (PCA)} sui dati centrati a 30 dimensioni. Le prime due componenti spiegano complessivamente il \textbf{57,9\% della varianza totale}: l'asse orizzontale \textbf{$PC_1$ (39,4\%)} riflette \textbf{Spesa e Volume Servizi} --- infatti la nuvola verde dei \textit{Low-Cost} è nettamente separata a sinistra rispetto ai profili ad alta spesa a destra --- mentre l'asse verticale \textbf{$PC_2$ (18,5\%)} riflette \textbf{Anzianità e Stabilità Contrattuale}, separando i \textit{Volatili} blu in basso dai \textit{Fedeli High-Value} arancioni in alto a destra. Sottolineo che la PCA è stata usata solo a scopo esplorativo e visivo, non per comprimere gli input dei classificatori.>>
+\transition{Ottenuti i tre segmenti, possiamo ora rispondere alla domanda sperimentale centrale del progetto: come si comportano diverse famiglie di classificatori supervisionati e che effetto ha aggiungere il cluster come feature?}
+
+\section*{Slide 7 --- Pipeline Sperimentale Supervisionata}
+\cue{Indica il diagramma di flusso a sinistra dall'alto verso il basso, poi presenta i tre classificatori sulla destra.}
+\noindent <<Questa slide riassume la nostra pipeline sperimentale supervisionata, progettata per essere totalmente priva di \textit{data leakage}. Come mostra lo schema a sinistra, si parte sempre dallo \textbf{split stratificato 80/20} (5.634 Train e 1.409 Test). Solo sul Training Set vengono fittati preprocessing e K-Means, generando due configurazioni parallele da confrontare a parità esatta di condizioni: la configurazione \textbf{Base (\texttt{Orig}, 30D)} e la configurazione \textbf{Arricchita (\texttt{+Clust}, 32D)}, ottenuta aggiungendo la codifica One-Hot con \texttt{drop='first'} del cluster assegnato (\texttt{Cluster\_1} e \texttt{Cluster\_2}, con il Cluster 0 come riferimento).
+
+Su entrambe le configurazioni cloniamo e confrontiamo tre classificatori probabilistici discriminativi di complessità crescente:
+\begin{enumerate}
+    \item la \textbf{Regressione Logistica}, baseline lineare convessa basata su sigmoide e Log-Loss, utile per testare quanta parte del problema sia già linearmente separabile;
+    \item l'\textbf{Albero Decisionale CART} regolarizzato a \textbf{\texttt{max\_depth=5}}, modello \textbf{White-Box}. Seguendo la Lezione 05, lo abbiamo addestrato su una pipeline dedicata con le \textbf{feature numeriche non scalate}: essendo gli alberi invarianti alle trasformazioni monotone, le prestazioni restano identiche ma le soglie sono direttamente leggibili in mesi ed Euro;
+    \item la \textbf{Rete Neurale MLP} con due strati nascosti \textbf{(64, 32)} ad attivazione \textbf{ReLU}, output sigmoideo e ottimizzatore \textbf{Adam}. Seguendo le Lezioni 07 e 08, per scongiurare l'overfitting tipico su dati tabellari abbiamo inserito \textbf{regolarizzazione L2 ($\alpha=0.1$)} ed \textbf{early stopping} su un 10\% di validazione interna.>>
+\end{enumerate}
+\transition{Passiamo ora ai numeri: vediamo come si sono comportati questi tre modelli sul Test Set e quale impatto ha avuto l'aggiunta del cluster.}
+
+\section*{Slide 8 --- Confronto delle Prestazioni Sperimentali}
+\cue{Indica il grafico a barre a sinistra (blu Base vs rosso +Cluster), poi la tabella in alto a destra e i due box conclusivi in basso.}
+\noindent <<Qui riportiamo i risultati reali sul \textbf{Test Set} di 1.409 clienti (374 in abbandono), confrontando Base (blu) e \texttt{+Cluster} (rosso) alla soglia standard $\tau=0.50$. Emerge un quadro sperimentale molto istruttivo:
+\begin{itemize}
+    \item la \textbf{Regressione Logistica} in configurazione Base ottiene le prestazioni migliori alla soglia standard: \textbf{80,6\% di Accuracy}, \textbf{55,9\% di Recall}, \textbf{F1-Score di 0,605} e \textbf{AUC-ROC di 0,842}. Con \texttt{+Cluster} registra un lieve calo (Recall 55,1\%, F1 0,598) per ridondanza e collinearità lineare, dato che i cluster derivano dalle stesse variabili di ingresso;
+    \item il \textbf{Decision Tree CART} resta \textbf{perfettamente invariato} (54,0\% Recall, 0,582 F1, 0,827 AUC), poiché gli split ottimali su \texttt{tenure} e Fibra Ottica dominano già l'etichetta discreta del cluster;
+    \item la \textbf{Rete Neurale MLP}, grazie a L2 ed \textit{early stopping} --- che arresta il training alla 17\textsuperscript{a}--19\textsuperscript{a} epoca anziché andare in overfitting su 500 epoche --- raggiunge AUC \texttt{0,842} in Base ed è l'\textbf{unico modello a migliorare su tutte le metriche con \texttt{+Cluster}} (Accuracy da 80,0\% a 80,3\%, Recall da 51,9\% a 52,1\%, F1 da 0,579 a 0,585), toccando la migliore \textbf{AUC-ROC assoluta di 0,843}.
+\end{itemize}
+Da qui traiamo due conclusioni chiave. Primo, il \textbf{Rasoio di Occam}: LogReg (\texttt{0,842} AUC) e MLP (\texttt{0,843} AUC) praticamente si equivalgono nel ranking globale, segno che il problema ha forte struttura lineare; per parsimonia, semplicità e manutenibilità vince la \textbf{Regressione Logistica}, mentre il valore principale del clustering è descrittivo. Secondo, il \textbf{Trade-off di Soglia (Lezione 04)}: con $\tau=0.50$ sfuggono 165 clienti su 374. Calibrando la soglia a \textbf{$\tau=0.35$} in 5-fold CV sul solo Training Set (zero leakage) la Recall sale al \textbf{70,3\%} e persino l'F1 sale a \textbf{0,614}; usando \textbf{\texttt{class\_weight='balanced'}}, la Recall raggiunge il \textbf{78,3\%} (293 clienti intercettati su 374), allineandosi all'asimmetria economica del CAC.>>
+\transition{Se la Regressione Logistica è il nostro motore preferito per il ranking probabilistico, il Decision Tree CART ci offre qualcosa di insostituibile per il management aziendale: la piena spiegabilità White-Box.}
+
+\section*{Slide 9 --- Spiegabilità Business: Regole dell'Albero Decisionale (CART)}
+\cue{Indica prima i box 1 e 2 in basso, poi traccia con il dito il percorso critico dalla radice fino al nodo blu scuro a sinistra.}
+\noindent <<In questa slide osserviamo i primi tre livelli dell'albero CART addestrato sui \textbf{5.634 clienti del Training Set non scalato}.
+
+Per leggerlo ricordiamo l'\textbf{Indice di Gini} nella classificazione binaria ($K=2$): $G_i = 1 - \sum_k p_{i,k}^2 \in [0, 0.5]$, dove \textbf{0} indica un nodo puro al 100\% (colore saturo) e \textbf{0,5} la massima confusione 50/50 (colore chiaro). I nodi \textbf{arancioni} indicano prevalenza di rimasti, quelli \textbf{blu} prevalenza di abbandoni; nella radice \texttt{value=[4139, 1495]} con \texttt{gini=0,39}.
+
+Grazie alle feature non scalate leggiamo subito soglie reali e azionabili:
+\begin{itemize}
+    \item il \textbf{primo split alla radice} è \textbf{\texttt{tenure <= 16.5} mesi}: i primi 16 mesi e mezzo concentrano la quasi totalità del rischio;
+    \item seguendo il ramo sinistro (\texttt{tenure <= 16.5}) e passando ai clienti in \textbf{Fibra Ottica} (\texttt{InternetService\_Fiber optic > 0.5}), il nodo diventa blu con il \textbf{68,3\% di churn} (593 su 868);
+    \item scendendo ancora sul ramo con spesa cumulata \textbf{\texttt{TotalCharges <= 120\,\texteuro}} --- cioè clienti in Fibra Ottica nei primissimi uno o due mesi dall'attivazione --- raggiungiamo il nodo blu scuro con l'\textbf{85,5\% di abbandoni} (\textbf{165 su 193}, $G=0,248$), che poi effettua l'ulteriore taglio su \textbf{\texttt{TechSupport\_Yes <= 0.5}}, confermando che al livello successivo l'assenza di supporto tecnico aggrava ulteriormente il churn fino all'87,6\%.
+\end{itemize}
+Questa regola \textit{White-Box} fornisce al CRM un'indicazione immediata: concentrare \textit{onboarding} proattivo e supporto tecnico prioritario sui neo-abbonati in Fibra Ottica fin dalle prime settimane.>>
+\transition{Avviandomi alla chiusura, tiriamo le fila del lavoro discutendo criticamente risultati, limiti e sviluppi futuri.}
+
+\section*{Slide 10 --- Discussione Critica, Conclusioni \& Sviluppi Futuri}
+\cue{Indica il banner di sintesi in alto e scorri in ordine i quattro riquadri, chiudendo guardando il professore.}
+\noindent <<In sintesi, ogni tecnica ha un ruolo preciso nel nostro agente CRM: \textbf{K-Means} per la strategia di segmentazione, \textbf{Regressione Logistica} per il ranking predittivo, \textbf{Albero CART} per la spiegabilità al management e \textbf{calibrazione di soglia} per la razionalità economica.
+
+Ricapitolo i quattro punti conclusivi:
+\begin{enumerate}
+    \item \textbf{Ruolo reale del clustering:} K-Means ha grande valore \textbf{descrittivo e strategico}, isolando stabilmente i \textit{Volatili} al 43,4\% di churn; come feature aggiuntiva apporta solo un lieve incremento all'MLP (AUC \texttt{0,843}), risultando ridondante su LogReg e CART.
+    \item \textbf{Razionalità economica e soglia CAC:} poiché perdere un cliente costa un intero CAC, calibrare la soglia a $\tau=0.35$ o usare \texttt{class\_weight='balanced'} innalza la Recall dal \textbf{55,9\% fino al 78,3\%}.
+    \item \textbf{Confronto modelli e limiti:} la Regressione Logistica vince per il \textbf{Rasoio di Occam}. Tra i limiti da evidenziare ci sono l'ipotesi di cluster sferici del K-Means, la natura statica del dataset (senza serie storiche né ticket di assistenza) e, in produzione, la conformità al \textbf{GDPR} e verifiche di \textbf{fairness} su attributi sensibili come \texttt{SeniorCitizen} e \texttt{gender}.
+    \item \textbf{Sviluppi futuri:} modelli \textbf{ensemble} (\textit{Random Forest}, \textit{XGBoost}) per interazioni non lineari e riduzione della varianza; \textbf{Soft Clustering} passando le distanze continue dai centroidi via \texttt{kmeans.transform()}; infine \textbf{SMOTE} (rigorosamente dentro i fold di CV) e \textbf{Cost-Sensitive Learning} con funzione di costo pesata direttamente in Euro sul CAC reale.
+\end{enumerate}
+Grazie per l'attenzione, resto a disposizione per eventuali domande sul progetto e sul codice.>>
+
+\vspace{3mm}
+\noindent\colorbox{LightBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{
+\footnotesize
+\textbf{\color{PrimaryNavy}Promemoria Lampo dei Numeri Chiave:}
+Dataset \texttt{7.043} righe, \texttt{21} col (\texttt{19} feature + \texttt{Churn} \textbf{26,54\%}), \texttt{11} \texttt{TotalCharges} vuoti (\texttt{tenure=0} $\rightarrow$ \texttt{0,0\,\texteuro}).
+Split 80/20: \texttt{5.634} Train (\texttt{4.139} / \texttt{1.495}) $|$ \texttt{1.409} Test (\texttt{1.035} / \texttt{374}).
+Feature: \textbf{30 Base} (\texttt{3} num + \texttt{27} OHE) $|$ \textbf{32 +Clust}.
+K-Means ($K=3$): WCSS \texttt{33.485 $\rightarrow$ 24.642}, Silhouette \textbf{0,282}; Volatili \textbf{43,4\%} (Test 43,3\%), High-Value \textbf{15,9\%}, Low-Cost \textbf{7,2\%}; PCA \textbf{57,9\%} (\texttt{PC1} 39,4\%, \texttt{PC2} 18,5\%).
+Test Set ($\tau=0.50$): LogReg Base \textbf{80,6\% Acc, 55,9\% Rec, 0,605 F1, 0,842 AUC}; CART \textbf{79,4\% Acc, 54,0\% Rec, 0,827 AUC}; MLP +Clust \textbf{80,3\% Acc, 52,1\% Rec, 0,585 F1, 0,843 AUC}.
+Soglia LogReg: $\tau=0.35 \rightarrow$ \textbf{70,3\% Rec} (F1 \textbf{0,614}); \texttt{balanced} $\rightarrow$ \textbf{78,3\% Rec} (F1 \textbf{0,614}).
+CART: \texttt{tenure <= 16.5} $\rightarrow$ Fibra (\textbf{68,3\%}) $\rightarrow$ \texttt{TotalCharges <= 120\,\texteuro} (\textbf{85,5\%}, \texttt{165/193}, $G=0.248$) $\rightarrow$ split \texttt{TechSupport\_Yes <= 0.5} (liv.\ 4: \textbf{87,6\%}, \texttt{162/185}).
+}}
+
+\end{document}

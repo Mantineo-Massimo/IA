@@ -1,0 +1,249 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{babel}
+\babelprovide[import,main]{italian}
+\usepackage[a4paper, left=17mm, right=17mm, top=20mm, bottom=18mm, headheight=15pt]{geometry}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs, tabularx, longtable}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{PrimaryNavy}{RGB}{20, 45, 85}
+\definecolor{SecondaryBlue}{RGB}{45, 95, 150}
+\definecolor{LightBg}{RGB}{244, 246, 250}
+\definecolor{CodeBg}{RGB}{247, 248, 250}
+\definecolor{CodeComment}{RGB}{90, 105, 120}
+\definecolor{CodeStr}{RGB}{150, 45, 45}
+\definecolor{WarnBg}{RGB}{253, 244, 236}
+
+\titleformat{\section}{\large\bfseries\color{PrimaryNavy}}{}{0em}{}[\vspace{-2pt}\color{SecondaryBlue}\hrule height 1pt]
+\titleformat{\subsection}{\normalsize\bfseries\color{SecondaryBlue}}{}{0em}{}
+\titlespacing*{\section}{0pt}{10pt plus 2pt minus 2pt}{4pt}
+\titlespacing*{\subsection}{0pt}{5pt plus 1pt minus 1pt}{2pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textbf{Foglio 3 --- Confronto Slide $\leftrightarrow$ Codice Notebook}}
+\fancyhead[R]{\footnotesize M. Mantineo (541924) -- Laboratorio di IA}
+\fancyfoot[C]{\footnotesize Pagina \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\emergencystretch 1.5em
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    columns=fullflexible,
+    keepspaces=true,
+    backgroundcolor=\color{CodeBg},
+    frame=single,
+    rulecolor=\color{PrimaryNavy!35},
+    keywordstyle=\bfseries\color{PrimaryNavy},
+    commentstyle=\itshape\color{CodeComment},
+    stringstyle=\color{CodeStr},
+    breaklines=true,
+    breakatwhitespace=true,
+    showstringspaces=false,
+    tabsize=4,
+    aboveskip=4pt,
+    belowskip=4pt,
+    xleftmargin=3pt,
+    xrightmargin=3pt,
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={à}{{\`a}}1 {è}{{\`e}}1 {é}{{\'e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+             {À}{{\`A}}1 {È}{{\`E}}1 {É}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+             {€}{{\texteuro}}1 {τ}{{$\tau$}}1 {→}{{$\rightarrow$}}1 {≤}{{$\le$}}1 {—}{{---}}1
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \bfseries \color{PrimaryNavy} Foglio 3 --- Confronto Slide per Slide con il Codice}\\[4pt]
+    {\large Tracciabilità Esatta tra \texttt{relazione/presentazione.pdf} (10 Slide) e \texttt{notebooks/churn\_analysis.ipynb} (31 Celle)}\\[3pt]
+    {\small \textbf{Studente:} Massimo Mantineo (Matricola: 541924) \quad|\quad \textbf{Corso:} Laboratorio di IA -- Prof.\ G.\ Fiumara}
+\end{center}
+
+\section*{Mappa Rapida di Tracciabilità 1:1 (Slide $\leftrightarrow$ Celle $\leftrightarrow$ Immagini)}
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{c l l >{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{PrimaryNavy}
+\color{white}\textbf{Slide} & \color{white}\textbf{Titolo Slide} & \color{white}\textbf{Celle Notebook} & \color{white}\textbf{File PNG / Elemento generato} \\
+\midrule
+1 & Titolo e Copertina & \texttt{Cella 0}, \texttt{Cella 2} & \texttt{logo\_unime\_orizontale.png} + costanti globali \\
+2 & Definizione IA \& PEAS & \texttt{Cella 0} (teorica) & Diagrammi TikZ (\texttt{presentazione.tex}); ponte a \texttt{Celle 4, 19, 23} \\
+3 & Task ML \& Probabilità & \texttt{Celle 0, 2, 10, 19} & Formalizzazione di split, metriche e \texttt{predict\_proba} \\
+4 & Dataset \& Preprocessing & \texttt{Celle 4, 6, 8, 10} & \texttt{boxplot\_permanenza\_costi.png} (e \texttt{distribuzione\_churn.png}) \\
+5 & Clustering K-Means & \texttt{Celle 2, 12, 14} & \texttt{clustering\_scelta\_k.png} \\
+6 & PCA \& Profilo Segmenti & \texttt{Celle 14, 16} & \texttt{clustering\_visualizzazione\_pca.png} (e \texttt{distribuzione\_churn\_cluster.png}) \\
+7 & Pipeline Supervisionata & \texttt{Celle 2, 10, 19} & Diagramma TikZ; pipeline 30D vs 32D e 3 classificatori \\
+8 & Confronto Prestazioni & \texttt{Celle 19, 21, 23, 25, 27} & \texttt{confronto\_prestazioni\_barre.png} (e \texttt{curve\_roc.png}) \\
+9 & Spiegabilità CART & \texttt{Celle 10, 19, 29} & \texttt{albero\_decisionale.png} + \texttt{export\_text()} \\
+10 & Conclusioni \& Sviluppi & \texttt{Cella 30} + \texttt{Celle 14, 21, 23, 29} & Sintesi critica basata sugli output reali \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section*{Slide 1 --- Titolo e Copertina $\leftrightarrow$ \texttt{Cella 0} e \texttt{Cella 2}}
+\noindent\textbf{Sulla Slide:} Titolo del progetto, dataset IBM Telco, autore e corso. \\
+\textbf{Nel Codice:} \texttt{Cella 0} descrive gli obiettivi e il vincolo \textit{Zero Data Leakage}; \texttt{Cella 2} centralizza tutte le costanti per la riproducibilità deterministica:
+\begin{lstlisting}
+# Cella 2 -- Configurazione Globale (riproducibilità al 100%)
+IMAGES_DIR = "../relazione/images" if os.path.exists("../relazione") else "relazione/images"
+RANDOM_STATE = 42;  TEST_SIZE = 0.20
+K_MIN = 2;  K_MAX = 7;  SELECTED_K = 3;  KMEANS_N_INIT = 10
+MLP_HIDDEN_LAYERS = (64, 32);  MLP_ALPHA = 0.1;  MLP_MAX_ITER = 500
+\end{lstlisting}
+
+\section*{Slide 2 --- Definizione IA \& Agente PEAS $\leftrightarrow$ \texttt{Celle 0, 4, 19, 23}}
+\noindent\textbf{Sulla Slide:} Quattro approcci R\&N (\textbf{Agire Razionalmente}), modello PEAS e diagramma del ciclo chiuso (disegnati in TikZ).\\
+\textbf{Corrispondenza concreta nel Codice:}
+\begin{itemize}
+    \item \textbf{Sensori ($S$):} le 19 colonne predittive lette da \texttt{Telco-Customer-Churn.csv} in \texttt{Cella 4} (\texttt{X\_raw} in \texttt{Cella 10}).
+    \item \textbf{Elemento di Apprendimento:} addestramento di \texttt{KMeans} (\texttt{Cella 14}) e dei 3 classificatori (\texttt{Cella 19}) solo su \texttt{X\_train}.
+    \item \textbf{Elemento Esecutivo + Utilità (verso Attuatori $A$):} stima di \texttt{predict\_proba(X)[:, 1]} (\texttt{Cella 19}) + soglia calibrata sul CAC (\texttt{test\_probs\_lr >= 0.35} e \texttt{class\_weight='balanced'} in \texttt{Cella 23}).
+\end{itemize}
+
+\section*{Slide 3 --- Formulazione Task ML \& Approccio Probabilistico $\leftrightarrow$ \texttt{Celle 2, 10, 12, 19}}
+\noindent\textbf{Sulla Slide:} Sistema Batch/Model-Based, Mitchell $\langle T,E,P\rangle$ (5.634 train su 7.043), K-Means senza \texttt{Churn}, probabilità discriminativa $P(\text{Churn}=1 \mid \mathbf{x}) \in [0,1]$.\\
+\textbf{Corrispondenza nel Codice:} $E$ (\texttt{5.634} istanze) deriva da \texttt{train\_test\_split} in \texttt{Cella 10}; le metriche $P$ (\texttt{recall\_score}, \texttt{precision\_score}, \texttt{f1\_score}, \texttt{roc\_auc\_score}) sono importate in \texttt{Cella 2} e valutate in \texttt{Cella 19}; tutti e 3 i classificatori calcolano direttamente $P(\text{Churn}=1 \mid \mathbf{x})$ tramite \texttt{.predict\_proba(X\_te)[:, 1]}.
+
+\section*{Slide 4 --- Dataset, Preprocessing \& Sbilanciamento $\leftrightarrow$ \texttt{Celle 4, 6, 8, 10}}
+\noindent\textbf{Sulla Slide:} 7.043 clienti, 21 colonne, 11 \texttt{TotalCharges} vuoti $\rightarrow$ \texttt{0,0\,\texteuro} (\texttt{tenure=0}), split stratificato 80/20 prima di scaling/clustering, \texttt{StandardScaler} + \texttt{OneHotEncoder(drop='first')} $\rightarrow$ 30 feature, 26,54\% Churn, boxplot (\texttt{tenure} 10,0 vs 38,0 mesi; \texttt{MonthlyCharges} 79,65 vs 64,43\,\texteuro).
+\begin{lstlisting}
+# Cella 6 -- Cleaning (11 righe vuote hanno tutte tenure == 0)
+blank_rows = df[df['TotalCharges'].astype(str).str.strip() == ""]
+df['TotalCharges'] = pd.to_numeric(df['TotalCharges'].astype(str).str.strip().replace("", "0"))
+df = df.drop(columns=['customerID'])
+df['Churn'] = df['Churn'].map({'Yes': 1, 'No': 0})
+
+# Cella 8 -- Mediane e salvataggio boxplot_permanenza_costi.png (Slide 4)
+churn_rate = df['Churn'].mean()                                # 26.54% (1869 / 7043)
+med_stats = df.groupby('Churn')[['tenure', 'MonthlyCharges']].median()
+plt.savefig(f'{IMAGES_DIR}/boxplot_permanenza_costi.png', dpi=300, bbox_inches='tight')
+
+# Cella 10 -- Split stratificato PRIMA di scaling/encoding (Zero Data Leakage)
+X_train_raw, X_test_raw, y_train, y_test = train_test_split(
+    X_raw, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+)
+preprocessor_scaled = ColumnTransformer(transformers=[
+    ('num', StandardScaler(), num_cols),                       # 3 numeriche (Z-Score)
+    ('cat', OneHotEncoder(drop='first', sparse_output=False), cat_cols) # 16 cat -> 27 dummy
+])
+X_train_scaled = preprocessor_scaled.fit_transform(X_train_raw) # (5634, 30) FIT solo Train
+X_test_scaled  = preprocessor_scaled.transform(X_test_raw)      # (1409, 30) SOLO TRANSFORM
+\end{lstlisting}
+\noindent\textbf{Output verificato:} \texttt{Train (5634, 30)}, \texttt{Test (1409, 30)}, entrambi \texttt{Churn=26.54\%}. \texttt{StandardScaler} apprende su Train: \texttt{tenure} ($\mu=32.49,\sigma=24.57$), \texttt{MonthlyCharges} ($\mu=64.93,\sigma=30.14$), \texttt{TotalCharges} ($\mu=2299.33,\sigma=2279.00$).
+
+\section*{Slide 5 --- Clustering K-Means \& Scelta di $K$ $\leftrightarrow$ \texttt{Cella 12}}
+\noindent\textbf{Sulla Slide:} 5.634 clienti train (30 feature senza \texttt{Churn}), confronto $K \in \{2..6\}$ con grafico \texttt{clustering\_\allowbreak scelta\_k.png}: $K=2$ ($s=0.293$, WCSS 33.485), \textbf{$K=3$ scelto} (gomito WCSS 24.642, $s=0.282$), $K\ge 4$ (crollo $0.230 \rightarrow 0.185$).
+\begin{lstlisting}
+# Cella 12 -- Valutazione K in {2, 3, 4, 5, 6} su X_train_scaled (default init='k-means++')
+for k in list(range(K_MIN, K_MAX)):
+    km = KMeans(n_clusters=k, random_state=RANDOM_STATE, n_init=KMEANS_N_INIT)
+    labels_k = km.fit_predict(X_train_scaled)
+    sil = silhouette_score(X_train_scaled, labels_k, sample_size=2000, random_state=RANDOM_STATE)
+    inertias.append(km.inertia_);  silhouettes.append(sil)
+# Grafico doppio asse: ax1 (Inerzia blu) + ax2 = ax1.twinx() (Silhouette arancione)
+plt.savefig(f'{IMAGES_DIR}/clustering_scelta_k.png', dpi=300, bbox_inches='tight')
+\end{lstlisting}
+\noindent\textbf{Output reale (\texttt{cluster\_results\_df}):} $K=2$: \texttt{33485.39 / 0.2930} $|$ \textbf{$K=3$: \texttt{24642.32 / 0.2817}} $|$ $K=4$: \texttt{22599.79 / 0.2304} $|$ $K=5$: \texttt{21178.53 / 0.2093} $|$ $K=6$: \texttt{19983.52 / 0.1848}.
+
+\section*{Slide 6 --- Segmentazione PCA \& Profilo Segmenti $\leftrightarrow$ \texttt{Celle 14 e 16}}
+\noindent\textbf{Sulla Slide:} Tabella profili Train (Volatili 2.557 / 15,2 mesi / 67,87\,\texteuro / \textbf{43,4\%}, Test 43,3\%; High-Value 1.863 / 57,7 mesi / 89,44\,\texteuro / 15,9\%; Low-Cost 1.214 / 30,2 mesi / 21,12\,\texteuro / 7,2\%) e scatter plot \texttt{clustering\_\allowbreak visualizzazione\_\allowbreak pca.png} (57,9\% varianza: $PC_1$ 39,4\%, $PC_2$ 18,5\%).
+\begin{lstlisting}
+# Cella 14 -- Fitting K=3 su Train, predict induttivo su Test e riordino ID per churn decrescente
+kmeans_chosen = KMeans(n_clusters=SELECTED_K, random_state=RANDOM_STATE, n_init=KMEANS_N_INIT)
+raw_train_clusters = kmeans_chosen.fit_predict(X_train_scaled)
+raw_test_clusters  = kmeans_chosen.predict(X_test_scaled)      # Out-of-sample, ZERO leakage
+cluster_order = pd.Series(y_train.values).groupby(raw_train_clusters).mean().sort_values(ascending=False).index.tolist()
+cluster_remap = {old_id: new_id for new_id, old_id in enumerate(cluster_order)} # {2:0, 1:1, 0:2}
+train_clusters = np.array([cluster_remap[c] for c in raw_train_clusters])
+test_clusters  = np.array([cluster_remap[c] for c in raw_test_clusters])
+
+# Cella 16 -- PCA 2D su X_train_scaled e ispezione loadings
+pca = PCA(n_components=2, random_state=RANDOM_STATE)
+X_train_pca = pca.fit_transform(X_train_scaled)
+var_ratio = pca.explained_variance_ratio_  # PC1=39.37%, PC2=18.50%, Totale=57.87%
+plt.savefig(f'{IMAGES_DIR}/clustering_visualizzazione_pca.png', dpi=300, bbox_inches='tight')
+\end{lstlisting}
+\noindent\textbf{Verifica Test Set (\texttt{Cella 14}):} Cluster 0 = \texttt{43,3\%} (677), Cluster 1 = \texttt{13,3\%} (420), Cluster 2 = \texttt{8,0\%} (312). \textbf{Top Loadings (\texttt{Cella 16}):} $PC_1$ (\texttt{MonthlyCharges +0.501}, \texttt{TotalCharges +0.491}, \texttt{tenure +0.338} vs \texttt{InternetService\_No -0.166}); $PC_2$ (\texttt{tenure +0.612}, \texttt{TotalCharges +0.338}, \texttt{Contract\_Two year +0.221} vs \texttt{MonthlyCharges -0.277}, \texttt{Fiber optic -0.163}).
+
+\section*{Slide 7 --- Pipeline Sperimentale Supervisionata $\leftrightarrow$ \texttt{Celle 10 e 19}}
+\noindent\textbf{Sulla Slide:} Diagramma split 80/20 $\rightarrow$ \texttt{Orig} (30D) vs \texttt{+Clust} (32D) $\rightarrow$ LogReg, CART (\texttt{max\_depth=5}, non scalato), MLP \texttt{(64, 32)} (ReLU, Adam, L2 $\alpha=0.1$, \textit{early stopping}).
+\begin{lstlisting}
+# Cella 10 -- Seconda pipeline SENZA scaling per il Decision Tree CART
+preprocessor_tree = ColumnTransformer(transformers=[
+    ('num', 'passthrough', num_cols),
+    ('cat', OneHotEncoder(drop='first', sparse_output=False), cat_cols)
+])
+
+# Cella 19 -- One-Hot dei cluster (+2 colonne -> 32D) e definizione dei 3 modelli
+ohe_cluster = OneHotEncoder(drop='first', sparse_output=False)
+cl_train_dummies = pd.DataFrame(ohe_cluster.fit_transform(train_clusters.reshape(-1, 1)),
+                                columns=['Cluster_1', 'Cluster_2'], index=X_train_raw.index)
+X_train_scaled_clust = pd.concat([X_train_scaled_df, cl_train_dummies], axis=1) # (5634, 32)
+# Modelli in model_specs:
+LogisticRegression(random_state=42, max_iter=1000)
+DecisionTreeClassifier(random_state=42, max_depth=5)
+MLPClassifier(random_state=42, hidden_layer_sizes=(64, 32), alpha=0.1,
+              early_stopping=True, max_iter=500)
+\end{lstlisting}
+\noindent\textbf{Dettagli interni verificati:} \texttt{MLPClassifier} usa di default \texttt{activation='relu'}, \texttt{solver='adam'}, \texttt{out\_\allowbreak activation\_='logistic'}, \texttt{validation\_\allowbreak fraction=0.1}, \texttt{n\_iter\_\allowbreak no\_change=10}; converge via early stopping a \textbf{17 epoche} (Base, 4.097 parametri) e \textbf{19 epoche} (+Cluster, 4.225 parametri). \texttt{LogisticRegression} converge in 40 iterazioni (\texttt{lbfgs}, 31 parametri in Base).
+
+\section*{Slide 8 --- Confronto delle Prestazioni Sperimentali $\leftrightarrow$ \texttt{Celle 19, 21, 23, 27}}
+\noindent\textbf{Sulla Slide:} Grafico a barre \texttt{confronto\_prestazioni\_barre.png}, tabella comparativa Base $\rightarrow$ +Clust ($\tau=0.50$), box Rasoio di Occam e box Trade-off Soglia ($\tau=0.35$ o \texttt{balanced} $\rightarrow$ Recall 70,3\%--78,3\%, F1 0,614).
+\begin{lstlisting}
+# Cella 19 -- Addestramento clonato Base vs +Cluster e salvataggio in results_df
+m_orig  = clone(base_model).fit(X_tr_o, y_train);  y_prob_o = m_orig.predict_proba(X_te_o)[:, 1]
+m_clust = clone(base_model).fit(X_tr_c, y_train);  y_prob_c = m_clust.predict_proba(X_te_c)[:, 1]
+
+# Cella 23 -- Calibrazione soglia 5-fold CV su Train (zero leakage) + test con balanced
+oof_probs = cross_val_predict(LogisticRegression(random_state=42, max_iter=1000),
+                              X_train_scaled_df, y_train, cv=5, method='predict_proba')[:, 1]
+lr_balanced = LogisticRegression(random_state=42, max_iter=1000,
+                                 class_weight='balanced').fit(X_train_scaled_df, y_train)
+
+# Cella 27 -- Grafico a barre letto DINAMICAMENTE da results_df (nessun dato hardcoded)
+recall_base = (results_df['Recall (Orig)'] * 100).tolist()
+auc_clust   = results_df['AUC (Clust)'].tolist()
+plt.savefig(f'{IMAGES_DIR}/confronto_prestazioni_barre.png', dpi=300, bbox_inches='tight')
+\end{lstlisting}
+\noindent\textbf{Verifica numeri reali (\texttt{Celle 21 e 23}):}
+LogReg Base: Acc \texttt{0.8062}, Rec \texttt{0.5588}, F1 \texttt{0.6049}, AUC \texttt{0.8422} (\texttt{TP=209, FN=165, FP=108, TN=927}).
+CART Base=+Clust: Acc \texttt{0.7942}, Rec \texttt{0.5401}, F1 \texttt{0.5821}, AUC \texttt{0.8267}.
+MLP Base $\rightarrow$ +Clust: Acc \texttt{0.7999 $\rightarrow$ 0.8034}, Rec \texttt{0.5187 $\rightarrow$ 0.5214}, F1 \texttt{0.5791 $\rightarrow$ 0.5847}, AUC \texttt{0.8424 $\rightarrow$ 0.8429}.
+Calibrazione LogReg: $\tau=0.35$ (CV Train Rec \texttt{0.7043}, F1 \texttt{0.6270}) $\rightarrow$ Test Rec \textbf{0.7032}, F1 \textbf{0.6138} (\texttt{TP=263, FN=111}); \texttt{balanced} $\rightarrow$ Test Rec \textbf{0.7834}, F1 \textbf{0.6136} (\texttt{TP=293, FN=81}).
+
+\section*{Slide 9 --- Spiegabilità Business: Albero CART $\leftrightarrow$ \texttt{Cella 29}}
+\noindent\textbf{Sulla Slide:} Immagine \texttt{albero\_decisionale.png}, Gini in $[0, 0.5]$, radice \texttt{value=[4139, 1495]}, regola critica \texttt{tenure <= 16.5} $\rightarrow$ Fibra (68,3\%) + \texttt{TotalCharges <= 120\,\texteuro} $\rightarrow$ \texttt{165/193} (85,5\%, $G=0.248$); senza \texttt{TechSupport}: 87,6\%.
+\begin{lstlisting}
+# Cella 29 -- Plot primi 3 livelli del modello CART Base (addestrato con max_depth=5)
+dt_model_orig = fitted_models['Decision Tree (CART)']['orig']
+anns = plot_tree(dt_model_orig, max_depth=3, feature_names=tree_labels,
+                 class_names=['Rimasto', 'Abbandono'], filled=True, rounded=True, ax=ax)
+# Nasconde i box '(...)' dei rami troncati al livello 4-5 per pulizia grafica
+plt.savefig(f'{IMAGES_DIR}/albero_decisionale.png', dpi=300, bbox_inches='tight')
+print(export_text(dt_model_orig, feature_names=list(X_train_tree_df.columns), max_depth=3))
+\end{lstlisting}
+\noindent\colorbox{WarnBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{
+\footnotesize\textbf{\color{PrimaryNavy}Nota Tecnica di Precisione (da sapere benissimo!):}
+(1) Il modello è addestrato a \texttt{max\_depth=5} (32 foglie), ma \texttt{plot\_tree} visualizza solo i primi \textbf{3 livelli} (\texttt{max\_depth=3}).
+(2) Nel nodo blu scuro di livello 3 (\texttt{samples=193}, \texttt{value=[28, 165]}, \textbf{85,5\% churn}, $G=0.248$), la condizione soddisfatta è già \texttt{tenure <= 16.5} + Fibra Ottica + \texttt{TotalCharges <= 120\,\texteuro}; la riga \texttt{TechSupport\_Yes <= 0.5} in cima al nodo è lo \textbf{split verso il livello 4}, dove i clienti senza supporto tecnico salgono a \textbf{162/185 (87,6\% churn, $G=0.218$)} mentre gli 8 clienti con supporto scendono al 37,5\%.
+}}
+
+\section*{Slide 10 --- Discussione Critica \& Conclusioni $\leftrightarrow$ \texttt{Cella 30}}
+\noindent\textbf{Sulla Slide:} 1) Valore descrittivo K-Means + lieve boost MLP; 2) Razionalità CAC e calibrazione soglia; 3) Rasoio di Occam + limiti (cluster sferici, dataset statico, GDPR/fairness); 4) Sviluppi futuri (Random Forest/XGBoost, \texttt{transform()}, SMOTE, Cost-Sensitive).\\
+\textbf{Corrispondenza nel Codice:} La \texttt{Cella 30} (Markdown conclusivo del notebook) consolida esattamente questi risultati sintetizzando gli output di \texttt{Celle 14, 21, 23 e 29}. \textbf{Nota extra:} se il professore chiede delle altre 3 immagini generate dal notebook (\texttt{distribuzione\_churn.png} in \texttt{Cella 8}, \texttt{distribuzione\_churn\_cluster.png} in \texttt{Cella 14}, \texttt{curve\_roc.png} in \texttt{Cella 25}), tutte e tre sono salvate automaticamente in \texttt{relazione/images/} e inserite nella relazione scritta (\texttt{relazione/relazione.pdf}).
+
+\end{document}

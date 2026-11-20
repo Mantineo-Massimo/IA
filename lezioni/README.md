@@ -21,9 +21,9 @@
 | [`03-Introduzione_al_ML.pdf`](03-Introduzione_al_ML.pdf) | **Machine Learning Landscape** | Géron, Cap. 1 | Definizione $\langle T, E, P \rangle$, tipologie ML, pipeline, rischi (overfitting/bias) | Formulazione del task di apprendimento, gestione sbilanciamento e cleaning |
 | [`04-Classificazione.pdf`](04-Classificazione.pdf) | **Classificazione** | Géron, Cap. 3 | MNIST, confusion matrix, Precision, Recall, F1, curve PR e ROC-AUC | Selezione metriche, curve ROC e calibrazione soglia ($\tau=0.35$) su sbilanciamento |
 | [`05-Decision Trees.pdf`](05-Decision Trees.pdf) | **Decision Trees** | Géron, Cap. 6 | Algoritmo CART, impurità di Gini, regolarizzazione, White-Box, cenni su PCA | Modello CART interpretabile (`max_depth=5`, feature non scalate), regole su tenure e fibra |
-| [`06-Unsupervised_Learning.pdf`](06-Unsupervised_Learning.pdf) | **Unsupervised Learning** | Géron, Cap. 9 | K-Means, inerzia WCSS, Silhouette score, Elbow method, DBSCAN, GMM, Anomaly Detection | Segmentazione clienti ($K=3$) con K-Means e profilazione cluster |
-| [`07-Introduction_to_NNs.pdf`](07-Introduction_to_NNs.pdf) | **Reti Neurali con Keras** | Géron, Cap. 10 | TLU, Perceptron, XOR, MLP, attivazioni (ReLU, Sigmoide), Backpropagation | Rete Neurale MLP feedforward per la classificazione non lineare |
-| [`08-Training_DeepNeuralNetworks.pdf`](08-Training_DeepNeuralNetworks.pdf) | **Training Deep Neural Networks** | Géron, Cap. 11 | Vanishing/Exploding gradients, He/Glorot init, Adam, Batch Normalization, Dropout | Regolarizzazione L2, Early Stopping e ottimizzatore Adam nell'MLP |
+| [`06-Unsupervised_Learning.pdf`](06-Unsupervised_Learning.pdf) | **Unsupervised Learning** | Géron, Cap. 9 | K-Means, inerzia WCSS, Silhouette, Elbow, DBSCAN, Isolation Forest, GMM, Anomaly Detection | Segmentazione clienti ($K=3$) con K-Means e profilazione cluster |
+| [`07-Introduction_to_NNs.pdf`](07-Introduction_to_NNs.pdf) | **Reti Neurali con Keras** | Géron, Cap. 10 | TLU, Perceptron, XOR, MLP, attivazioni (ReLU, Sigmoide), Backprop, Softmax+CE, Early Stopping | Rete Neurale MLP feedforward + Early Stopping per la classificazione non lineare |
+| [`08-Training_DeepNeuralNetworks.pdf`](08-Training_DeepNeuralNetworks.pdf) | **Training Deep Neural Networks** | Géron, Cap. 11 | Vanishing/Exploding gradients, He/Glorot init, BatchNorm, Transfer Learning, Adam, L1/L2, Dropout | Regolarizzazione L2 ($\alpha=0.1$) e ottimizzatore Adam nell'MLP |
 
 ---
 
@@ -57,10 +57,10 @@ Russell & Norvig categorizzano le definizioni storiche di IA lungo due direttric
 * **1943:** McCulloch & Pitts modellano il primo neurone artificiale matematico.
 * **1950:** Alan Turing pubblica *"Computing Machinery and Intelligence"* (Test di Turing, machine learning, giochi).
 * **1956:** Convegno di Dartmouth; John McCarthy conia ufficialmente il termine **"Artificial Intelligence"**.
-* **1969–1979:** Sistemi Basati sulla Conoscenza e Sistemi Esperti (DENDRAL, MYCIN).
-* **Anni '70 e '80:** I primi "Inverni dell'IA" (*AI Winters*) dovuti all'eccesso di aspettative e limiti computazionali.
+* **1969–1986:** Sistemi Basati sulla Conoscenza e Sistemi Esperti (DENDRAL, MYCIN, R1).
+* **Anni '70 e fine anni '80:** Gli "Inverni dell'IA" (*AI Winters*, Rapporto Lighthill 1973 e declino dei sistemi esperti) dovuti all'eccesso di aspettative e limiti computazionali.
 * **1986–presente:** Rinascita delle reti neurali con la riscoperta della Backpropagation.
-* **2012–presente:** Rivoluzione del Deep Learning (ImageNet, GPU, disponibilità di Big Data), fino ai modelli generativi e LLM.
+* **2011/2012–presente:** Rivoluzione del Deep Learning (ImageNet 2012, GPU, disponibilità di Big Data), fino ai modelli generativi e LLM.
 * **Beneficial AI:** Etica, robustezza, fairness, allineamento dell'IA ai valori umani e impatto economico/sociale.
 
 ---
@@ -131,6 +131,7 @@ Per definire rigorosamente un problema di progettazione di un agente:
   * **Supervisionato (Supervised):** Il dataset di addestramento contiene sia le feature $X$ sia le etichette target $y$ (es. Regressione Lineare, Regressione Logistica, Decision Trees, SVM, Neural Networks).
   * **Non Supervisionato (Unsupervised):** Dati privi di etichetta (es. K-Means, DBSCAN, PCA, Autoencoder).
   * **Semi-supervisionato (Semisupervised):** Pochi dati etichettati uniti a una grande mole di dati non etichettati.
+  * **Auto-supervisionato (Self-Supervised):** Genera automaticamente etichette a partire da dati non etichettati (es. ricostruzione di parti mascherate di immagini o testo), spesso come pre-addestramento per *Transfer Learning*.
   * **Apprendimento per Rinforzo (Reinforcement Learning):** Un agente seleziona azioni in un ambiente, riceve ricompense o penalità (reward/penalty) e apprende la politica ottima ($\pi^*$).
 * **Capacità di Aggiornamento Continuo:**
   * **Batch Learning (Offline):** Il sistema viene addestrato su tutti i dati disponibili e poi rilasciato in produzione senza aggiornarsi dinamicamente.
@@ -194,8 +195,8 @@ Se solo il 10% delle immagini contiene la cifra "5", un classificatore banale (*
 * **Scelta tra PR Curve e ROC Curve:** Si preferisce la curva **Precision-Recall** quando la classe positiva è rara (forte sbilanciamento) o quando i Falsi Positivi sono più costosi dei Falsi Negativi; altrimenti si usa la curva **ROC**.
 
 #### 5. Classificazione Multiclasse e Strategie
-* **Algoritmi nativi multiclasse:** Random Forest, Naive Bayes, Reti Neurali.
-* **Strategie per estendere classificatori binari (es. SVM, Logistic Regression):**
+* **Algoritmi nativi multiclasse:** Logistic Regression (via Softmax), Random Forest, Naive Bayes, Reti Neurali.
+* **Strategie per estendere classificatori strettamente binari (es. SVM, SGDClassifier):**
   * **One-versus-Rest (OvR / OvA):** Si addestrano $N$ classificatori binari (uno per ciascuna classe contro tutte le altre). Per 10 cifre servono 10 classificatori.
   * **One-versus-One (OvO):** Si addestra un classificatore per ogni coppia di classi. Per $N$ classi servono $\frac{N(N-1)}{2}$ classificatori (per MNIST: 45 classificatori).
 * **Analisi degli Errori (Error Analysis):** Visualizzazione della matrice di confusione normalizzata per riga per individuare le classi confuse più frequentemente (es. cifre 4 e 9, o 3 e 5).
@@ -281,7 +282,12 @@ L'apprendimento non supervisionato opera su campioni non etichettati per estrarr
   * **Core Point:** Ha almeno `min_samples` punti nel suo $\varepsilon$-intorno.
   * **Border Point:** Si trova nel vicinato di un core point ma ha meno di `min_samples`.
   * **Noise Point / Outlier:** Non appartiene ad alcun intorno denso (etichettato come $-1$).
-* **Vantaggi di DBSCAN:** Identifica cluster di forma arbitraria (forme concave o ad anello) e rileva automaticamente gli outlier senza dover specificare $K$ a priori.
+* **Vantaggi di DBSCAN:** Identifica cluster di forma arbitraria (forme concave o ad anello) e rileva automaticamente gli outlier senza dover specificare $K$ a priori. *Nota scikit-learn:* `DBSCAN` espone `fit_predict()` ma **non** dispone di un metodo `.predict()` nativo per nuovi campioni.
+
+#### 4.1 Isolation Forest (Anomaly Detection)
+* Algoritmo non supervisionato basato su alberi casuali (*isolation trees*): le anomalie sono rare e diverse, quindi vengono isolate con un **cammino medio più corto** (*short path length*) rispetto ai punti normali.
+* `predict(X)` restituisce `1` (inlier) o `-1` (outlier); iperparametri principali: `n_estimators` (default `100`), `max_samples` (default `min(256, n_samples)`), `contamination`.
+* Vantaggi: evita il calcolo costoso delle distanze a coppie e scala molto bene in alta dimensionalità.
 
 #### 5. Modelli a Mistura di Gaussiane (GMM)
 * Modello probabilistico che assume che i dati siano stati generati da una combinazione convessa di $K$ distribuzioni normali multivariate con parametri sconosciuti $(\mu_k, \Sigma_k, \pi_k)$.
@@ -338,8 +344,10 @@ Metodo per addestrare reti neurali combinando la discesa del gradiente con la **
 * **Classificazione Binaria:** 1 neurone di output con attivazione sigmoide, loss **Binary Cross-Entropy**:
   $$\mathcal{L} = -\frac{1}{m} \sum_{i=1}^m \left[ y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
 * **Classificazione Multiclasse:** $K$ neuroni di output con funzione **Softmax**, loss **Categorical Cross-Entropy**:
-  $$\text{Softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
-* **Keras API:** Creazione di modelli con la `Sequential` API e `Functional` API, compilazione con `compile(optimizer, loss, metrics)` e addestramento con `fit(X_train, y_train, epochs, validation_data)`.
+  $$\text{Softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}, \qquad \frac{\partial \mathcal{L}}{\partial z_i} = \hat{y}_i - y_i$$
+  *(Gradiente elegante: predizione meno target; per stabilità numerica si sottrae $z_{\max}$ ai logit prima dell'esponenziale.)*
+* **Overfitting ed Early Stopping:** Monitorando le curve sul validation set, l'**Early Stopping** arresta l'addestramento prima che la rete vada in overfitting.
+* **Keras & Scikit-Learn API:** `MLPClassifier` / `MLPRegressor` in scikit-learn (che supportano `predict_proba()` ed `early_stopping=True`); `Sequential` / `Functional` API in Keras con `compile(optimizer, loss, metrics)` e `fit(X_train, y_train, epochs, validation_data)`.
 
 ---
 
@@ -383,6 +391,10 @@ Operazione inserita tipicamente prima o dopo la funzione di attivazione:
 Soluzione comune nelle reti ricorrenti (RNN): limita il gradiente a una soglia massima prestabilita per prevenire l'esplosione numerica:
 $$\text{if } \|\mathbf{g}\| > c \implies \mathbf{g} \leftarrow c \frac{\mathbf{g}}{\|\mathbf{g}\|}$$
 
+#### 5.1 Transfer Learning e Unsupervised Pretraining
+* **Transfer Learning:** Riutilizza gli strati inferiori di un modello già addestrato su un task simile (che estraggono feature generali), congelandoli inizialmente (`layer.trainable = False`) e riaddestrando/raffinando (*fine-tuning*) gli strati superiori con learning rate ridotto.
+* **Unsupervised / Self-Supervised Pretraining:** Quando i dati etichettati scarseggiano, si addestra prima un modello non supervisionato (es. Autoencoder o task ausiliario auto-supervisionato) per apprendere rappresentazioni utili, per poi fare *fine-tuning* supervisionato.
+
 #### 6. Ottimizzatori Avanzati (Faster Optimizers)
 Rispetto alla discesa del gradiente standard (SGD):
 * **Momentum Optimization:** Simula una sfera con massa inerziale che scende lungo un pendio, accelerando lungo le direzioni consistenti:
@@ -398,8 +410,9 @@ Rispetto alla discesa del gradiente standard (SGD):
 #### 8. Tecniche di Regolarizzazione per Evitare l'Overfitting
 * **Regolarizzazione $L_1$ (Lasso):** Aggiunge $\alpha \sum |w_i|$ alla loss, inducendo pesi sparsi (*feature selection* implicita).
 * **Regolarizzazione $L_2$ (Ridge / Weight Decay):** Aggiunge $\frac{\lambda}{2} \sum w_i^2$ alla loss, forzando i pesi a rimanere piccoli e distribuiti.
-* **Dropout (Srivastava et al., 2014):** Ad ogni passo di training spegne casualmente ogni neurone con probabilità $p$ (solitamente tra $0.1$ e $0.5$). Costringe la rete a non affidarsi a singoli neuroni e simula un ensemble di $2^N$ architetture.
-* **Early Stopping:** Interrompe l'addestramento non appena la loss sul validation set smette di diminuire per un numero prefissato di epoche (*patience*).
+* **Dropout (Srivastava et al., 2014):** Ad ogni passo di training spegne casualmente ogni neurone con probabilità $p$ (solitamente tra $0.1$ e $0.5$). Costringe la rete a non affidarsi a singoli neuroni e simula un ensemble di architetture; **Monte Carlo (MC) Dropout** mantiene attivo il dropout in inferenza su più passaggi per stimare l'incertezza predittiva.
+* **Max-Norm Regularization:** Impone un limite superiore $\|\mathbf{w}\|_2 \le r$ alla norma dei pesi entranti in ciascun neurone, stabilizzando l'addestramento.
+* **Early Stopping (introdotto nella Lezione 07):** Interrompe l'addestramento non appena le prestazioni sul validation set smettono di migliorare per un numero prefissato di epoche (*patience*).
 
 ---
 

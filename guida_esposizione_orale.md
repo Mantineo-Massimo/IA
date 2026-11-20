@@ -67,7 +67,7 @@ graph TD
 > Confrontiamo tre classificatori probabilistici discriminativi su Base (30D) vs +Cluster (32D senza leakage):
 > 1. **Regressione Logistica**: Baseline lineare convessa.
 > 2. **Albero CART (`max_depth=5`)**: Addestrato su feature numeriche **non scalate** (invarianza alle trasformazioni monotone, Lezione 05) per regole leggibili in mesi ed Euro.
-> 3. **MLP `(64, 32)`**: Attivazione ReLU, output sigmoideo, Adam, regolarizzazione L2 (`alpha=0.1`) ed *early stopping* (Lezione 08).
+> 3. **MLP `(64, 32)`**: Attivazione ReLU, output sigmoideo, Adam, regolarizzazione L2 (`alpha=0.1`) ed *early stopping* (Lezioni 07–08).
 
 ## Slide 8: Confronto delle Prestazioni Sperimentali
 * **Transizione:** *"Esaminiamo i risultati reali sul Test Set e l'impatto della soglia decisionale..."*
@@ -75,7 +75,7 @@ graph TD
 
 ## Slide 9: Spiegabilità Business: Regole dell'Albero Decisionale (CART)
 * **Transizione:** *"Analizziamo le regole trasparenti estratte dall'albero CART..."*
-> L'albero usa l'**Indice di Gini** ($G_i \in [0, 0.5]$ per $K=2$ classi). Sui 5.634 campioni di training non scalati, la radice è `tenure <= 16.5` mesi; seguendo il ramo in **Fibra Ottica** (68.3% churn), `TotalCharges <= 120.0€` (primi mesi) e assenza di `TechSupport`, il nodo blu scuro raggiunge l'**85.5% di Churn** (`165 / 193`, $G=0.248$).
+> L'albero usa l'**Indice di Gini** ($G_i \in [0, 0.5]$ per $K=2$ classi). Sui 5.634 campioni di training non scalati, la radice è `tenure <= 16.5` mesi; seguendo il ramo in **Fibra Ottica** (68.3% churn) e `TotalCharges <= 120.0€` (primi mesi), il nodo blu scuro di livello 3 raggiunge l'**85.5% di Churn** (`165 / 193`, $G=0.248$), e il successivo split su assenza di `TechSupport` (livello 4) sale all'**87.6%** (`162 / 185`).
 
 ## Slide 10: Discussione Critica, Conclusioni & Sviluppi Futuri
 > 1. **Ruolo Reale del Clustering**: Valore soprattutto descrittivo/strategico (Volatili 43.4% churn) + lieve boost AUC su MLP (`0.843`).

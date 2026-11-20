@@ -1,0 +1,182 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{babel}
+\babelprovide[import,main]{italian}
+\usepackage[a4paper, left=18mm, right=18mm, top=20mm, bottom=18mm, headheight=15pt]{geometry}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs, tabularx}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{PrimaryNavy}{RGB}{20, 45, 85}
+\definecolor{SecondaryBlue}{RGB}{45, 95, 150}
+\definecolor{LightBg}{RGB}{244, 246, 250}
+\definecolor{TrapBg}{RGB}{253, 243, 242}
+\definecolor{AccentRed}{RGB}{170, 40, 40}
+
+\titleformat{\section}{\large\bfseries\color{PrimaryNavy}}{}{0em}{}[\vspace{-2pt}\color{SecondaryBlue}\hrule height 1pt]
+\titlespacing*{\section}{0pt}{10pt plus 2pt minus 2pt}{5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textbf{Foglio 2 --- Banca Domande e Risposte d'Esame}}
+\fancyhead[R]{\footnotesize M. Mantineo (541924) -- Laboratorio di IA}
+\fancyfoot[C]{\footnotesize Pagina \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\emergencystretch 1.5em
+
+\newcommand{\qa}[2]{%
+  \par\vspace{4pt}\noindent\textbf{\color{PrimaryNavy}#1}\par\vspace{1pt}%
+  \noindent\textbf{\color{SecondaryBlue}R:} #2\par\vspace{2pt}%
+}
+\newcommand{\qatrap}[2]{%
+  \par\vspace{4pt}\noindent\colorbox{TrapBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+  \textbf{\color{AccentRed}#1}\\[2pt]\textbf{\color{PrimaryNavy}R:} #2}}\par\vspace{3pt}%
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \bfseries \color{PrimaryNavy} Foglio 2 --- Banca Completa di Domande e Risposte d'Esame}\\[4pt]
+    {\large 33 Domande Mirate su Teoria (Lezioni 01--08), Risultati, Codice e Domande Trabocchetto}\\[3pt]
+    {\small \textbf{Progetto:} Churn Prediction e Segmentazione Comportamentale \quad|\quad \textbf{Studente:} Massimo Mantineo (541924)}
+\end{center}
+
+\section*{Sezione A --- Fondamenti di IA \& Agenti Intelligenti (Lezioni 01--02, Slide 2)}
+
+\qa{A1. Quali sono i quattro approcci alla definizione di IA secondo Russell \& Norvig e perché avete scelto ``Agire Razionalmente''?}{
+Russell e Norvig organizzano le definizioni di IA lungo due assi (\textit{Pensiero vs.\ Comportamento} e \textit{Umanamente vs.\ Razionalmente}): (1) \textbf{Pensare Umanamente} (modellazione cognitiva), (2) \textbf{Pensare Razionalmente} (leggi della logica), (3) \textbf{Agire Umanamente} (Test di Turing) e (4) \textbf{Agire Razionalmente} (agente razionale). Adottiamo l'\textbf{Agire Razionalmente} perché in un sistema di \textit{churn management} non serve imitare il cervello umano né usare sillogismi rigidi, ma selezionare azioni che \textbf{massimizzino il valore atteso della misura di prestazione $P$} in condizioni di incertezza.}
+
+\qa{A2. Qual è la differenza tra razionalità e onniscienza?}{
+Un agente \textbf{onnisciente} conosce a priori l'esito reale e certo di ogni propria azione (impossibile in pratica). Un agente \textbf{razionale} massimizza la prestazione \textit{attesa} date le sole percezioni disponibili e la conoscenza pregressa: se un cliente a basso rischio abbandona per un evento imprevedibile esterno, la scelta precedente resta comunque razionale.}
+
+\qa{A3. A quale architettura di agente appartiene il vostro sistema CRM?}{
+È un \textbf{agente basato su utilità con apprendimento} (\textit{utility-based learning agent}): usa una funzione di utilità per gestire il trade-off tra obiettivi conflittuali (ridurre il churn vs.\ contenere il costo delle promozioni rispetto al CAC) e apprende dai dati storici. Le quattro componenti concettuali sono: \textit{elemento esecutivo} (predizione/azione), \textit{elemento di apprendimento} (training ML), \textit{critico} (valutazione metriche/esiti) e \textit{generatore di problemi} (campagne esplorative).}
+
+\qa{A4. Descriva il modello PEAS e motivi tutte le proprietà dell'ambiente $E$.}{
+\textbf{P:} valore netto di fidelizzazione (churn evitato rispetto al costo offerte e al CAC).
+\textbf{E:} clientela Telco via CRM --- \textit{parzialmente osservabile} (offerte dei competitor e insoddisfazione latente restano fuori dai log), \textit{nondeterministico / stocastico} (esito modellato con probabilità), \textit{multi-agente} (clienti e operatori concorrenti), \textit{continuo} (tempo e importi), \textit{sconosciuto} (appreso via ML), \textit{sequenziale e dinamico} nel ciclo reale delle campagne di retention, ma \textbf{episodico e statico} nella singola predizione \textit{batch} su uno snapshot fisso.
+\textbf{A:} offerte mirate, sconti, supporto tecnico prioritario.
+\textbf{S:} log CRM (fatturazione, \textit{tenure}, contratti, servizi).}
+
+\qa{A5. Differenza tra la $P$ nel PEAS e la $P$ di Tom Mitchell $\langle T, E, P \rangle$?}{
+Nel \textbf{PEAS} (Russell \& Norvig), $P$ è il criterio oggettivo esterno nell'ambiente aziendale (impatto economico netto rispetto al CAC). In \textbf{Mitchell}, $P$ misura la qualità predittiva del modello ML sul proprio task $T$ (Recall, Precision, F1-Score, AUC-ROC).}
+
+\section*{Sezione B --- Machine Learning, Dataset \& Preprocessing (Lezione 03, Slide 3--4)}
+
+\qa{B1. Come classifica il sistema nella tassonomia ML della Lezione 03 (Géron)?}{
+Per supervisione è \textbf{ibrido} (non supervisionato K-Means/PCA + supervisionato); per aggiornamento è \textbf{Batch (Offline)} (addestrato periodicamente sullo storico); per generalizzazione è \textbf{Model-Based} (apprende parametri/regole matematiche anziché memorizzare esempi come k-NN).}
+
+\qa{B2. Perché parlate di modelli ``probabilistici discriminativi'' e non bayesiani?}{
+Un modello \textit{generativo} (es.\ Naive Bayes) modella $P(\mathbf{x} \mid y)$ e $P(y)$ risalendo a $P(y \mid \mathbf{x})$ col teorema di Bayes. I nostri tre modelli (LogReg, CART, MLP) sono \textbf{discriminativi}: stimano direttamente $P(\text{Churn}=1 \mid \mathbf{x}) \in [0, 1]$ senza assumere indipendenza condizionata tra le 30 feature Telco.}
+
+\qa{B3. Perché imputare a \texttt{0.0} gli 11 valori vuoti di \texttt{TotalCharges} invece di eliminarli o usare la mediana?}{
+Perché dall'ispezione del codice (\texttt{blank\_rows['tenure'].unique()}) tutte e 11 le righe hanno \textbf{\texttt{tenure == 0}}: sono neo-clienti che non hanno ancora concluso il primo ciclo di fatturazione, quindi la loro spesa cumulata è oggettivamente \texttt{0,0\,\texteuro}. Imputare media ($\approx 2.299$\,\texteuro) o mediana distorcerebbe i dati, mentre eliminarle farebbe perdere istanze sui nuovi clienti.}
+
+\qa{B4. Cos'è il Data Leakage e come lo avete azzerato nella pipeline?}{
+Il \textit{data leakage} avviene quando statistiche del Test Set contaminano l'addestramento, gonfiando le metriche. Lo azzeriamo in 4 passaggi: (1) \texttt{train\_test\_split} stratificato 80/20 \textbf{prima} di tutto; (2) \texttt{StandardScaler} e \texttt{OneHotEncoder} fittati (\texttt{fit\_transform}) solo su \texttt{X\_train\_raw}; (3) \texttt{KMeans} e \texttt{PCA} fittati solo su \texttt{X\_train\_scaled} (sul test si usa solo \texttt{predict()}); (4) calibrazione di $\tau=0.35$ eseguita in 5-fold CV (\texttt{cross\_val\_predict}) solo sul Training Set.}
+
+\qa{B5. Perché uno split stratificato (\texttt{stratify=y})?}{
+Con target sbilanciato (26,54\% Churn), uno split puramente casuale può alterare le proporzioni di classe tra Train e Test. Con \texttt{stratify=y} entrambi hanno esattamente il 26,54\% di Churn (1.495/5.634 nel Train, 374/1.409 nel Test).}
+
+\qa{B6. Differenza tra Standardizzazione (Z-Score) e Normalizzazione (Min-Max): perché \texttt{StandardScaler}?}{
+Min-Max comprime in $[0,1]$ ma è vulnerabile agli outlier; la \textbf{Standardizzazione Z-Score} ($z=(x-\mu)/\sigma$, media 0 e deviazione standard 1 sul solo Train) è più robusta agli outlier ed è ideale per distanze euclidee (K-Means), covarianza (PCA) e discesa del gradiente con regolarizzazione L2 (LogReg, MLP).}
+
+\qa{B7. Perché \texttt{OneHotEncoder(drop='first')} e quale limite introduce?}{
+Elimina la multicollinearità perfetta (\textit{trappola delle variabili dummy}) passando da 16 categoriali a 27 colonne binarie (\textbf{30 feature totali}). Come limite noto (discusso nella relazione), nel K-Means basato su distanza euclidea introduce una lieve asimmetria tra la categoria di riferimento (vettore nullo, distanza $1$ dalle altre) e due categorie diverse da quella di riferimento (distanza $\sqrt{2}$).}
+
+\section*{Sezione C --- Classificazione, Sbilanciamento \& Soglia (Lezione 04, Slide 4 \& 8)}
+
+\qa{C1. Perché l'Accuracy è fuorviante su questo dataset?}{
+Perché il 73,46\% dei clienti resta: un classificatore \textit{dummy} che predice sempre ``Rimasto'' raggiunge il \textbf{73,46\% di Accuracy} con \textbf{Recall = 0\%}, non salvando neppure un cliente in fuga.}
+
+\qa{C2. Formule di Precision, Recall, F1-Score e perché F1 usa la media armonica?}{
+$\text{Precision} = \frac{TP}{TP+FP}$ (affidabilità degli allarmi); $\text{Recall} = \frac{TP}{TP+FN}$ (quota di churner intercettati); $F_1 = 2\frac{\text{Prec}\cdot\text{Rec}}{\text{Prec}+\text{Rec}}$. La \textbf{media armonica} penalizza pesantemente i valori bassi (con Prec 100\% e Rec 1\%, la media aritmetica è 50,5\% ma F1 è $\approx 2\%$), quindi F1 è alta solo se entrambe sono buone.}
+
+\qa{C3. Perché qui la Recall è più importante della Precision?}{
+Per l'\textbf{asimmetria dei costi}: un Falso Negativo (FN) fa perdere il cliente e impone il pagamento di un intero \textbf{CAC} di acquisizione, mentre un Falso Positivo (FP) costa solo un'offerta o un contatto proattivo di retention.}
+
+\qa{C4. Cos'è la Curva ROC e che significato probabilistico ha l'AUC-ROC?}{
+La Curva ROC traccia $\text{TPR (Recall)}$ vs.\ $\text{FPR} = \frac{FP}{FP+TN} = 1 - \text{Specificity}$ al variare di tutte le soglie $\tau \in [0,1]$. L'\textbf{AUC-ROC} è la probabilità che il modello assegni uno score più alto a un positivo casuale rispetto a un negativo casuale (0,5 random, 1,0 perfetto; noi otteniamo \textbf{0,842--0,843}).}
+
+\qa{C5. Quando preferire la Curva Precision-Recall (PR) alla Curva ROC?}{
+Quando la classe positiva è \textbf{molto rara} (es.\ 1\% frodi), dove molti TN mantengono basso l'FPR rendendo ottimistica la ROC, oppure quando i FP sono molto costosi. Nel nostro caso (26,54\% positivi, sbilanciamento moderato) la ROC è affidabile, ma la integriamo sempre con Precision, Recall e F1.}
+
+\qa{C6. Differenza tra calibrare la soglia ($\tau=0.35$) e usare \texttt{class\_weight='balanced'}?}{
+Calibrare la soglia $\tau=0.35$ (verificata in 5-fold CV solo su Train: Recall CV 70,4\%, F1 0,627) lascia invariati i pesi del modello e l'AUC, spostando solo la decisione finale (\texttt{y\_prob >= 0.35}): sul Test Set la Recall sale a \textbf{70,3\%} (FN da 165 a 111) e l'F1 sale a \textbf{0,614}. Invece \texttt{class\_weight='balanced'} ripesa gli errori direttamente nella Log-Loss durante il training ($\approx 1.88\times$ sui positivi), portando la Recall al \textbf{78,3\%} (293 TP, solo 81 FN, F1 0,614, Prec 50,4\%).}
+
+\section*{Sezione D --- Apprendimento Non Supervisionato: K-Means \& PCA (Lezione 06, Slide 5--6)}
+
+\qa{D1. Come funziona K-Means (Lloyd), cosa minimizza e cos'è K-Means++?}{
+Minimizza l'Inerzia $\text{WCSS} = \sum_{j=1}^K \sum_{\mathbf{x}_i \in C_j} \|\mathbf{x}_i - \boldsymbol{\mu}_j\|^2$ alternando assegnazione al centroide euclideo più vicino e aggiornamento dei centroidi come media dei punti, fino a convergenza (23 iterazioni). \textbf{K-Means++} (default in scikit-learn, con \texttt{n\_init=10}) sceglie i semi iniziali ben distanziati con probabilità proporzionale alla distanza quadratica minima, riducendo il rischio di minimi locali scadenti.}
+
+\qa{D2. Perché non basta l'Inerzia per scegliere $K$ e come si legge il Silhouette Score?}{
+Perché l'Inerzia scende sempre fino a 0 per $K=N$. La combiniamo col Metodo del Gomito e con il \textbf{Silhouette Score} $s(i) = \frac{b(i)-a(i)}{\max(a(i), b(i))} \in [-1, +1]$ ($a_i$ = coesione intra-cluster, $b_i$ = separazione dal cluster vicino più prossimo). A $K=2$ ($s=0.293$) si divide solo internet sì/no; a $K=3$ c'è il gomito netto (33.485 $\rightarrow$ 24.642) con $s=0.282$; per $K \ge 4$ la Silhouette crolla (0.230 $\rightarrow$ 0.185).}
+
+\qa{D3. Perché un Silhouette Score di \texttt{0,282} è accettabile e perché nel codice c'è \texttt{sample\_size=2000}?}{
+In uno spazio misto a \textbf{30 dimensioni} con 27 colonne binarie one-hot, i profili clienti non sono sfere isolate ma un continuum con zone di confine: \texttt{0,282} indica separazione moderata ma strutturalmente reale (confermata dal tasso di churn stabile tra Train e Test: 43,4\% vs 43,3\%). Il parametro \texttt{sample\_size=2000} (con \texttt{random\_state=42}) evita il costo quadratico $O(N^2)$ su 5.634 istanze ($\approx 15{,}9$ milioni di coppie per $K$), fornendo una stima veloce e riproducibile.}
+
+\qa{D4. Perché K-Means e non DBSCAN o GMM?}{
+K-Means offre scalabilità lineare, centroidi medi immediatamente interpretabili nel CRM e il metodo induttivo \textbf{\texttt{.predict()}} sul Test Set senza leakage. DBSCAN in \texttt{scikit-learn} non ha \texttt{.predict()} per nuovi punti e in 30D misto la scelta di $\varepsilon$ è instabile; GMM full-covariance su 30D prevalentemente binari violerebbe l'ipotesi di normalità multivariata.}
+
+\qa{D5. Come funziona la PCA e la usate per addestrare i classificatori?}{
+Sui dati centrati $\mathbf{X}_c$, la PCA calcola gli autovettori della matrice di covarianza $\boldsymbol{\Sigma} = \frac{1}{N-1}\mathbf{X}_c^T\mathbf{X}_c$ proiettando sui primi 2 assi di massima varianza (\textbf{57,87\%} totale: $PC_1=39{,}37\%$ Spesa/Servizi; $PC_2=18{,}50\%$ Anzianità/Contratti). \textbf{No}, non la usiamo per addestrare i classificatori (per non perdere il 42\% di varianza e l'interpretabilità delle feature), ma solo per visualizzare in 2D i cluster.}
+
+\qa{D6. Riordinare gli ID dei cluster usando \texttt{y\_train} (Cella 14) introduce data leakage?}{
+\textbf{No}: il K-Means è fittato esclusivamente su \texttt{X\_train\_scaled} senza mai vedere \texttt{y\_train}. Il riordino (\texttt{cluster\_remap = \{2:0, 1:1, 0:2\}}) è una pura rinominazione biunivoca degli indici decisa sul solo Training Set e applicata fissa al Test Set, senza cambiare i gruppi né guardare \texttt{y\_test}.}
+
+\section*{Sezione E --- Decision Trees CART \& Interpretabilità (Lezione 05, Slide 7 \& 9)}
+
+\qa{E1. Come funziona CART e qual è la formula dell'Indice di Gini?}{
+CART esegue una ricerca \textit{greedy} top-down scegliendo ad ogni nodo la coppia (feature $k$, soglia $t_k$) che minimizza $J(k,t_k) = \frac{m_L}{m}G_L + \frac{m_R}{m}G_R$, dove $G_i = 1 - \sum_{k=1}^K p_{i,k}^2$. Per $K=2$, $G_i \in [0, 0.5]$ (0 puro, 0,5 massima impurità). Produce alberi molto simili all'Entropia di Shannon ma è più veloce perché evita i logaritmi.}
+
+\qa{E2. Perché il Decision Tree è addestrato su feature numeriche NON scalate?}{
+Perché gli alberi CART effettuano tagli ortogonali su una variabile alla volta e sono \textbf{invarianti alle trasformazioni monotone crescenti} (Lezione 05): le metriche sono identiche al decimale, ma le soglie restano leggibili direttamente in \textbf{mesi} (\texttt{tenure <= 16.5}) ed \textbf{Euro} (\texttt{TotalCharges <= 120.0}).}
+
+\qa{E3. Complessità di CART e perché \texttt{max\_depth=5}?}{
+Training $O(n m \log_2 m)$, predizione $O(\log_2 m)$ (al più 5 test). \texttt{max\_depth=5} (32 foglie) regolarizza l'albero prevenendo l'overfitting (alta varianza) tipico degli alberi non vincolati.}
+
+\qatrap{E4. [TRABOCCHETTO SU SLIDE 9] Nel nodo blu scuro (\texttt{165/193}, 85,5\% churn), questi clienti sono PRIMA o DOPO lo split su \texttt{TechSupport\_Yes <= 0.5}?}{
+I \textbf{193 clienti (165 in churn, 85,5\%, $G=0.248$)} appartengono già al nodo di \textbf{livello 3} definito da \texttt{tenure <= 16.5} + Fibra Ottica + \texttt{TotalCharges <= 120\,\texteuro}. La scritta \texttt{TechSupport\_Yes <= 0.5} in cima al riquadro è la \textbf{regola di split verso il livello 4} (nascosto dal \texttt{plot\_tree(..., max\_depth=3)}): al livello 4 del modello addestrato (\texttt{max\_depth=5}), i clienti \textit{senza} supporto tecnico salgono a \textbf{162/185 (87,6\% churn, $G=0.218$)}, mentre gli 8 clienti \textit{con} supporto scendono al 37,5\%.}
+
+\qa{E5. Quali sono i limiti di un singolo Decision Tree?}{
+Confini ortogonali agli assi (sensibilità alle rotazioni dei dati) e \textbf{alta varianza}: piccole modifiche nel dataset possono cambiare lo split di radice. Si risolvono con ensemble come \textbf{Random Forest} e \textbf{XGBoost}.}
+
+\section*{Sezione F --- Regressione Logistica \& Reti Neurali MLP (Lezioni 07--08, Slide 7--8)}
+
+\qa{F1. Come funziona la Regressione Logistica e quali pesi sono più forti nel progetto?}{
+Calcola $P(Y=1 \mid \mathbf{x}) = \sigma(\mathbf{w}^T\mathbf{x} + b) = \frac{1}{1+e^{-(\mathbf{w}^T\mathbf{x}+b)}}$ minimizzando la \textbf{Binary Cross-Entropy} (funzione convessa $\rightarrow$ ottimo globale con solver \texttt{lbfgs}, 40 iterazioni, L2 di default \texttt{C=1.0}). I pesi più positivi (aumentano churn) sono \texttt{Fiber optic} ($+1.181$), \texttt{TotalCharges} ($+0.528$), \texttt{Electronic check} ($+0.393$); i più protettivi sono \texttt{Contract\_Two year} ($-1.314$) e \texttt{tenure} ($-1.257$).}
+
+\qa{F2. Perché servono strati nascosti e attivazioni non lineari nell'MLP?}{
+Un singolo Perceptron (Rosenblatt) risolve solo problemi linearmente separabili e fallisce sullo \textbf{XOR}. Più strati risolvono il limite solo con attivazioni non lineari: altrimenti $W_3(W_2(W_1\mathbf{x})) = W_{\text{tot}}\mathbf{x}$ collasserebbe in un singolo modello lineare.}
+
+\qa{F3. Perché ReLU negli strati nascosti e Sigmoide in output?}{
+\textbf{ReLU} ($\max(0,z)$) ha derivata 1 per $z>0$, prevenendo i \textbf{gradienti svanenti} (\textit{vanishing gradients}) della sigmoide ed è rapidissima; la \textbf{Sigmoide} in output (\texttt{out\_activation\_='logistic'}) converte il logit finale in una probabilità valida in $(0,1)$ per la Binary Cross-Entropy.}
+
+\qa{F4. Come apprende l'MLP (Backpropagation + Adam) e che effetto hanno L2 ed Early Stopping?}{
+Backpropagation propaga l'errore all'indietro con la regola della catena e \textbf{Adam} combina Momentum (1° momento) e RMSProp (2° momento adattivo). Con 2 strati \texttt{(64, 32)}, l'MLP ha \textbf{4.097 parametri} (contro \textbf{31} della LogReg!) e andrebbe in pesante overfitting su 500 epoche (AUC verso 0,78). Con \textbf{L2 (\texttt{alpha=0.1})} e \textbf{\texttt{early\_stopping=True}} (10\% validation interna, \texttt{n\_iter\_no\_change=10}), l'MLP si arresta a \textbf{17 epoche} (Base) e \textbf{19 epoche} (+Cluster), raggiungendo \textbf{AUC 0,8429}.}
+
+\section*{Sezione G --- Analisi Critica, Codice, Etica \& Sviluppi Futuri (Slide 8 \& 10)}
+
+\qa{G1. Perché \texttt{+Cluster} peggiora leggermente LogReg, lascia identico CART e aiuta solo MLP?}{
+I cluster K-Means sono costruiti sulle stesse 30 feature: su \textbf{LogReg} introducono lieve ridondanza/collinearità lineare (Recall 55,9\% $\rightarrow$ 55,1\%); su \textbf{CART} gli split diretti su \texttt{tenure}/Fibra dominano già il Gini quindi l'albero non sceglie mai i cluster; sull'\textbf{MLP} gli strati non lineari sfruttano il segnale aggregato migliorando tutte e 5 le metriche (AUC 0,8424 $\rightarrow$ \textbf{0,8429}). Il valore principale del K-Means resta quindi \textbf{descrittivo/strategico}.}
+
+\qa{G2. Cos'è il Rasoio di Occam e perché qui fa vincere la Regressione Logistica?}{
+A parità di prestazioni predittive ($\text{AUC}\approx 0.842$ vs $0.843$), si preferisce il modello più semplice. La Regressione Logistica (31 parametri, convessa, interpretabile, F1 0,605) non richiede i 4.225 parametri black-box dell'MLP, quindi è la scelta migliore per il ranking, affiancata da CART per la spiegabilità.}
+
+\qa{G3. [DOMANDE SUL CODICE] Perché usate \texttt{clone(base\_model)}, \texttt{predict\_proba()[:, 1]} e \texttt{random\_state=42}?}{
+\texttt{clone()} (Cella 19) crea copie vergini indipendenti per Base e \texttt{+Cluster} evitando stati condivisi; \texttt{predict\_proba()[:, 1]} estrae lo score continuo $P(Y=1\mid\mathbf{x})$ necessario per Curva ROC, AUC e calibrazione soglia (mentre \texttt{predict()} taglia a 0,50); \texttt{random\_state=42} (Cella 2) garantisce riproducibilità deterministica al 100\%.}
+
+\qa{G4. Quali implicazioni di GDPR e \textit{fairness} ha il progetto?}{
+Il dataset include attributi sensibili come \texttt{SeniorCitizen} e \texttt{gender}: occorrono audit di \textbf{fairness} per prevenire discriminazioni tariffarie (es.\ anziani penalizzati). Inoltre il \textbf{GDPR} richiede minimizzazione, pseudonimizzazione (\texttt{customerID} rimosso) e trasparenza sulle decisioni automatizzate (art.\ 22), motivo ulteriore per valorizzare modelli spiegabili come CART e LogReg.}
+
+\qa{G5. Cosa intendete per Soft Clustering (\texttt{transform()}), SMOTE in CV e Cost-Sensitive Learning?}{
+(1) \textbf{\texttt{kmeans.transform()}} sostituisce l'etichetta discreta con le 3 distanze euclidee continue dai centroidi; (2) \textbf{SMOTE} genera sintetici della classe minoritaria ma va applicato \textit{solo dentro i training fold} (via \texttt{imblearn.pipeline}) per evitare leakage; (3) \textbf{Cost-Sensitive Learning} usa una matrice di costo esplicita in Euro (CAC reale vs costo offerta) per massimizzare direttamente l'utilità attesa.}
+
+\end{document}

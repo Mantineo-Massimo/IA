@@ -149,7 +149,7 @@ I tre profili sul Training Set mostrano forte differenziazione del rischio (conf
 
 \noindent \textbf{Cosa dire a voce:}
 \begin{quote}
-Confrontiamo i tre classificatori su configurazione Base (30D) e +Cluster (32D con codifica One-Hot di cluster predetti senza leakage). La \textbf{Regressione Logistica} testa la separabilità lineare; l'\textbf{Albero CART} (\texttt{max\_depth=5}) viene addestrato sulle variabili numeriche non scalate (invariante alle trasformazioni monotone, Lezione 05) per avere soglie leggibili in mesi ed Euro; l'\textbf{MLP} (64, 32) usa regolarizzazione L2 ($\alpha=0.1$) ed \textit{early stopping} (Lezione 08).
+Confrontiamo i tre classificatori su configurazione Base (30D) e +Cluster (32D con codifica One-Hot di cluster predetti senza leakage). La \textbf{Regressione Logistica} testa la separabilità lineare; l'\textbf{Albero CART} (\texttt{max\_depth=5}) viene addestrato sulle variabili numeriche non scalate (invariante alle trasformazioni monotone, Lezione 05) per avere soglie leggibili in mesi ed Euro; l'\textbf{MLP} (64, 32) usa regolarizzazione L2 ($\alpha=0.1$) ed \textit{early stopping} (Lezioni 07--08).
 \end{quote}
 
 \subsection*{Slide 8: Confronto delle Prestazioni Sperimentali}
@@ -165,7 +165,7 @@ Con L2 ed \textit{early stopping}, l'MLP non va in overfitting e raggiunge $\tex
 
 \noindent \textbf{Cosa dire a voce:}
 \begin{quote}
-L'albero misura l'impurità tramite l'\textbf{Indice di Gini} ($G \in [0, 0.5]$ per $K=2$ classi). Lo split di radice su $5.634$ istanze isola subito \texttt{tenure <= 16.5} mesi. Seguendo il ramo in \textbf{Fibra Ottica} (\textbf{68.3\% churn}), con spesa cumulata \texttt{TotalCharges <= 120.0\,\texteuro} (primi mesi) e assenza di \texttt{TechSupport}, si arriva al nodo blu scuro con l'\textbf{85.5\% di Churn} (165 su 193, $G=0.248$).
+L'albero misura l'impurità tramite l'\textbf{Indice di Gini} ($G \in [0, 0.5]$ per $K=2$ classi). Lo split di radice su $5.634$ istanze isola subito \texttt{tenure <= 16.5} mesi. Seguendo il ramo in \textbf{Fibra Ottica} (\textbf{68.3\% churn}) e spesa cumulata \texttt{TotalCharges <= 120.0\,\texteuro} (primi mesi), si arriva al nodo blu scuro di livello 3 con l'\textbf{85.5\% di Churn} (165 su 193, $G=0.248$); il successivo split su assenza di \texttt{TechSupport} (livello 4) porta il tasso all'\textbf{87.6\%} (162 su 185).
 \end{quote}
 
 \subsection*{Slide 10: Discussione Critica, Conclusioni \& Sviluppi Futuri}

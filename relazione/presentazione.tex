@@ -496,15 +496,15 @@
 
         \begin{column}{0.33\textwidth}
             \colorbox{SecondaryBlue!12}{\parbox{\linewidth}{
-                \footnotesize \color{PrimaryNavy}\textbf{3. Regola Critica (85.5\% Churn)}\\[0.5mm]
+                \footnotesize \color{PrimaryNavy}\textbf{3. Regola Critica (85.5\% $\rightarrow$ 87.6\%)}\\[0.5mm]
                 \scriptsize \color{DarkText}
                 • \textbf{Radice}: \texttt{tenure <= 16.5} mesi.\\
-                • \textbf{Fibra Ottica} (68.3\%) + \texttt{TotalCharges <= 120\,\texteuro} + no \texttt{TechSupport} $\rightarrow$ \textbf{165/193} ($G=0.248$).
+                • \textbf{Fibra} (68.3\%) + \texttt{TotalCharges <= 120\,\texteuro} $\rightarrow$ \textbf{165/193} (85.5\%, $G=0.248$); senza \texttt{TechSupport}: \textbf{87.6\%}.
             }}
         \end{column}
     \end{columns}
 
-    \note{L'albero CART fornisce piena spiegabilità White-Box. Misura l'impurità con l'Indice di Gini tra 0 e 0.5 (essendo classificazione binaria K=2). Poiché lo abbiamo addestrato sui dati non standardizzati del Training Set (5.634 clienti), leggiamo soglie reali: il primo split è tenure <= 16.5 mesi; proseguendo su Fibra Ottica (68.3\% churn), spesa totale <= 120€ (primi mesi) e assenza di TechSupport si raggiunge un nodo blu scuro con l'85.5\% di abbandoni (165 su 193).}
+    \note{L'albero CART fornisce piena spiegabilità White-Box. Misura l'impurità con l'Indice di Gini tra 0 e 0.5 (essendo classificazione binaria K=2). Poiché lo abbiamo addestrato sui dati non standardizzati del Training Set (5.634 clienti), leggiamo soglie reali: il primo split è tenure <= 16.5 mesi; proseguendo su Fibra Ottica (68.3\% churn) e spesa totale <= 120€ (primi mesi) si raggiunge il nodo blu scuro di livello 3 con l'85.5\% di abbandoni (165 su 193, G=0.248); il successivo split su assenza di TechSupport (livello 4) innalza ulteriormente il churn all'87.6\% (162 su 185).}
 \end{frame}
 
 % ==========================================

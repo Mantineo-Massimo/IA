@@ -8,7 +8,7 @@
 ## Slide 1 — Copertina
 > «Buongiorno professore, sono Massimo Mantineo e presento il mio progetto di Laboratorio di Intelligenza Artificiale sulla **previsione dell'abbandono dei clienti** — il cosiddetto churn — nel settore delle telecomunicazioni, sul dataset pubblico IBM Telco da 7.043 clienti.
 >
-> Come indicato in copertina, unisco le due tecniche principali viste a lezione: l'**apprendimento non supervisionato**, cioè dividere i clienti in gruppi simili senza sapere chi abbandona, e l'**apprendimento supervisionato**, cioè usare esempi passati con esito noto per prevedere chi sta per andarsene e verificare se conoscere il gruppo aiuta le previsioni.»
+> Nel progetto unisco le due tecniche principali viste a lezione: l'**apprendimento non supervisionato**, cioè dividere i clienti in gruppi simili senza sapere chi abbandona, e l'**apprendimento supervisionato**, cioè usare esempi passati con esito noto per prevedere chi sta per andarsene e verificare se conoscere il gruppo aiuta le previsioni.»
 
 **Passaggio → Slide 2:** «Prima di guardare i dati, vediamo perché nasce questo problema e come lo inquadriamo come agente intelligente.»
 
@@ -19,7 +19,7 @@
 >
 > Lo descriviamo con il modello **PEAS**:
 > - **Obiettivo (P — Performance):** ridurre gli abbandoni spendendo meno del **CAC**, cioè il costo per acquisire un cliente nuovo.
-> - **Ambiente (E — Environment):** clientela Telco, **parzialmente osservabile** (non vediamo la concorrenza), **incerto** (lavoriamo con probabilità) e che **cambia nel tempo** nelle campagne reali, mentre nella singola previsione resta fisso.
+> - **Ambiente (E — Environment):** clientela Telco, **parzialmente osservabile** (non vediamo la concorrenza), **incerto** (lavoriamo con probabilità), **dinamico** nella realtà (mercato e clienti cambiano nel tempo) ma **statico** nel nostro esperimento (fotografia fissa dei dati).
 > - **Azioni (A — Actuators):** offerte mirate, sconti e supporto tecnico prioritario.
 > - **Dati in ingresso (S — Sensors):** i dati del gestionale clienti (**CRM**) su durata del contratto, bollette e servizi attivi.»
 
@@ -28,11 +28,11 @@
 ---
 
 ## Slide 3 — Come Impara l'Agente: Due Compiti di Machine Learning
-> «L'agente impara **offline** — cioè viene addestrato una volta sull'intero blocco di dati storici, non cliente per cliente in tempo reale — attraverso due compiti di Machine Learning:
-> - Il **compito supervisionato** segue la definizione di **Mitchell (T, E, P)**: un algoritmo impara dall'**Esperienza (E)** dei **5.634 clienti passati** con esito noto se migliora sul **Compito (T)** di prevedere chi abbandonerà rispetto alla misura di **Prestazione (P)**, valutata con metriche per dati sbilanciati (**Recall, Precision, F1 e AUC-ROC**).
+> «L'agente impara dai dati storici attraverso due compiti di Machine Learning:
+> - Il **compito supervisionato** segue la definizione di **Mitchell (T, E, P)**: un algoritmo impara dall'**Esperienza (E)** dei **5.634 clienti passati** con esito noto se migliora sul **Compito (T)** di prevedere chi abbandonerà rispetto alla misura di **Prestazione (P)**, valutata con metriche per dati sbilanciati: **Recall o Sensibilità** (quanti clienti in fuga intercettiamo), **Precision** (tra chi segnaliamo, quanti abbandonano davvero), **F1** (media armonica che dà più peso al valore più basso, così è alta solo se entrambe sono buone) e **AUC-ROC** (bravura generale nel separare le due classi, da 0,5 a 1).
 > - Il **compito non supervisionato** raggruppa i clienti simili con **K-Means** senza guardare gli abbandoni, li visualizza in 2D con la **PCA** e verifica se il gruppo aiuta le previsioni.
 >
-> Perché il Machine Learning e non regole scritte a mano? Con **30 caratteristiche** le regole fisse sono fragili, non si adattano al mercato e rispondono solo **sì o no**. I nostri modelli invece stimano una **probabilità da 0 a 1**, così ordiniamo i clienti per rischio e scegliamo da quale soglia intervenire. Infine, nel **PEAS** misuriamo il guadagno economico reale in azienda, mentre nel **Machine Learning (Mitchell)** quanto prevede bene il modello.»
+> Perché il Machine Learning e non regole scritte a mano? Con **30 caratteristiche** le regole fisse sono fragili, non si adattano al mercato e rispondono solo **sì o no**. I nostri modelli invece stimano una **probabilità da 0 a 1**, così ordiniamo i clienti per rischio e scegliamo da quale soglia intervenire.»
 
 **Passaggio → Slide 4:** «Passiamo ora ai dati reali del dataset, a tutto il preprocessing svolto e ai primi segnali che emergono dal Boxplot.»
 
@@ -68,7 +68,7 @@
 ---
 
 ## Slide 6 — I Tre Tipi di Clienti Scoperti e la Mappa PCA
-> «Solo dopo aver formato i 3 gruppi abbiamo guardato il loro tasso di abbandono. I colori delle schede a sinistra corrispondono ai puntini del grafico:
+> «Solo dopo aver formato i 3 gruppi abbiamo guardato il loro tasso di abbandono. I colori delle schede a sinistra corrispondono ai puntini del grafico (ogni percentuale vale **dentro il singolo gruppo**, dove abbandoni + rimasti = 100%, e i tre gruppi sommano **5.634 clienti di training**, mentre gli altri **1.409** sono nel test):
 > - **Gruppo 0 (Blu — Volatili):** 2.557 clienti recenti (**15 mesi**), spesa media (**68 euro**) e **43,4%** di abbandoni (confermato al **43,3%** sul test, segno che i gruppi sono stabili);
 > - **Gruppo 1 (Arancione — Fedeli High-Value):** 1.863 clienti storici (**58 mesi**), spesa alta (**89 euro**) e solo **15,9%** di abbandoni (13,3% sul test);
 > - **Gruppo 2 (Verde — Low-Cost):** 1.214 clienti con servizi base senza internet (**21 euro**) e abbandoni minimi (**7,2%**, 8,0% sul test).
@@ -82,8 +82,8 @@
 ## Slide 7 — Come Prevediamo l'Abbandono: I Tre Modelli
 > «Dopo lo split 80/20, senza data leakage, confrontiamo **3 modelli** sia sui dati **Base (30 variabili)** sia aggiungendo 2 colonne 0/1 per il **Gruppo K-Means (32 variabili)**:
 > 1. **Regressione Logistica:** ragiona come una pagella a punti — dà un **peso** a ogni dato del cliente (es. Fibra alza il rischio, tanti mesi lo abbassano), li somma e passa il totale dentro una curva a "S" chiamata **sigmoide** che schiaccia qualunque punteggio in una **probabilità da 0% a 100%**. Semplice, veloce e stabile: è il nostro punto di riferimento.
-> 2. **Albero CART:** funziona come una **catena di domande sì/no**. **Come sceglie quale domanda fare per prima?** A ogni nodo prova tutte le domande possibili e sceglie quella che **abbassa di più l'indice di Gini**, creando due sottogruppi più puri. Limitiamo la profondità a **5 livelli** così non impara a memoria i singoli clienti, e lo addestriamo **senza standardizzazione** perché guarda una caratteristica alla volta: così leggiamo subito **mesi ed euro veri**.
-> 3. **Rete Neurale MLP:** lavora su **due livelli collegati**: un primo strato di **64 neuroni** incrocia più indizi insieme e un secondo strato di **32 neuroni** li raffina fino alla probabilità finale, cogliendo legami complessi. Usa **ReLU** (un interruttore che lascia passare solo i segnali positivi utili, evitando che la rete si blocchi) e **Adam** (che a ogni errore aggiusta i pesi in modo rapido e intelligente). Contro l'**overfitting** — cioè imparare a memoria il training andando male sul test — usiamo la **penalità L2** (tiene i pesi piccoli ed equilibrati) e l'**early stopping** (ferma lo studio appena smette di migliorare su una piccola verifica interna).
+> 2. **Albero CART:** funziona come una **catena di domande sì/no**. **Chi stabilisce le condizioni?** Non noi a mano: a ogni nodo CART prova **in automatico** tutte le 30 variabili e tutte le soglie possibili (approccio **greedy**) e sceglie quella che **abbassa di più l'indice di Gini**, creando due sottogruppi più puri. Noi limitiamo solo la profondità a **5 livelli** così non impara a memoria i singoli clienti, e lo addestriamo **senza standardizzazione** perché guarda una caratteristica alla volta: così leggiamo subito **mesi ed euro veri**.
+> 3. **Rete Neurale MLP:** mentre la Logistica è come un solo valutatore che somma i 30 dati una volta sola, la Rete Neurale è come una **squadra di piccoli valutatori (neuroni) divisi in 2 strati**: prima **64 neuroni** leggono i dati e cercano combinazioni di indizi, poi **32 neuroni** li riassumono fino alla probabilità finale, cogliendo legami complessi. Usa **ReLU** (azzera i segnali negativi e lascia passare solo quelli utili) e **Adam** (a ogni errore durante lo studio corregge automaticamente i pesi). Contro l'**overfitting** — cioè imparare a memoria il training andando male sul test — usiamo la **penalità L2** (tiene i pesi piccoli ed equilibrati) e l'**early stopping** (ferma lo studio appena smette di migliorare su una piccola verifica interna).
 >
 > Lo **scopo** è capire chi prevede meglio sui clienti nuovi e se il gruppo K-Means porta un vero vantaggio.»
 
@@ -125,7 +125,7 @@
 ## Slide 10 — Conclusioni, Limiti e Sviluppi Futuri
 > «In sintesi, ogni strumento ha un ruolo preciso: **K-Means** per capire i profili, **Regressione Logistica** per le previsioni, **Albero CART** per spiegare il perché e **soglia calibrata** per proteggere i costi. Portiamo a casa che il clustering isola i Volatili (**43,4%**), la Logistica vince per semplicità e solidità, e tarare la soglia sul CAC porta la Recall fino al **78,3%**.
 >
-> Come **limiti** abbiamo che K-Means forma gruppi "a sfera" (perché usa la distanza in linea retta dal centro), i dati sono statici senza lo storico dei reclami, e in produzione bisogna garantire **privacy**, **trasparenza** sulle decisioni e **fairness** (evitare discriminazioni su età o genere). Come **sviluppi futuri**: modelli ensemble come **Random Forest** (tanti alberi indipendenti in parallelo che votano a maggioranza) e **XGBoost** (alberi costruiti uno dopo l'altro dove ciascuno corregge gli errori del precedente), **soft clustering** (usare le distanze continue dai centri invece del solo numero di gruppo), analisi con **curva Precision-Recall** (più sensibile su dati sbilanciati) e costi pesati direttamente in euro sul CAC reale. Grazie per l'attenzione!»
+> Come **limiti** abbiamo che K-Means forma gruppi "a sfera" (perché usa la distanza in linea retta dal centro), i dati sono statici senza lo storico dei reclami, e in produzione bisogna garantire **privacy**, **trasparenza** sulle decisioni e **fairness** (evitare discriminazioni su età o genere). Come **sviluppo futuro** proponiamo la **Random Forest**: invece di usare un solo albero decisionale (che è instabile, cioè basta cambiare pochi clienti nel training per cambiare i tagli), addestra in parallelo **tanti alberi diversi** dando a ciascuno un campione casuale di clienti e un sottoinsieme casuale di variabili, e poi li fa **votare a maggioranza** — così gli errori dei singoli alberi si compensano e si riduce l'**overfitting**. Grazie per l'attenzione!»
 
 ---
 
@@ -141,4 +141,4 @@
 - **Metriche e AUC-ROC:** Recall = `TP/(TP+FN)`; Precision = `TP/(TP+FP)`; F1 = media armonica tra Precision e Recall; Accuracy = `(TP+TN)/tutti`; AUC-ROC = area sotto la curva Recall vs falsi allarmi (`0,5` caso – `1` perfetto).
 - **5-fold Cross-Validation e Pesi Bilanciati:** 5-fold divide il training in 5 fette (4 studiano, 1 verifica a turno, mai il test); pesi bilanciati = sbagliare un abbandono pesa ~3 volte di più.
 - **Indice di Gini:** `1 − (quota rimasti² + quota abbandoni²)`; con 2 classi va da `0` (puro) a `0,5` (metà e metà).
-- **Etica e Modelli Futuri:** Privacy, trasparenza e fairness (no discriminazioni su età/genere); Random Forest = alberi in parallelo a maggioranza; XGBoost = alberi in sequenza che correggono gli errori precedenti.
+- **Etica e Modelli Futuri:** Privacy, trasparenza e fairness (no discriminazioni su età/genere); Random Forest = alberi in parallelo a maggioranza.

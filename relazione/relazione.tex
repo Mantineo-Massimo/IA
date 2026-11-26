@@ -405,11 +405,7 @@ Dall'albero in Figura~\ref{fig:tree} emergono regole aziendali immediate:
 \subsection{Limiti, Aspetti Etici e Sviluppi Futuri}
 Tra i limiti dell'approccio attuale vanno segnalati: l'assunzione di cluster sferici tipica del K-Means (dovuta alla distanza euclidea in linea retta dai centroidi), la lieve asimmetria nelle distanze indotta da \texttt{drop='first'} sulle variabili one-hot e la natura statica del dataset (privo di serie storiche di utilizzo o log di assistenza). Sul piano etico e di affidabilità, l'impiego in produzione richiede garanzie di \textbf{privacy}, \textbf{trasparenza} sulle decisioni automatizzate e controlli di \textit{fairness} per evitare discriminazioni tariffarie basate su attributi demografici sensibili (es.\ \texttt{SeniorCitizen} o \texttt{gender}).
 
-Come sviluppi futuri si individuano:
-\begin{enumerate}
-    \item \textbf{Modelli Ensemble (\textit{Random Forest} e \textit{XGBoost})}: Rispettivamente insiemi di alberi indipendenti in parallelo a voto di maggioranza e alberi in sequenza che correggono gli errori precedenti, per ridurre la varianza dell'albero singolo su dati tabellari.
-    \item \textbf{Soft Clustering, Curva Precision-Recall e Costi sul CAC}: Sostituzione delle etichette discrete di cluster con le distanze continue dai centroidi (\texttt{kmeans.transform()}), valutazione approfondita tramite \textbf{curva Precision-Recall} su classi sbilanciate e ottimizzazione di una funzione di costo espressa direttamente in Euro in funzione del CAC reale.
-\end{enumerate}
+Come sviluppo futuro si individua l'impiego di modelli \textit{ensemble} come la \textbf{Random Forest} (insieme di alberi decisionali indipendenti in parallelo a voto di maggioranza), per ridurre la varianza dell'albero singolo su dati tabellari, unito all'integrazione di dati temporali su reclami e utilizzo.
 
 \section{Conclusioni e Dichiarazione sull'Uso dell'AI}
 \subsection{Sintesi dei Risultati}

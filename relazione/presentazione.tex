@@ -78,15 +78,8 @@
     {\small \color{DarkText!80} Dataset IBM Telco (7.043 clienti) -- Telecomunicazioni}\\[2.5mm]
     {\color{SecondaryBlue}\rule{0.52\textwidth}{1.5pt}}
 
-    \vspace{0.35cm}
-    \card{CardBlue}{0.86\textwidth}{\footnotesize \centering
-        \textbf{\color{PrimaryNavy} Due fasi integrate:}
-        \textbf{Non supervisionato} (dividere i clienti in gruppi simili senza sapere chi abbandona)
-        $+$ \textbf{Supervisionato} (usare esempi passati con esito noto per prevedere chi se ne andrà).
-    }
-
-    \vspace{0.42cm}
-    {\normalsize \textbf{Massimo Mantineo} \quad (Matricola: 541924)}\\[1.5mm]
+    \vspace{0.60cm}
+    {\normalsize \textbf{Massimo Mantineo} \quad (Matricola: 541924)}\\[2mm]
     {\small \color{DarkText!75} Anno Accademico 2025/2026}
     \vfill
 \end{frame}
@@ -120,7 +113,7 @@
                 \textbf{\color{PrimaryNavy} Obiettivo (P -- Performance):} ridurre gli abbandoni spendendo meno del \textbf{CAC} (costo per acquisire un nuovo cliente).
             }\\[2mm]
             \card{CardAmber}{\linewidth}{\footnotesize
-                \textbf{\color{AccentAmber} Ambiente (E -- Environment):} clientela Telco -- \textbf{parzialmente osservabile} (non vediamo la concorrenza), \textbf{incerto} (probabilità), \textbf{cambia nel tempo} nelle campagne reali (fisso nella singola previsione).
+                \textbf{\color{AccentAmber} Ambiente (E -- Environment):} clientela Telco -- \textbf{parzialmente osservabile} (non vediamo la concorrenza), \textbf{incerto} (probabilità), \textbf{dinamico} nella realtà (mercato e clienti cambiano nel tempo) ma \textbf{statico} nel nostro esperimento (fotografia fissa dei dati).
             }\\[2mm]
             \card{CardGreen}{\linewidth}{\footnotesize
                 \textbf{\color{AccentGreen} Azioni (A -- Actuators):} interventi aziendali -- offerte mirate, sconti e supporto tecnico prioritario.
@@ -139,18 +132,22 @@
     \begin{columns}[T, onlytextwidth]
         \begin{column}{0.49\textwidth}
             \raggedright
-            \textbf{\color{PrimaryNavy} Due compiti addestrati offline sullo storico}
+            \textbf{\color{PrimaryNavy} Due compiti addestrati sullo storico}
             \vspace{1.8mm}
 
-            \card{CardBlue}{\linewidth}{\footnotesize
+            \card{CardBlue}{\linewidth}{\scriptsize
                 \textbf{\color{PrimaryNavy}\small 1. Compito Supervisionato (Mitchell: T, E, P)}\\[2pt]
                 Usa l'\textbf{Esperienza (E)} di \textbf{5.634 clienti passati} per migliorare sul \textbf{Compito (T)} di prevedere chi abbandonerà.\\[2pt]
-                \textbf{Prestazione (P):} \textbf{Recall}, \textbf{Precision}, \textbf{F1} e \textbf{AUC-ROC}.
-            }\\[2.5mm]
+                \textbf{Prestazione (P) -- metriche per dati sbilanciati:}\\
+                -- \textbf{Recall (Sensibilità):} \% di clienti in fuga intercettati.\\
+                -- \textbf{Precision:} tra chi segnaliamo, quanti abbandonano davvero.\\
+                -- \textbf{F1:} media armonica (dà più peso al valore più basso).\\
+                -- \textbf{AUC-ROC:} bravura nel separare le 2 classi (0,5 caso -- 1 perfetto).
+            }\\[2mm]
 
-            \card{CardGreen}{\linewidth}{\footnotesize
+            \card{CardGreen}{\linewidth}{\scriptsize
                 \textbf{\color{AccentGreen}\small 2. Compito Non Supervisionato}\\[2pt]
-                Raggruppa i clienti simili con \textbf{K-Means} senza mai guardare chi ha abbandonato.\\[2pt]
+                Raggruppa i clienti simili con \textbf{K-Means} senza mai guardare chi ha abbandonato.\\[1.5pt]
                 Li visualizza in 2D con la \textbf{PCA} (riassume 30 variabili in 2 assi) e verifica se i gruppi aiutano le previsioni.
             }
         \end{column}
@@ -170,11 +167,6 @@
             \end{itemize}
         \end{column}
     \end{columns}
-
-    \vspace{2.6mm}
-    \card{CardAmber}{\textwidth}{\footnotesize
-        \textbf{\color{PrimaryNavy} Distinzione fondamentale (PEAS vs Mitchell):} nel \textbf{PEAS} la misura di prestazione è il \textbf{guadagno economico reale} in azienda; nel \textbf{Machine Learning (Mitchell)} misura invece \textbf{quanto prevede bene il modello} sui dati.
-    }
 \end{frame}
 
 % ==========================================
@@ -204,7 +196,8 @@
 
             \vspace{1.5mm}
             \card{CardRed}{\linewidth}{\scriptsize
-                \textbf{\color{AccentRed} Come si legge il Boxplot (Verde = Rimasti, Rosso = Abbandoni):}\\[1.5pt]
+                \textbf{\color{AccentRed}\small Il Boxplot}\\[2pt]
+                -- \textbf{\color{AccentGreen} Verde} = Rimasti \quad|\quad \textbf{\color{AccentRed} Rosso} = Abbandoni.\\[1.5pt]
                 -- \textbf{Linea nera} = \textbf{mediana} (dati in ordine dal piccolo al grande: il valore centrale, o media dei 2 centrali se pari).\\
                 -- \textbf{Scatola} = 50\% centrale (dal 25\textdegree{} al 75\textdegree{} percentile); \textbf{baffi/pallini} = estremi e casi anomali (\textbf{outlier}).\\[1.5pt]
                 -- \textbf{Esito:} chi abbandona resta poco (\textbf{10 mesi} vs \textbf{38}) e paga di più (\textbf{80\,\texteuro} vs \textbf{64\,\texteuro}).
@@ -264,19 +257,23 @@
             \card{CardBlue}{\linewidth}{\footnotesize
                 \textbf{\color{SecondaryBlue}\small Gruppo 0 -- Volatili (2.557, Blu)}\\[2pt]
                 Clienti recenti (\textbf{15 mesi}), spesa media (\textbf{68\,\texteuro}).\\
-                \textbf{\color{AccentRed} 43,4\% di abbandoni} (confermato al \textbf{43,3\%} sul test: gruppi stabili).
+                \textbf{\color{AccentRed} 43,4\% di abbandoni.}
             }\\[2mm]
 
             \card{CardAmber}{\linewidth}{\footnotesize
                 \textbf{\color{AccentAmber}\small Gruppo 1 -- Fedeli High-Value (1.863, Arancione)}\\[2pt]
                 Clienti storici (\textbf{58 mesi}), spesa alta (\textbf{89\,\texteuro}).\\
-                Abbandoni contenuti: \textbf{15,9\%} (13,3\% sul test).
+                Abbandoni contenuti: \textbf{15,9\%}.
             }\\[2mm]
 
             \card{CardGreen}{\linewidth}{\footnotesize
                 \textbf{\color{AccentGreen}\small Gruppo 2 -- Low-Cost (1.214, Verde)}\\[2pt]
                 Servizi base senza internet (\textbf{21\,\texteuro/mese}).\\
-                Abbandoni minimi: \textbf{7,2\%} (8,0\% sul test).
+                Abbandoni minimi: \textbf{7,2\%}.
+            }\\[2mm]
+
+            \card{CardGray}{\linewidth}{\scriptsize
+                Ogni \% vale \textbf{dentro il singolo gruppo} (abbandoni + rimasti = 100\%). Totale: \textbf{5.634} clienti di training (gli altri \textbf{1.409} sono nel test).
             }
         \end{column}
 
@@ -316,18 +313,18 @@
         \begin{column}{0.315\textwidth}
             \card{CardGreen}{\linewidth}{\scriptsize
                 \textbf{\color{AccentGreen}\small 2. Albero CART}\\[3pt]
-                Fa una \textbf{catena di domande sì/no} (scegliendo ogni volta quella che abbassa di più l'\textbf{indice di Gini}), fino a max \textbf{5 livelli} per non imparare a memoria.\\[3pt]
-                Addestrato \textbf{senza standardizzazione}: leggiamo subito \textbf{mesi ed euro veri}.
+                Fa una \textbf{catena di domande sì/no}: \textbf{sceglie in automatico} (metodo \textbf{greedy}) la variabile e la soglia che abbassano di più l'\textbf{indice di Gini}, separando meglio le classi.\\[3pt]
+                Fermato a max \textbf{5 livelli} contro l'overfitting; addestrato \textbf{senza standardizzazione} per leggere subito \textbf{mesi ed euro veri}.
             }
         \end{column}
 
         \begin{column}{0.315\textwidth}
             \card{CardAmber}{\linewidth}{\scriptsize
                 \textbf{\color{AccentAmber}\small 3. Rete Neurale MLP}\\[3pt]
-                Due livelli collegati (\textbf{64 poi 32 neuroni}) che incrociano più indizi per legami complessi:\\[2pt]
-                -- \textbf{ReLU:} lascia passare solo i segnali utili.\\
-                -- \textbf{Adam:} aggiusta i pesi rapidamente.\\
-                -- Contro l'\textbf{overfitting} (imparare a memoria): \textbf{L2} (pesi equilibrati) + \textbf{early stopping} (si ferma appena non migliora).
+                Una squadra di piccoli valutatori (\textbf{neuroni}) in \textbf{2 strati}: \textbf{64} combinano i dati del cliente, poi \textbf{32} li riassumono nella probabilità finale.\\[2pt]
+                -- \textbf{ReLU:} azzera i segnali negativi e passa solo quelli utili.\\
+                -- \textbf{Adam:} corregge i pesi a ogni errore nello studio.\\
+                -- Contro l'\textbf{overfitting} (imparare a memoria): \textbf{L2} (pesi piccoli) + \textbf{early stopping} (si ferma appena non migliora).
             }
         \end{column}
     \end{columns}
@@ -349,11 +346,13 @@
 
             \vspace{1.4mm}
             \card{CardBlue}{\linewidth}{\scriptsize
-                \textbf{\color{PrimaryNavy} Come si calcolano le metriche (1.409 clienti di test):}\\[1.5pt]
-                \textbf{\color{SecondaryBlue} Blu} = Base (30 var.) \quad|\quad \textbf{\color{AccentRed} Rosso} = con Gruppo K-Means (32 var.).\\[1.5pt]
-                -- \textbf{Recall:} abbandoni beccati / tutti gli abbandoni veri (soglia 50\%).\\
-                -- \textbf{Precision:} abbandoni beccati / tutti i segnalati; \textbf{F1} = media armonica tra le due; \textbf{Accuracy} = risposte giuste / tutti i clienti.\\
-                -- \textbf{AUC-ROC:} area sotto la curva Recall vs falsi allarmi (\textbf{0,5} caso -- \textbf{1} perfetto).
+                \textbf{\color{PrimaryNavy} Le metriche sul Test Set (1.409 clienti)}\\[2pt]
+                \textbf{\color{SecondaryBlue} Blu} = Base (30 var.) \hspace{3pt}|\hspace{3pt} \textbf{\color{AccentRed} Rosso} = + K-Means (32 var.)\\[2.5pt]
+                -- \textbf{Recall:} abbandoni trovati / abbandoni veri (soglia 50\%).\\[1pt]
+                -- \textbf{Precision:} abbandoni trovati / clienti segnalati.\\[1pt]
+                -- \textbf{F1:} media armonica tra Precision e Recall.\\[1pt]
+                -- \textbf{Accuracy:} previsioni giuste / tutti i clienti.\\[1pt]
+                -- \textbf{AUC-ROC:} area Recall vs falsi allarmi (\textbf{0,5} caso -- \textbf{1} perfetto).
             }
         \end{column}
 
@@ -361,7 +360,7 @@
             \raggedright
             \card{CardGreen}{\linewidth}{\scriptsize
                 \textbf{\color{AccentGreen}\small 1. Chi vince? La Regressione Logistica}\\[1.5pt]
-                Miglior Recall (\textbf{55,9\%}), Accuracy \textbf{80,6\%}, F1 \textbf{0,605}, AUC \textbf{0,842} --- stessa forza della Rete Neurale (\textbf{0,843}).\\[1.5pt]
+                Miglior Recall (\textbf{55,9\%}), Accuracy \textbf{80,6\%}, F1 \textbf{0,605}, AUC-ROC \textbf{0,842} --- stessa forza della Rete Neurale (\textbf{0,843}).\\[1.5pt]
                 \textbf{A parità di risultato vince il modello più semplice:} meno parametri, più stabile e meno rischio di overfitting.
             }\\[1.8mm]
 
@@ -389,12 +388,12 @@
     \begin{columns}[T, onlytextwidth]
         \begin{column}{0.40\textwidth}
             \card{CardBlue}{\linewidth}{\scriptsize
-                \textbf{\color{PrimaryNavy}\small Come si legge il grafico}\\[2pt]
-                -- \textbf{\color{AccentAmber} Arancione} = prevalenza Rimasti.\\
-                -- \textbf{\color{SecondaryBlue} Blu} = prevalenza Abbandoni.\\[2pt]
-                -- \textbf{Indice di Gini} (quanto un gruppo è misto):\\
-                \textbf{Calcolo:} $1 - (\text{quota rimasti}^2 + \text{quota abbandoni}^2)$.\\
-                Con \textbf{2 classi} va da \textbf{0} (puro, \textbf{scuro}) a \textbf{0,5} (metà e metà, \textbf{chiaro}).
+                \textbf{\color{PrimaryNavy}\small Legenda dell'Albero}\\[2pt]
+                -- \textbf{\color{AccentAmber} Arancione} = Rimasti \hspace{3pt}|\hspace{3pt} \textbf{\color{SecondaryBlue} Blu} = Abbandoni.\\[2pt]
+                -- \textbf{Condizioni (tagli):} scelte \textbf{in automatico} da CART provando tutte le variabili e soglie (vince chi abbassa di più il Gini).\\[2pt]
+                -- \textbf{Indice di Gini} (quanto un riquadro è misto):\\
+                \textbf{Vicino a 0} (\textbf{scuro}) = quasi tutti uguali;\\
+                \textbf{Vicino a 0,5} (\textbf{chiaro}) = metà e metà.
             }
         \end{column}
 
@@ -434,8 +433,7 @@
                 \textbf{\color{AccentAmber}\small Limiti e sviluppi futuri}\\[2.2pt]
                 -- \textbf{Limiti tecnici:} K-Means taglia gruppi ``a sfera'' (distanza in linea retta) e i dati sono statici (manca lo storico dei reclami).\\[2.2pt]
                 -- \textbf{Etica e affidabilità:} garantire \textbf{privacy}, \textbf{trasparenza} sulle decisioni e \textbf{fairness} (evitare discriminazioni su età o genere).\\[2.2pt]
-                -- \textbf{Modelli futuri:} \textbf{Random Forest} (tanti alberi in parallelo che votano a maggioranza) e \textbf{XGBoost} (alberi in sequenza che correggono gli errori precedenti).\\[2.2pt]
-                -- \textbf{Miglioramenti:} \textbf{soft clustering} (distanze continue dai centri), analisi con \textbf{curva Precision-Recall} (dati sbilanciati) e costi in euro sul CAC.
+                -- \textbf{Sviluppo futuro -- Random Forest:} invece di un solo albero (sensibile a piccole variazioni dei dati), addestra \textbf{tanti alberi su campioni e variabili casuali diverse} che poi \textbf{votano a maggioranza}: riduce gli errori e l'\textbf{overfitting}.
             }
         \end{column}
     \end{columns}

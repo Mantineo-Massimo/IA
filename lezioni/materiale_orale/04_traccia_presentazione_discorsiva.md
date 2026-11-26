@@ -1,7 +1,7 @@
 # Foglio 4 — Esposizione Orale Completa con Ogni Concetto e «Come si fa»
 
-**Slide abbinate:** [`relazione/presentazione_discorsiva.pdf`](../relazione/presentazione_discorsiva.pdf) (10 slide, zero codice sullo schermo, 100% allineate alle dispense del corso)  
-**Come usarla:** Non hai limiti di tempo: esponi con calma seguendo le 10 slide. Ogni termine che nomini ha già dentro sia **cosa significa** sia **come si calcola o funziona**, senza termini fuori dispensa (`SMOTE`, `GDPR`, nome `Rasoio di Occam` rimossi).
+**Slide abbinate:** [`relazione/presentazione.pdf`](../../relazione/presentazione.pdf) (10 slide, zero codice sullo schermo, 100% allineate alle dispense del corso)  
+**Come usarla:** Non hai limiti di tempo: esponi con calma seguendo le 10 slide. Ogni termine che nomini ha già dentro sia **cosa significa** sia **come si calcola o funziona**.
 
 ---
 

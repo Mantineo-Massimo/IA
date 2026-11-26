@@ -126,7 +126,7 @@ Il fenomeno del \textit{churn} (abbandono dei clienti) rappresenta una delle pri
 \end{enumerate}
 
 \subsection{Approcci alla Definizione di IA e Modello PEAS}
-In accordo con i fondamenti di Russell \& Norvig (Lezioni 01--02, illustrati in Figura~\ref{fig:epistemologia}), il problema si colloca nel quadrante dell'\textbf{Agire Razionalmente}: il sistema è progettato non per imitare processi cognitivi umani, ma per selezionare azioni che massimizzino il valore atteso della misura di prestazione ($P$), adottando un approccio consequenzialista in condizioni di incertezza (senza richiedere onniscienza).
+In accordo con i fondamenti di Russell \& Norvig (illustrati in Figura~\ref{fig:epistemologia}), il problema si colloca nel quadrante dell'\textbf{Agire Razionalmente}: il sistema è progettato non per imitare processi cognitivi umani, ma per selezionare azioni che massimizzino il valore atteso della misura di prestazione ($P$), adottando un approccio consequenzialista in condizioni di incertezza (senza richiedere onniscienza).
 
 \begin{figure}[htbp]
     \centering
@@ -160,11 +160,11 @@ In accordo con i fondamenti di Russell \& Norvig (Lezioni 01--02, illustrati in 
         \draw[NavyBlue!80, thick] (hub.south) |- (bl.east);
         \draw[NavyBlue!80, thick] (hub.south) |- (br.west);
     \end{tikzpicture}
-    \caption{\textbf{Approcci alla Definizione di IA (Russell \& Norvig, Lezione 01)}: I quattro approcci lungo gli assi \textit{Pensiero/Comportamento} e \textit{Umanamente/Razionalmente}, con evidenza dell'Agire Razionalmente adottato dal sistema.}
+    \caption{\textbf{Approcci alla Definizione di IA (Russell \& Norvig)}: I quattro approcci lungo gli assi \textit{Pensiero/Comportamento} e \textit{Umanamente/Razionalmente}, con evidenza dell'Agire Razionalmente adottato dal sistema.}
     \label{fig:epistemologia}
 \end{figure}
 
-In particolare, il sistema CRM si configura come un \textbf{agente basato su utilità con apprendimento} (\textit{utility-based learning agent}, Lezione 02): utilizza una funzione di utilità per bilanciare obiettivi conflittuali (ridurre gli abbandoni rispetto al costo delle promozioni) e apprende dai dati storici nel modello \textbf{PEAS}:
+In particolare, il sistema CRM si configura come un \textbf{agente basato su utilità con apprendimento} (\textit{utility-based learning agent}): utilizza una funzione di utilità per bilanciare obiettivi conflittuali (ridurre gli abbandoni rispetto al costo delle promozioni) e apprende dai dati storici nel modello \textbf{PEAS}:
 \begin{itemize}
     \item \textbf{Performance Measure (P)}: Criterio oggettivo esterno che valuta la sequenza di stati prodotta nell'ambiente aziendale, ossia la massimizzazione del valore netto di fidelizzazione (riduzione del tasso di abbandono e salvaguardia del margine rispetto al CAC).
     \item \textbf{Environment (E)}: L'ecosistema operativo della clientela Telco interagente tramite CRM. Secondo la tassonomia di Russell \& Norvig, l'ambiente è \textit{parzialmente osservabile} (offerte della concorrenza o insoddisfazione latente restano fuori dai log), \textit{nondeterministico} e modellato in modo \textit{stocastico} (probabilistico), \textit{multi-agente}, \textit{continuo} (su importi e durata), \textit{sconosciuto} a priori (appreso via ML), nonché \textit{dinamico} e \textit{sequenziale} nelle campagne reali (pur essendo \textit{statico} ed \textit{episodico} nella singola predizione batch).
@@ -173,10 +173,10 @@ In particolare, il sistema CRM si configura come un \textbf{agente basato su uti
 \end{itemize}
 
 \subsection{Formulazione dei Task di Machine Learning}
-Poiché in un ambiente stocastico e ad alta dimensionalità le regole booleane scritte a mano (\textit{SE ... ALLORA ...}) non scalano e non quantificano il rischio, l'agente appoggia le proprie decisioni sull'apprendimento automatico (Lezione 03):
+Poiché in un ambiente stocastico e ad alta dimensionalità le regole booleane scritte a mano (\textit{SE ... ALLORA ...}) non scalano e non quantificano il rischio, l'agente appoggia le proprie decisioni sull'apprendimento automatico:
 \begin{itemize}
     \item \textbf{Task Supervisionato (Mitchell $\langle T, E, P \rangle$)}: Compito ($T$) di classificazione binaria probabilistica per stimare $P(\text{Churn}=1 \mid \mathbf{x}) \in [0, 1]$ e ordinare i clienti per rischio; Esperienza ($E$) data dalle $5.634$ istanze etichettate di training estratte dai $7.043$ clienti; Prestazione ($P$) valutata con metriche robuste allo sbilanciamento (\textit{Precision}, \textit{Recall}, \textit{F1-Score}, \textit{AUC-ROC}).
-    \item \textbf{Task Non Supervisionato}: Partizionamento esplorativo tramite clustering K-Means (Lezione 06) sulle $30$ feature di training senza usare l'etichetta \texttt{Churn}, valutato con Inerzia WCSS e \textit{Silhouette Score} e ispezionato in 2D via PCA, per poi verificare rigorosamente se le etichette di cluster migliorino i classificatori (\textit{feature engineering}).
+    \item \textbf{Task Non Supervisionato}: Partizionamento esplorativo tramite clustering K-Means sulle $30$ feature di training senza usare l'etichetta \texttt{Churn}, valutato con Inerzia WCSS e \textit{Silhouette Score} e ispezionato in 2D via PCA, per poi verificare rigorosamente se le etichette di cluster migliorino i classificatori (\textit{feature engineering}).
 \end{itemize}
 
 \section{Dataset e Preparazione dei Dati}
@@ -190,7 +190,7 @@ La variabile target è \texttt{Churn} (valori originali \texttt{Yes}/\texttt{No}
     \item \textbf{Codifica binaria del target}: \texttt{Churn} è stata mappata in $y \in \{0, 1\}$, dove $1$ indica l'abbandono (\texttt{Yes}) e $0$ la permanenza (\texttt{No}). Il tasso di churn complessivo è pari al \textbf{26.54\%} (1.869 clienti su 7.043, contro 5.174 rimasti pari al 73.46\%).
 \end{itemize}
 
-\subsubsection{Criticità dello Sbilanciamento delle Classi (Lezione 04)}
+\subsubsection{Criticità dello Sbilanciamento delle Classi}
 Un tasso di churn del 26.54\% evidenzia uno \textbf{sbilanciamento delle classi} (rapporto circa $1:2.77$). Un classificatore banale (\textit{dummy classifier}) che predicesse sempre la classe maggioritaria ($y=0$) otterrebbe comunque un'\textit{Accuracy} del 73.46\%, ma avrebbe $\text{Recall} = 0\%$, risultando del tutto inutile ai fini della \textit{retention}. Per questo motivo l'analisi si concentra su \textbf{Precision}, \textbf{Recall}, \textbf{F1-Score} e \textbf{AUC-ROC}.
 
 \subsection{Analisi Grafica Esplorativa (EDA)}
@@ -207,7 +207,7 @@ La Figura~\ref{fig:eda} riassume la distribuzione del target e il confronto risp
 \end{itemize}
 
 \subsection{Split Stratificato e Preprocessing (Prevenzione del Data Leakage)}
-Per prevenire qualsiasi contaminazione tra addestramento e valutazione (\textit{data leakage}, Lezione 03), lo \textbf{split stratificato 80/20} viene eseguito \textit{prima} di qualsiasi trasformazione parametrica: si ottengono \textbf{5.634 istanze di Training} e \textbf{1.409 istanze di Test}, entrambe con proporzione esatta del 26.54\% di Churn.
+Per prevenire qualsiasi contaminazione tra addestramento e valutazione (\textit{data leakage}), lo \textbf{split stratificato 80/20} viene eseguito \textit{prima} di qualsiasi trasformazione parametrica: si ottengono \textbf{5.634 istanze di Training} e \textbf{1.409 istanze di Test}, entrambe con proporzione esatta del 26.54\% di Churn.
 
 Successivamente sono state definite due pipeline tramite \texttt{ColumnTransformer}, entrambe addestrate esclusivamente sul Training Set (\texttt{fit\_transform}) e applicate al Test Set (\texttt{transform}):
 \begin{enumerate}
@@ -216,13 +216,13 @@ Successivamente sono state definite due pipeline tramite \texttt{ColumnTransform
         z = \frac{x - \mu}{\sigma}
     \end{equation}
     e \texttt{OneHotEncoder(drop='first')} alle 16 variabili categoriali (27 colonne binarie risultanti). L'opzione \texttt{drop='first'} elimina la ridondanza lineare (trappola delle variabili \textit{dummy}) evitando la multicollinearità perfetta nei modelli lineari, pur introducendo una lieve asimmetria nelle distanze euclidee rispetto alla categoria di riferimento.
-    \item \textbf{Pipeline Non Scalata (30 feature)} per il Decision Tree CART: poiché gli alberi valutano soglie ortogonali su singole feature alla volta e sono invarianti alle trasformazioni monotone (Lezione 05), lasciare le 3 variabili numeriche in unità originali (\texttt{passthrough}) mantiene identiche prestazioni predittive rendendo i nodi direttamente leggibili in mesi ed Euro.
+    \item \textbf{Pipeline Non Scalata (30 feature)} per il Decision Tree CART: poiché gli alberi valutano soglie ortogonali su singole feature alla volta e sono invarianti alle trasformazioni monotone, lasciare le 3 variabili numeriche in unità originali (\texttt{passthrough}) mantiene identiche prestazioni predittive rendendo i nodi direttamente leggibili in mesi ed Euro.
 \end{enumerate}
 
 \section{Metodologia}
 
 \subsection{Apprendimento Non Supervisionato: Clustering K-Means e PCA}
-Tra gli algoritmi esplorati in Lezione 06, abbiamo selezionato il \textbf{K-Means} (con inizializzazione \textit{K-Means++}) per tre ragioni metodologiche: scalabilità lineare, produzione di centroidi medi immediatamente interpretabili in termini di profilo cliente e disponibilità del metodo induttivo \texttt{.predict()} per assegnare il Test Set senza ri-addestrare né indurre \textit{data leakage} (a differenza di algoritmi basati su densità come DBSCAN, privi in \texttt{scikit-learn} di assegnazione diretta \textit{out-of-sample}). K-Means partiziona i $5.634$ profili del Training Set standardizzato ($30$ feature, senza usare \texttt{Churn}) in $K$ gruppi minimizzando l'Inerzia o \textit{Within-Cluster Sum-of-Squares} (WCSS):
+Tra gli algoritmi di clustering esplorati, abbiamo selezionato il \textbf{K-Means} (con inizializzazione \textit{K-Means++}) per tre ragioni metodologiche: scalabilità lineare, produzione di centroidi medi immediatamente interpretabili in termini di profilo cliente e disponibilità del metodo induttivo \texttt{.predict()} per assegnare il Test Set senza ri-addestrare né indurre \textit{data leakage} (a differenza di algoritmi basati su densità come DBSCAN, privi in \texttt{scikit-learn} di assegnazione diretta \textit{out-of-sample}). K-Means partiziona i $5.634$ profili del Training Set standardizzato ($30$ feature, senza usare \texttt{Churn}) in $K$ gruppi minimizzando l'Inerzia o \textit{Within-Cluster Sum-of-Squares} (WCSS):
 \begin{equation}
     \text{WCSS} = \sum_{j=1}^{K} \sum_{\mathbf{x}_i \in C_j} \|\mathbf{x}_i - \boldsymbol{\mu}_j\|^2
 \end{equation}
@@ -262,9 +262,9 @@ Per ispezionare geometricamente i cluster, abbiamo applicato la \textbf{Principa
 \subsection{Apprendimento Supervisionato: Modelli di Classificazione}
 Per il task di classificazione binaria ($y \in \{0,1\}$), tutti e tre i modelli selezionati sono \textbf{classificatori probabilistici discriminativi} che stimano direttamente $P(y=1 \mid \mathbf{x})$:
 \begin{enumerate}
-    \item \textbf{Regressione Logistica (Baseline Lineare -- Lezione 04 per valutazione e soglia)}: Modello lineare parametrico convesso basato sulla funzione sigmoide $\sigma(\mathbf{w}^T\mathbf{x} + b) = \frac{1}{1 + e^{-(\mathbf{w}^T\mathbf{x} + b)}}$ e minimizzazione della \textit{Log-Loss} (\textit{Binary Cross-Entropy}). Veloce, stabile e interpretabile tramite i pesi $\mathbf{w}$.
-    \item \textbf{Decision Tree CART (Modello White-Box -- Lezione 05)}: Modello non parametrico che partiziona lo spazio tramite tagli ortogonali agli assi minimizzando l'\textbf{Indice di Gini} pesato. Per controllare la varianza (\textit{overfitting}), la profondità è regolarizzata a \texttt{max\_depth=5}.
-    \item \textbf{Multi-Layer Perceptron (MLP -- Lezioni 07 e 08)}: Rete neurale \textit{feed-forward} con due strati nascosti da $64$ e $32$ neuroni (attivazione ReLU $f(z) = \max(0, z)$) e output sigmoideo. Addestrata minimizzando la \textit{Binary Cross-Entropy} con ottimizzatore \textbf{Adam}, regolarizzazione L2 esplicita ($\alpha = 0.1$) ed \textbf{early stopping} (\texttt{early\_stopping=True}, 10\% di validazione interna) per prevenire l'overfitting su dati tabellari.
+    \item \textbf{Regressione Logistica (Baseline Lineare)}: Modello lineare parametrico convesso basato sulla funzione sigmoide $\sigma(\mathbf{w}^T\mathbf{x} + b) = \frac{1}{1 + e^{-(\mathbf{w}^T\mathbf{x} + b)}}$ e minimizzazione della \textit{Log-Loss} (\textit{Binary Cross-Entropy}). Veloce, stabile e interpretabile tramite i pesi $\mathbf{w}$.
+    \item \textbf{Decision Tree CART (Modello White-Box)}: Modello non parametrico che partiziona lo spazio tramite tagli ortogonali agli assi minimizzando l'\textbf{Indice di Gini} pesato. Per controllare la varianza (\textit{overfitting}), la profondità è regolarizzata a \texttt{max\_depth=5}.
+    \item \textbf{Multi-Layer Perceptron (MLP)}: Rete neurale \textit{feed-forward} con due strati nascosti da $64$ e $32$ neuroni (attivazione ReLU $f(z) = \max(0, z)$) e output sigmoideo. Addestrata minimizzando la \textit{Binary Cross-Entropy} con ottimizzatore \textbf{Adam}, regolarizzazione L2 esplicita ($\alpha = 0.1$) ed \textbf{early stopping} (\texttt{early\_stopping=True}, 10\% di validazione interna) per prevenire l'overfitting su dati tabellari.
 \end{enumerate}
 
 \section{Esperimenti e Profilazione dei Cluster}
@@ -355,12 +355,12 @@ I risultati smentiscono l'ipotesi semplicistica che una feature discreta di clus
 \begin{itemize}
     \item \textbf{Regressione Logistica}: Subisce una leggera flessione (\textit{Recall} $0.5588 \rightarrow 0.5508$, \textit{F1} $0.6049 \rightarrow 0.5980$). Poiché i centroidi K-Means derivano dalle stesse variabili di ingresso (\textit{tenure}, costi, servizi), le colonne one-hot del cluster introducono collinearità ridondante e una lieve perdita di calibrazione lineare.
     \item \textbf{Decision Tree (CART)}: Resta perfettamente invariato ($0.7942$ Acc, $0.5401$ Recall, $0.8267$ AUC), poiché gli split ottimali su \textit{tenure} e tipo di servizio dominano già l'informazione discreta di cluster.
-    \item \textbf{Rete Neurale (MLP)}: Grazie alla regolarizzazione L2 ($\alpha=0.1$) e all'\textit{early stopping} (Lezioni 07--08), la rete evita l'overfitting tipico su dataset tabellari (dove senza \textit{early stopping} si osserva un netto degrado verso $\text{AUC} \approx 0.78$) e raggiunge $\text{AUC} = 0.8424$. Con l'aggiunta del cluster, l'MLP ottiene un moderato miglioramento su tutte e cinque le metriche (\textit{Accuracy} $79.99\% \rightarrow 80.34\%$, \textit{Precision} $65.54\% \rightarrow 66.55\%$, \textit{Recall} $51.87\% \rightarrow 52.14\%$, \textit{F1} $0.5791 \rightarrow 0.5847$, e la migliore \textbf{AUC-ROC assoluta pari a $0.8429$}).
+    \item \textbf{Rete Neurale (MLP)}: Grazie alla regolarizzazione L2 ($\alpha=0.1$) e all'\textit{early stopping}, la rete evita l'overfitting tipico su dataset tabellari (dove senza \textit{early stopping} si osserva un netto degrado verso $\text{AUC} \approx 0.78$) e raggiunge $\text{AUC} = 0.8424$. Con l'aggiunta del cluster, l'MLP ottiene un moderato miglioramento su tutte e cinque le metriche (\textit{Accuracy} $79.99\% \rightarrow 80.34\%$, \textit{Precision} $65.54\% \rightarrow 66.55\%$, \textit{Recall} $51.87\% \rightarrow 52.14\%$, \textit{F1} $0.5791 \rightarrow 0.5847$, e la migliore \textbf{AUC-ROC assoluta pari a $0.8429$}).
 \end{itemize}
-Nel complesso, l'equivalenza sostanziale in AUC tra Regressione Logistica ($0.8422$) e MLP ($0.8429$) conferma che il problema possiede una forte componente lineare/additiva: a parità di prestazioni, preferendo il \textbf{modello più semplice} (meno parametri e minor rischio di overfitting, Lezioni 03 e 06), la \textbf{Regressione Logistica} rimane la scelta operativa preferibile per stabilità, convessità e facilità di manutenzione, mentre il \textbf{valore primario del K-Means è descrittivo e strategico} (segmentazione azionabile del CRM).
+Nel complesso, l'equivalenza sostanziale in AUC tra Regressione Logistica ($0.8422$) e MLP ($0.8429$) conferma che il problema possiede una forte componente lineare/additiva: a parità di prestazioni, preferendo il \textbf{modello più semplice} (meno parametri e minor rischio di overfitting), la \textbf{Regressione Logistica} rimane la scelta operativa preferibile per stabilità, convessità e facilità di manutenzione, mentre il \textbf{valore primario del K-Means è descrittivo e strategico} (segmentazione azionabile del CRM).
 
 \subsection{Trade-off Precision/Recall e Razionalità Economica (CAC)}
-In ambito Telco, valutare un modello alla sola soglia standard $\tau = 0.50$ su classi sbilanciate penalizza la \textbf{Recall} ($\sim 56\%$), lasciando sfuggire $165$ clienti su $374$ (\textit{Falsi Negativi}). Poiché la perdita di un cliente comporta il sostenimento di un intero \textbf{CAC} di sostituzione, mentre un'azione di \textit{retention} sui \textit{Falsi Positivi} ha costo contenuto, un agente razionale deve calibrare il punto operativo lungo la curva ROC/Precision-Recall (Lezione 04).
+In ambito Telco, valutare un modello alla sola soglia standard $\tau = 0.50$ su classi sbilanciate penalizza la \textbf{Recall} ($\sim 56\%$), lasciando sfuggire $165$ clienti su $374$ (\textit{Falsi Negativi}). Poiché la perdita di un cliente comporta il sostenimento di un intero \textbf{CAC} di sostituzione, mentre un'azione di \textit{retention} sui \textit{Falsi Positivi} ha costo contenuto, un agente razionale deve calibrare il punto operativo lungo la curva ROC/Precision-Recall.
 
 Come dimostrato in Tabella~\ref{tab:threshold}, spostando la soglia decisionale sulla Regressione Logistica a $\tau = 0.35$ (verificata in 5-fold cross-validation sul solo Training Set senza \textit{data leakage}) oppure adottando il bilanciamento dei pesi \texttt{class\_weight='balanced'}, la Recall sale fino al \textbf{78.34\%} e persino l'F1-Score migliora ($0.6049 \rightarrow 0.6138$):
 
@@ -382,7 +382,7 @@ Soglia calibrata $\tau = 0.35$ & 0.7651 & 0.5445 & 0.7032 & \textbf{0.6138} & 26
 \end{table}
 
 \subsection{Spiegabilità Business: Il Decision Tree come Modello White-Box}
-L'Albero Decisionale CART (Lezione 05) rappresenta il modello \textbf{White-Box} ideale per spiegare le decisioni al management. Poiché è addestrato sulle variabili numeriche non scalate del Training Set ($5.634$ campioni), le soglie sono direttamente leggibili in mesi ed Euro (Figura~\ref{fig:tree}).
+L'Albero Decisionale CART rappresenta il modello \textbf{White-Box} ideale per spiegare le decisioni al management. Poiché è addestrato sulle variabili numeriche non scalate del Training Set ($5.634$ campioni), le soglie sono direttamente leggibili in mesi ed Euro (Figura~\ref{fig:tree}).
 
 \begin{figure}[H]
     \centering
@@ -403,12 +403,12 @@ Dall'albero in Figura~\ref{fig:tree} emergono regole aziendali immediate:
 \end{itemize}
 
 \subsection{Limiti, Aspetti Etici e Sviluppi Futuri}
-Tra i limiti dell'approccio attuale vanno segnalati: l'assunzione di cluster sferici tipica del K-Means (dovuta alla distanza euclidea in linea retta dai centroidi, Lezione 06), la lieve asimmetria nelle distanze indotta da \texttt{drop='first'} sulle variabili one-hot e la natura statica del dataset (privo di serie storiche di utilizzo o log di assistenza). Sul piano etico e di affidabilità (Lezioni 01 e 05), l'impiego in produzione richiede garanzie di \textbf{privacy}, \textbf{trasparenza} sulle decisioni automatizzate e controlli di \textit{fairness} per evitare discriminazioni tariffarie basate su attributi demografici sensibili (es.\ \texttt{SeniorCitizen} o \texttt{gender}).
+Tra i limiti dell'approccio attuale vanno segnalati: l'assunzione di cluster sferici tipica del K-Means (dovuta alla distanza euclidea in linea retta dai centroidi), la lieve asimmetria nelle distanze indotta da \texttt{drop='first'} sulle variabili one-hot e la natura statica del dataset (privo di serie storiche di utilizzo o log di assistenza). Sul piano etico e di affidabilità, l'impiego in produzione richiede garanzie di \textbf{privacy}, \textbf{trasparenza} sulle decisioni automatizzate e controlli di \textit{fairness} per evitare discriminazioni tariffarie basate su attributi demografici sensibili (es.\ \texttt{SeniorCitizen} o \texttt{gender}).
 
 Come sviluppi futuri si individuano:
 \begin{enumerate}
-    \item \textbf{Modelli Ensemble (\textit{Random Forest} e \textit{XGBoost})}: Rispettivamente insiemi di alberi indipendenti in parallelo a voto di maggioranza (Lezione 05) e alberi in sequenza che correggono gli errori precedenti, per ridurre la varianza dell'albero singolo su dati tabellari.
-    \item \textbf{Soft Clustering, Curva Precision-Recall e Costi sul CAC}: Sostituzione delle etichette discrete di cluster con le distanze continue dai centroidi (\texttt{kmeans.transform()}, Lezione 06), valutazione approfondita tramite \textbf{curva Precision-Recall} su classi sbilanciate (Lezione 04) e ottimizzazione di una funzione di costo espressa direttamente in Euro in funzione del CAC reale.
+    \item \textbf{Modelli Ensemble (\textit{Random Forest} e \textit{XGBoost})}: Rispettivamente insiemi di alberi indipendenti in parallelo a voto di maggioranza e alberi in sequenza che correggono gli errori precedenti, per ridurre la varianza dell'albero singolo su dati tabellari.
+    \item \textbf{Soft Clustering, Curva Precision-Recall e Costi sul CAC}: Sostituzione delle etichette discrete di cluster con le distanze continue dai centroidi (\texttt{kmeans.transform()}), valutazione approfondita tramite \textbf{curva Precision-Recall} su classi sbilanciate e ottimizzazione di una funzione di costo espressa direttamente in Euro in funzione del CAC reale.
 \end{enumerate}
 
 \section{Conclusioni e Dichiarazione sull'Uso dell'AI}

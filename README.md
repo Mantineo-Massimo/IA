@@ -25,8 +25,6 @@ IA/
 │   ├── Progetti.pdf
 │   └── Descrizione_progetti.pdf
 │
-├── guida_esposizione_orale.md         # Traccia e mappa concettuale per l'esame orale
-├── guida_esposizione_orale.tex / .pdf # Versione stampabile in bianco e nero
 ├── requirements.txt                   # Dipendenze Python richieste
 └── README.md                          # Questo file
 ```
@@ -35,7 +33,7 @@ IA/
 
 ## 🚀 Come Riprodurre il Progetto
 
-Il progetto è stato sviluppato in ambiente Linux utilizzando **Python 3.14** (`venv/` locale) ed è completamente riproducibile eseguendo i passi seguenti.
+Il progetto è stato sviluppato in ambiente Linux utilizzando **Python 3** (verificato su **Python 3.15**, `venv/` locale) ed è completamente riproducibile eseguendo i passi seguenti.
 
 ### 1. Prerequisiti
 Assicurati di avere Python 3 e `pip` installati sul sistema.
@@ -70,4 +68,4 @@ Seleziona **Kernel -> Restart & Run All** (oppure esegui `jupyter nbconvert --to
    * **Regressione Logistica (Baseline):** Miglior modello complessivo alla soglia standard (**Accuracy 80.62%**, **Recall 55.88%**, **F1-Score 0.6049**, **AUC-ROC 0.8422**). Con calibrazione della soglia ($\tau=0.35$) o `class_weight='balanced'`, la Recall sale al **70.32%--78.34%** (`F1 ~ 0.614`).
    * **Decision Tree CART (`max_depth=5`, feature non scalate):** **Accuracy 79.42%**, **Recall 54.01%**, **AUC-ROC 0.8267**; fornisce regole *White-Box* leggibili in mesi ed Euro (nuovi clienti in Fibra Ottica con `tenure <= 16.5` mesi e `TotalCharges <= 120€` raggiungono l'**85.5% di churn**, salendo all'**87.6%** senza supporto tecnico).
    * **MLP (`(64, 32)`, L2 $\alpha=0.1$, *early stopping*):** Raggiunge **AUC-ROC 0.8424** (base) e **0.8429** (+Cluster, miglior AUC assoluta; Recall `51.87% -> 52.14%`, Accuracy `79.99% -> 80.34%`).
-   * **Impatto del Clustering:** Il valore principale del K-Means è descrittivo/strategico; come feature aggiuntiva apporta un lieve miglioramento sull'MLP mentre risulta ridondante su Regressione Logistica e CART (confermando il **Rasoio di Occam** a favore della Regressione Logistica).
+   * **Impatto del Clustering:** Il valore principale del K-Means è descrittivo/strategico; come feature aggiuntiva apporta un lieve miglioramento sull'MLP mentre risulta ridondante su Regressione Logistica e CART (confermando la preferenza per il modello più semplice e stabile: la **Regressione Logistica**).

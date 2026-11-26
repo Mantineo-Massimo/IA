@@ -1,0 +1,132 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{babel}
+\babelprovide[import,main]{italian}
+\usepackage[a4paper, left=14mm, right=14mm, top=14mm, bottom=14mm, headheight=14pt]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.15}
+\raggedright
+
+\definecolor{PrimaryNavy}{RGB}{20, 48, 88}
+\definecolor{SecondaryBlue}{RGB}{40, 95, 155}
+\definecolor{AccentAmber}{RGB}{165, 92, 10}
+\definecolor{SoftBox}{RGB}{236, 243, 252}
+\definecolor{PassBox}{RGB}{253, 244, 228}
+
+\titleformat{\section}{\normalsize\bfseries\color{PrimaryNavy}}{}{0em}{}[\vspace{-2pt}\color{SecondaryBlue}\hrule height 0.9pt]
+\titlespacing*{\section}{0pt}{4pt}{3pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textbf{Foglio 4 --- Esposizione Orale Completa con Definizioni e ``Come si fa''}}
+\fancyhead[R]{\footnotesize M. Mantineo (541924)}
+\fancyfoot[C]{\footnotesize Pagina \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\say}[1]{%
+  \par\vspace{2pt}\noindent\colorbox{SoftBox}{\parbox{\dimexpr\linewidth-2\fboxsep}{\raggedright\small\textbf{\color{PrimaryNavy}Cosa dire:} #1}}\par\vspace{2pt}%
+}
+\newcommand{\pass}[2]{%
+  \par\vspace{1pt}\noindent\colorbox{PassBox}{\parbox{\dimexpr\linewidth-2\fboxsep}{\raggedright\footnotesize\textbf{\color{AccentAmber}Passaggio $\rightarrow$ Slide #1:} <<#2>>}}\par%
+}
+\newcommand{\slideblock}[3]{%
+  \noindent\begin{minipage}{\linewidth}
+    \section*{#1}
+    \say{#2}
+    #3
+  \end{minipage}\par\vspace{6pt}%
+}
+
+\begin{document}
+
+\begin{center}
+    {\Large \bfseries \color{PrimaryNavy} Esposizione Orale Completa -- Ogni Concetto e ``Come si fa''}\\[3pt]
+    {\small Abbinata 1:1 alle 10 slide di \texttt{relazione/presentazione\_discorsiva.pdf} -- Zero codice, zero corsivi, 100\% dispense del corso}
+\end{center}
+\vspace{2pt}
+
+\slideblock{Slide 1 --- Copertina}{%
+<<Buongiorno professore, sono Massimo Mantineo e presento il mio progetto di Laboratorio di Intelligenza Artificiale sulla \textbf{previsione dell'abbandono dei clienti} --- il cosiddetto churn --- nel settore delle telecomunicazioni, sul dataset pubblico IBM Telco da 7.043 clienti. Come indicato in copertina, unisco le due tecniche principali viste a lezione: l'\textbf{apprendimento non supervisionato}, cioè dividere i clienti in gruppi simili senza sapere chi abbandona, e l'\textbf{apprendimento supervisionato}, cioè usare esempi passati con esito noto per prevedere chi sta per andarsene e verificare se conoscere il gruppo aiuta le previsioni.>>%
+}{\pass{2}{Prima di guardare i dati, vediamo perché nasce questo problema e come lo inquadriamo come agente intelligente.}}
+
+\slideblock{Slide 2 --- Il Problema e l'Agente Razionale (PEAS)}{%
+<<Nel settore telefonico acquisire un cliente nuovo costa molto più che trattenere un cliente attuale. Tra i \textbf{quattro approcci di Russell e Norvig} --- cioè pensare come umani, agire come umani (Test di Turing), pensare razionalmente con la logica e \textbf{agire razionalmente} --- scegliamo proprio quest'ultimo: invece di imitare la mente umana, progettiamo un \textbf{agente razionale} che sceglie l'azione più conveniente in condizioni di incertezza. È fondamentale distinguere \textbf{razionalità} da \textbf{onniscienza}: l'agente non prevede con certezza il futuro, ma impara dai dati e bilancia clienti salvati e costo delle offerte. Lo descriviamo col modello \textbf{PEAS}: \textbf{Obiettivo (P)} ridurre gli abbandoni spendendo meno del \textbf{CAC} (costo per acquisire un nuovo cliente); \textbf{Ambiente (E)} clientela Telco, parzialmente osservabile (non vediamo la concorrenza), incerto (lavoriamo con probabilità) e che cambia nel tempo nelle campagne reali (mentre è fisso nella singola previsione); \textbf{Azioni (A)} offerte mirate, sconti e supporto tecnico prioritario; \textbf{Dati in ingresso (S)} i dati del gestionale clienti (CRM) su contratto, bollette e servizi attivi.>>%
+}{\pass{3}{Adesso vediamo come fa concretamente l'agente a imparare dai dati storici.}}
+
+\slideblock{Slide 3 --- Come Impara l'Agente: Due Compiti di Machine Learning}{%
+<<L'agente impara \textbf{offline} --- cioè viene addestrato una volta sull'intero blocco di dati storici, non cliente per cliente in tempo reale --- attraverso due compiti di Machine Learning. Il \textbf{compito supervisionato} segue la definizione di \textbf{Mitchell (T, E, P)}: un algoritmo impara dall'\textbf{Esperienza (E)} dei \textbf{5.634 clienti passati} con esito noto se migliora sul \textbf{Compito (T)} di prevedere chi abbandonerà rispetto alla misura di \textbf{Prestazione (P)}, valutata con metriche per dati sbilanciati (\textbf{Recall, Precision, F1 e AUC-ROC}). Il \textbf{compito non supervisionato} raggruppa i clienti simili con \textbf{K-Means} senza guardare gli abbandoni, li visualizza in 2D con la \textbf{PCA} e verifica se il gruppo aiuta le previsioni. Perché il Machine Learning e non regole scritte a mano? Con \textbf{30 caratteristiche} le regole fisse sono fragili, non si adattano al mercato e rispondono solo sì o no. I nostri modelli invece stimano una \textbf{probabilità da 0 a 1}, così ordiniamo i clienti per rischio e scegliamo da quale soglia intervenire. Infine, nel \textbf{PEAS} misuriamo il guadagno economico reale in azienda, mentre nel \textbf{Machine Learning (Mitchell)} quanto prevede bene il modello.>>%
+}{\pass{4}{Passiamo ora ai dati reali del dataset, a tutto il preprocessing svolto e ai primi segnali che emergono dal Boxplot.}}
+
+\slideblock{Slide 4 --- I Dati, il Preprocessing e il Boxplot}{%
+<<Lavoriamo sul dataset IBM Telco, con \textbf{7.043 clienti} e il \textbf{26,5\%} di abbandoni. Prima dei modelli svolgiamo cinque passaggi:
+\textbf{1. Pulizia:} togliamo il codice identificativo del cliente (non aiuta a generalizzare) e mettiamo a \textbf{0 euro} 11 spese totali vuote perché erano clienti appena arrivati a 0 mesi.
+\textbf{2. Split stratificato 80/20 (Zero Data Leakage):} dividiamo \textbf{prima} di qualsiasi calcolo in \textbf{80\% training} (5.634 clienti per far studiare i modelli) e \textbf{20\% test} (1.409 clienti tenuti nascosti per l'esame finale); è \textbf{stratificato} perché mantiene esattamente lo stesso 26,5\% di abbandoni in entrambi, ed è fatto subito per evitare il \textbf{data leakage}, cioè non far filtrare informazioni del test nel training.
+\textbf{3. Standardizzazione:} le 3 variabili numeriche hanno unità diversissime --- i mesi arrivano a 72, la spesa totale supera 8.000 euro. Siccome il computer non distingue mesi ed euro, un numero grande schiaccerebbe uno piccolo nei calcoli di distanza o peso. Come si calcola? A ogni valore \textbf{togliamo la media e dividiamo per la deviazione standard} (che misura quanto i dati sono sparsi attorno alla media), calcolate \textbf{solo sul training}. Così portiamo tutto sullo stesso metro: \textbf{0} = nella media, \textbf{positivo} = sopra la media, \textbf{negativo} = sotto la media.
+\textbf{4. One-Hot Encoding:} i modelli leggono solo numeri, non parole; trasformiamo le \textbf{16 variabili testuali} in \textbf{27 colonne 0 e 1}. Per esempio, se il tipo di internet ha 3 casi (Fibra, DSL, Nessuno), bastano 2 colonne 0/1 perché se sono entrambe 0 significa automaticamente il terzo caso: togliere una categoria ridondante per variabile evita problemi nei modelli lineari (3 + 27 = \textbf{30 variabili finali}).
+\textbf{5. Sbilanciamento:} con il 26,5\% di abbandoni, dire sempre ``resta'' darebbe 73,5\% di accuratezza ma \textbf{Recall 0\%}.
+A destra usiamo il \textbf{Boxplot} per confrontare Rimasti (verde) e Abbandoni (rosso) senza farsi falsare dagli outlier: la \textbf{linea nera} è la \textbf{mediana} --- si calcola ordinando tutti i clienti dal valore più piccolo al più grande e prendendo quello esattamente nel mezzo (o la media dei due centrali se sono pari); la \textbf{scatola} va dal 25\textdegree{} al 75\textdegree{} percentile (i quartili Q1 e Q3, cioè il 50\% centrale dei clienti); i \textbf{baffi} arrivano fino a 1,5 volte la lunghezza della scatola e i \textbf{pallini} oltre i baffi sono i casi anomali (outlier). Chi abbandona resta poco (\textbf{10 mesi} vs 38) e paga di più (\textbf{80 euro} vs 64).>>%
+}{\pass{5}{Una volta preparati i dati in modo pulito, partiamo dalla prima fase: dividere i clienti di training in gruppi simili con K-Means.}}
+
+\slideblock{Slide 5 --- Dividere i Clienti in Gruppi con K-Means}{%
+<<Sul solo training di 5.634 clienti eseguiamo il \textbf{clustering}, cioè raggruppiamo i clienti simili \textbf{senza mai guardare gli abbandoni}. \textbf{Come funziona K-Means?} Sceglie K centri iniziali, assegna ogni cliente al centro più vicino in linea retta, poi ricalcola ogni centro come la \textbf{media} dei suoi clienti e ripete questi passi finché i centri non si fermano (ripetendo da 10 partenze per trovare la soluzione migliore). Scegliamo \textbf{K-Means} invece di \textbf{DBSCAN} per due motivi: crea \textbf{profili medi} chiari per il marketing, e impara i centri solo sul training per poi assegnare ogni \textbf{cliente nuovo del test} al centro più vicino senza ricalcolare tutto da capo (cosa che DBSCAN non permette nativamente). Nel grafico a destra leggiamo due curve: la \textbf{linea blu (Inerzia)} si calcola misurando la distanza di ogni cliente dal centro del suo gruppo, elevandola al \textbf{quadrato} e sommando tutto --- scende sempre, quindi cerchiamo il \textbf{gomito}; la \textbf{linea arancione (Silhouette)} varia da \textbf{$-$1 a $+$1} e per ogni cliente confronta quanto è vicino ai compagni del proprio gruppo rispetto al gruppo vicino più prossimo (differenza tra le due distanze divisa per il loro massimo). Confrontando i riquadri: \textbf{K=2} è troppo semplice (separa solo chi ha internet da chi no); \textbf{K=3 (scelto)} è il gomito netto con buona compattezza (Silhouette \textbf{0,282}, normale con 30 variabili miste); da \textbf{K=4} in su i gruppi si spezzettano troppo e la Silhouette crolla.>>%
+}{\pass{6}{Scelti i 3 gruppi, vediamo chi c'è dentro ciascun gruppo e come li visualizziamo nella mappa 2D.}}
+
+\slideblock{Slide 6 --- I Tre Tipi di Clienti Scoperti e la Mappa PCA}{%
+<<Solo dopo aver formato i 3 gruppi abbiamo guardato il loro tasso di abbandono. I colori delle schede a sinistra corrispondono ai puntini del grafico: \textbf{Gruppo 0 (Blu -- Volatili)}, 2.557 clienti recenti (\textbf{15 mesi}), spesa media (\textbf{68 euro}) e \textbf{43,4\%} di abbandoni (confermato al \textbf{43,3\%} sul test, segno che i gruppi sono stabili); \textbf{Gruppo 1 (Arancione -- Fedeli High-Value)}, 1.863 clienti storici (\textbf{58 mesi}), spesa alta (\textbf{89 euro}) e solo \textbf{15,9\%} di abbandoni (13,3\% sul test); \textbf{Gruppo 2 (Verde -- Low-Cost)}, 1.214 clienti con servizi base senza internet (\textbf{21 euro}) e abbandoni minimi (\textbf{7,2\%}, 8,0\% sul test). A destra usiamo la \textbf{PCA} (Analisi delle Componenti Principali) \textbf{solo per disegnare il grafico}: siccome non possiamo disegnare 30 variabili su uno schermo piatto, la PCA le riassume in \textbf{2 assi}. \textbf{Come sceglie questi 2 assi?} Cerca prima la direzione nello spazio lungo cui i clienti \textbf{variano di più} (massima varianza, \textbf{PC1 = 39\%}), legata a spesa e servizi (i verdi Low-Cost a sinistra), e poi la seconda direzione con più variabilità rimasta \textbf{perpendicolare} alla prima (\textbf{PC2 = 19\%}), legata all'anzianità (i blu Volatili in basso, gli arancioni Fedeli in alto a destra). In totale tiene il \textbf{58\%} dell'informazione, mentre i modelli supervisionati usano tutte le 30 variabili.>>%
+}{\pass{7}{Capiti i tre profili di clienti, passiamo alla seconda fase: i tre modelli supervisionati per prevedere chi sta per abbandonare.}}
+
+\slideblock{Slide 7 --- Come Prevediamo l'Abbandono: I Tre Modelli}{%
+<<Dopo lo split 80/20, senza data leakage, confrontiamo \textbf{3 modelli} sia sui dati \textbf{Base (30 variabili)} sia aggiungendo 2 colonne 0/1 per il \textbf{Gruppo K-Means (32 variabili)}:
+\textbf{1. Regressione Logistica:} ragiona come una pagella a punti --- dà un \textbf{peso} a ogni dato del cliente (es. Fibra alza il rischio, tanti mesi lo abbassano), li somma e passa il totale dentro una curva a ``S'' chiamata \textbf{sigmoide} che schiaccia qualunque punteggio in una \textbf{probabilità da 0\% a 100\%}. Semplice, veloce e stabile: è il nostro punto di riferimento.
+\textbf{2. Albero CART:} funziona come una \textbf{catena di domande sì/no}. \textbf{Come sceglie quale domanda fare per prima?} A ogni nodo prova tutte le domande possibili e sceglie quella che \textbf{abbassa di più l'indice di Gini}, creando due sottogruppi più puri. Limitiamo la profondità a \textbf{5 livelli} così non impara a memoria i singoli clienti, e lo addestriamo \textbf{senza standardizzazione} perché guarda una caratteristica alla volta: così leggiamo subito \textbf{mesi ed euro veri}.
+\textbf{3. Rete Neurale MLP:} lavora su \textbf{due livelli collegati}: un primo strato di \textbf{64 neuroni} incrocia più indizi insieme e un secondo strato di \textbf{32 neuroni} li raffina fino alla probabilità finale, cogliendo legami complessi. Usa \textbf{ReLU} (un interruttore che lascia passare solo i segnali positivi utili, evitando che la rete si blocchi) e \textbf{Adam} (che a ogni errore aggiusta i pesi in modo rapido e intelligente). Contro l'\textbf{overfitting} --- cioè imparare a memoria il training andando male sul test --- usiamo la \textbf{penalità L2} (tiene i pesi piccoli ed equilibrati) e l'\textbf{early stopping} (ferma lo studio appena smette di migliorare su una piccola verifica interna). Lo \textbf{scopo} è capire chi prevede meglio sui clienti nuovi e se il gruppo K-Means porta un vero vantaggio.>>%
+}{\pass{8}{Vediamo adesso i risultati ottenuti mettendo questi tre modelli alla prova sui 1.409 clienti di test.}}
+
+\slideblock{Slide 8 --- I Risultati sul Test Set e la Soglia di Allarme}{%
+<<A sinistra vediamo i risultati sui \textbf{1.409 clienti di test} (blu = Base, rosso = con Gruppo K-Means). Tutte le metriche nascono dai 4 conti della \textbf{Matrice di Confusione}: abbandoni beccati (TP), abbandoni persi (FN), falsi allarmi (FP) e rimasti riconosciuti (TN). Come si calcolano? \textbf{Recall} (Grafico 1) = abbandoni beccati diviso tutti gli abbandoni veri; \textbf{Precision} = abbandoni beccati diviso tutti i clienti segnalati; \textbf{F1} = media armonica tra Precision e Recall (2 per Precision per Recall diviso la loro somma: resta alta solo se entrambe sono buone); \textbf{Accuracy} = risposte giuste diviso tutti i clienti; \textbf{AUC-ROC} (Grafico 2) si ottiene facendo scorrere la soglia da 0 a 1, disegnando Recall contro falsi allarmi e prendendo l'\textbf{area sotto la curva} (da 0,5 = caso a 1 = perfetto). A destra i 3 risultati:
+\textbf{1. Vince la Regressione Logistica:} miglior Recall (\textbf{55,9\%}), Accuracy \textbf{80,6\%}, F1 \textbf{0,605} e AUC \textbf{0,842}, uguale alla Rete Neurale (\textbf{0,843}). \textbf{A parità di risultato scegliamo il modello più semplice}: ha pochissimi parametri, è più stabile e rischia meno overfitting.
+\textbf{2. Il Gruppo K-Means (barre rosse)} aiuta di pochissimo solo la Rete Neurale, cala un filo sulla Logistica perché ripete informazioni già presenti, e lascia identico l'Albero.
+\textbf{3. Come intercettare più clienti in fuga:} con soglia 50\% ne troviamo poco più di metà. Abbassiamo l'allarme al \textbf{35\%}, verificandolo prima in \textbf{5-fold cross-validation sul solo training} --- cioè dividiamo il training in 5 fette uguali, a turno 4 studiano e 1 verifica, ripetendo 5 volte senza mai toccare il test --- oppure usiamo \textbf{pesi bilanciati}, dicendo al modello che sbagliare un abbandono pesa circa \textbf{3 volte di più} che sbagliare un cliente che resta. Così la Logistica sale al \textbf{70\%--78\% di Recall} (F1 \textbf{0,614}), proteggendo dal CAC.>>%
+}{\pass{9}{Se la Logistica vince sulle previsioni, l'Albero Decisionale è fondamentale perché ci spiega chiaramente il perché i clienti se ne vanno: guardiamolo nella prossima slide.}}
+
+\slideblock{Slide 9 --- Cosa Ci Insegna l'Albero Decisionale (Regole Chiare)}{%
+<<L'albero ci mostra regole chiare per l'azienda sui 5.634 clienti di training non scalati. I riquadri \textbf{arancioni} indicano prevalenza di rimasti, quelli \textbf{blu} prevalenza di abbandoni. L'\textbf{indice di Gini} misura quanto un gruppo è misto e si calcola così: si prende la proporzione di rimasti e quella di abbandoni nel riquadro, si elevano entrambe al quadrato, si sommano e si sottrae il risultato da 1. Con \textbf{2 classi} varia quindi da \textbf{0} (puro al 100\%, perché 1 meno 1 fa 0, colore scuro) a \textbf{0,5} (metà e metà, perché 1 meno 0,25 meno 0,25 fa 0,5, colore chiaro). Seguendo passo passo le frecce blu:
+\textbf{1.} cliente recente (\textbf{meno di 16,5 mesi}) + \textbf{Fibra Ottica} $\rightarrow$ abbandona già il \textbf{68,3\%} (593 su 868);
+\textbf{2.} in più ha speso \textbf{meno di 120 euro} (primi 1--2 mesi) $\rightarrow$ riquadro blu scuro con l'\textbf{85,5\%} di abbandoni (165 su 193);
+\textbf{3.} al passo successivo, senza \textbf{supporto tecnico}, si sale all'\textbf{87,6\%}.
+L'\textbf{azione aziendale} è chiara: offrire supporto tecnico gratuito ai nuovi clienti in Fibra fin dai primi mesi.>>%
+}{\pass{10}{Avviandomi alla chiusura, tiriamo le somme con i punti chiave, i limiti e gli sviluppi futuri.}}
+
+\slideblock{Slide 10 --- Conclusioni, Limiti e Sviluppi Futuri}{%
+<<In sintesi, ogni strumento ha un ruolo preciso: \textbf{K-Means} per capire i profili, \textbf{Regressione Logistica} per le previsioni, \textbf{Albero CART} per spiegare il perché e \textbf{soglia calibrata} per proteggere i costi. Portiamo a casa che il clustering isola i Volatili (\textbf{43,4\%}), la Logistica vince per semplicità e solidità, e tarare la soglia sul CAC porta la Recall fino al \textbf{78,3\%}. Come \textbf{limiti} abbiamo che K-Means forma gruppi ``a sfera'' (perché usa la distanza in linea retta dal centro), i dati sono statici senza lo storico dei reclami, e in produzione bisogna garantire \textbf{privacy}, \textbf{trasparenza} sulle decisioni e \textbf{fairness} (evitare discriminazioni su età o genere). Come \textbf{sviluppi futuri}: modelli ensemble come \textbf{Random Forest} (tanti alberi indipendenti in parallelo che votano a maggioranza) e \textbf{XGBoost} (alberi costruiti uno dopo l'altro dove ciascuno corregge gli errori del precedente), \textbf{soft clustering} (usare le distanze continue dai centri invece del solo numero di gruppo), analisi con \textbf{curva Precision-Recall} (più sensibile su dati sbilanciati) e costi pesati direttamente in euro sul CAC reale. Grazie per l'attenzione!>>%
+}{}
+
+\noindent\begin{minipage}{\linewidth}
+\section*{Mini-Glossario Lampo (se il prof ti interrompe e chiede ``Cos'è / Come si calcola...?'')}
+\noindent\colorbox{PassBox}{\parbox{\dimexpr\linewidth-2\fboxsep}{\raggedright\small
+\textbf{\color{PrimaryNavy}4 Approcci IA / Mitchell:} Pensare/Agire come umani, Pensare/Agire razionalmente (scelto). Mitchell: impara da Esperienza (E) sul Compito (T) se migliora la Prestazione (P).\\[2.5pt]
+\textbf{\color{PrimaryNavy}Split stratificato e Data Leakage:} divide 80\% training e 20\% test mantenendo lo stesso 26,5\% di abbandoni \textbf{prima} di ogni calcolo, così nessun dato del test entra nel training.\\[2.5pt]
+\textbf{\color{PrimaryNavy}Standardizzazione:} a ogni numero si toglie la media e si divide per la deviazione standard (solo sul training): 0 = media, $+$ sopra, $-$ sotto.\\[2.5pt]
+\textbf{\color{PrimaryNavy}One-Hot Encoding:} trasforma le 16 variabili testuali in 27 colonne 0/1 togliendo 1 categoria ridondante per variabile (es. 3 tipi $\rightarrow$ 2 colonne).\\[2.5pt]
+\textbf{\color{PrimaryNavy}Boxplot e Mediana:} mediana = dati in ordine, valore centrale (o media dei 2 centrali se pari); scatola = 25\textdegree{}--75\textdegree{} percentile (50\% centrale); baffi = 1,5 volte la scatola; pallini = outlier.\\[2.5pt]
+\textbf{\color{PrimaryNavy}K-Means, Inerzia e Silhouette:} K-Means assegna al centro più vicino e aggiorna i centri come media. Inerzia = somma distanze al quadrato dal centro. Silhouette ($-$1 a $+$1) = (distanza altro gruppo $-$ distanza proprio gruppo) / massimo tra le due.\\[2.5pt]
+\textbf{\color{PrimaryNavy}PCA:} sceglie i 2 assi con massima varianza (PC1 39\%, PC2 19\% perpendicolare) per disegnare in 2D tenendo il 58\% dell'informazione.\\[2.5pt]
+\textbf{\color{PrimaryNavy}Sigmoide, ReLU, Adam, L2, Early Stopping:} Sigmoide trasforma la somma in probabilità 0--1; ReLU lascia passare solo segnali positivi; Adam aggiorna i pesi; L2 tiene i pesi equilibrati; Early Stopping ferma lo studio appena non migliora (anti-overfitting).\\[2.5pt]
+\textbf{\color{PrimaryNavy}Metriche e AUC-ROC:} Recall = TP/(TP+FN); Precision = TP/(TP+FP); F1 = media armonica tra Precision e Recall; Accuracy = (TP+TN)/tutti; AUC-ROC = area sotto la curva Recall vs falsi allarmi (0,5 caso -- 1 perfetto).\\[2.5pt]
+\textbf{\color{PrimaryNavy}5-fold Cross-Validation e Pesi Bilanciati:} 5-fold divide il training in 5 fette (4 studiano, 1 verifica a turno, mai il test); pesi bilanciati = sbagliare un abbandono pesa $\sim$3 volte di più.\\[2.5pt]
+\textbf{\color{PrimaryNavy}Indice di Gini:} $1 - (\text{quota rimasti}^2 + \text{quota abbandoni}^2)$; con 2 classi va da 0 (puro) a 0,5 (metà e metà).\\[2.5pt]
+\textbf{\color{PrimaryNavy}Etica e Modelli Futuri:} Privacy, trasparenza e fairness (no discriminazioni su età/genere); Random Forest = alberi in parallelo a maggioranza; XGBoost = alberi in sequenza che correggono gli errori precedenti.
+}}
+\end{minipage}
+
+\end{document}

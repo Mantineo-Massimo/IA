@@ -350,14 +350,14 @@ Le matrici di confusione nella configurazione Base ($\tau = 0.50$) evidenziano:
 
 \section{Discussione Critica, Spiegabilità \& Sviluppi Futuri}
 
-\subsection{Impatto Reale del Clustering e Rasoio di Occam}
+\subsection{Impatto Reale del Clustering e Scelta del Modello più Semplice}
 I risultati smentiscono l'ipotesi semplicistica che una feature discreta di clustering migliori sempre qualsiasi classificatore, offrendo invece un quadro sperimentale molto istruttivo:
 \begin{itemize}
     \item \textbf{Regressione Logistica}: Subisce una leggera flessione (\textit{Recall} $0.5588 \rightarrow 0.5508$, \textit{F1} $0.6049 \rightarrow 0.5980$). Poiché i centroidi K-Means derivano dalle stesse variabili di ingresso (\textit{tenure}, costi, servizi), le colonne one-hot del cluster introducono collinearità ridondante e una lieve perdita di calibrazione lineare.
     \item \textbf{Decision Tree (CART)}: Resta perfettamente invariato ($0.7942$ Acc, $0.5401$ Recall, $0.8267$ AUC), poiché gli split ottimali su \textit{tenure} e tipo di servizio dominano già l'informazione discreta di cluster.
     \item \textbf{Rete Neurale (MLP)}: Grazie alla regolarizzazione L2 ($\alpha=0.1$) e all'\textit{early stopping} (Lezioni 07--08), la rete evita l'overfitting tipico su dataset tabellari (dove senza \textit{early stopping} si osserva un netto degrado verso $\text{AUC} \approx 0.78$) e raggiunge $\text{AUC} = 0.8424$. Con l'aggiunta del cluster, l'MLP ottiene un moderato miglioramento su tutte e cinque le metriche (\textit{Accuracy} $79.99\% \rightarrow 80.34\%$, \textit{Precision} $65.54\% \rightarrow 66.55\%$, \textit{Recall} $51.87\% \rightarrow 52.14\%$, \textit{F1} $0.5791 \rightarrow 0.5847$, e la migliore \textbf{AUC-ROC assoluta pari a $0.8429$}).
 \end{itemize}
-Nel complesso, l'equivalenza sostanziale in AUC tra Regressione Logistica ($0.8422$) e MLP ($0.8429$) conferma che il problema possiede una forte componente lineare/additiva: per il \textbf{Rasoio di Occam} (principio di parsimonia), la \textbf{Regressione Logistica} rimane la scelta operativa preferibile per semplicità, convessità e facilità di manutenzione, mentre il \textbf{valore primario del K-Means è descrittivo e strategico} (segmentazione azionabile del CRM).
+Nel complesso, l'equivalenza sostanziale in AUC tra Regressione Logistica ($0.8422$) e MLP ($0.8429$) conferma che il problema possiede una forte componente lineare/additiva: a parità di prestazioni, preferendo il \textbf{modello più semplice} (meno parametri e minor rischio di overfitting, Lezioni 03 e 06), la \textbf{Regressione Logistica} rimane la scelta operativa preferibile per stabilità, convessità e facilità di manutenzione, mentre il \textbf{valore primario del K-Means è descrittivo e strategico} (segmentazione azionabile del CRM).
 
 \subsection{Trade-off Precision/Recall e Razionalità Economica (CAC)}
 In ambito Telco, valutare un modello alla sola soglia standard $\tau = 0.50$ su classi sbilanciate penalizza la \textbf{Recall} ($\sim 56\%$), lasciando sfuggire $165$ clienti su $374$ (\textit{Falsi Negativi}). Poiché la perdita di un cliente comporta il sostenimento di un intero \textbf{CAC} di sostituzione, mentre un'azione di \textit{retention} sui \textit{Falsi Positivi} ha costo contenuto, un agente razionale deve calibrare il punto operativo lungo la curva ROC/Precision-Recall (Lezione 04).
@@ -402,13 +402,13 @@ Dall'albero in Figura~\ref{fig:tree} emergono regole aziendali immediate:
     \item \textbf{Impatto Operativo sul CRM}: L'agente razionale può indirizzare supporto tecnico proattivo (\textit{onboarding}) e sconti temporanei proprio ai neo-abbonati in Fibra Ottica nei primi mesi di attivazione.
 \end{itemize}
 
-\subsection{Limiti, Aspetti Etici (GDPR) e Sviluppi Futuri}
-Tra i limiti dell'approccio attuale vanno segnalati: l'assunzione di cluster sferici tipica del K-Means, la lieve asimmetria nelle distanze indotta da \texttt{drop='first'} sulle variabili one-hot e la natura statica del dataset (privo di serie storiche di utilizzo o log di assistenza). Sul piano etico e normativo, l'impiego in produzione impone conformità al \textbf{GDPR} (minimizzazione, pseudonimizzazione e trasparenza delle decisioni automatizzate) e controlli di \textit{fairness} per evitare discriminazioni tariffarie basate su attributi demografici sensibili (es.\ \texttt{SeniorCitizen} o \texttt{gender}).
+\subsection{Limiti, Aspetti Etici e Sviluppi Futuri}
+Tra i limiti dell'approccio attuale vanno segnalati: l'assunzione di cluster sferici tipica del K-Means (dovuta alla distanza euclidea in linea retta dai centroidi, Lezione 06), la lieve asimmetria nelle distanze indotta da \texttt{drop='first'} sulle variabili one-hot e la natura statica del dataset (privo di serie storiche di utilizzo o log di assistenza). Sul piano etico e di affidabilità (Lezioni 01 e 05), l'impiego in produzione richiede garanzie di \textbf{privacy}, \textbf{trasparenza} sulle decisioni automatizzate e controlli di \textit{fairness} per evitare discriminazioni tariffarie basate su attributi demografici sensibili (es.\ \texttt{SeniorCitizen} o \texttt{gender}).
 
 Come sviluppi futuri si individuano:
 \begin{enumerate}
-    \item \textbf{Modelli Ensemble (\textit{Random Forest} e \textit{XGBoost})}: Per ridurre la varianza dell'albero singolo e catturare interazioni non lineari ad alto ordine su dati tabellari.
-    \item \textbf{Soft Clustering e Bilanciamento (\textit{SMOTE} / \textit{Cost-Sensitive Learning})}: Sostituzione delle etichette discrete di cluster con le distanze continue dai centroidi (\texttt{kmeans.transform()}), sovracampionamento sintetico SMOTE solo sui fold di training e ottimizzazione di una funzione di costo espressa direttamente in Euro in funzione del CAC reale.
+    \item \textbf{Modelli Ensemble (\textit{Random Forest} e \textit{XGBoost})}: Rispettivamente insiemi di alberi indipendenti in parallelo a voto di maggioranza (Lezione 05) e alberi in sequenza che correggono gli errori precedenti, per ridurre la varianza dell'albero singolo su dati tabellari.
+    \item \textbf{Soft Clustering, Curva Precision-Recall e Costi sul CAC}: Sostituzione delle etichette discrete di cluster con le distanze continue dai centroidi (\texttt{kmeans.transform()}, Lezione 06), valutazione approfondita tramite \textbf{curva Precision-Recall} su classi sbilanciate (Lezione 04) e ottimizzazione di una funzione di costo espressa direttamente in Euro in funzione del CAC reale.
 \end{enumerate}
 
 \section{Conclusioni e Dichiarazione sull'Uso dell'AI}
@@ -416,7 +416,7 @@ Come sviluppi futuri si individuano:
 \begin{enumerate}
     \item Il clustering K-Means ($K=3$, \textit{Silhouette} $0.2817$) ha individuato tre segmenti interpretabili e stabili tra Training e Test Set, isolando nel \textbf{Cluster 0 (Volatili)} l'area di massima criticità (\textbf{43.4\% di churn} su Training, 43.3\% su Test).
     \item La \textbf{Regressione Logistica} ottiene le prestazioni complessive migliori alla soglia standard (\textit{Accuracy} \textbf{80.62\%}, \textit{Recall} \textbf{55.88\%}, \textit{F1} \textbf{0.6049}, \textit{AUC} \textbf{0.8422}); la calibrazione a $\tau=0.35$ o \texttt{class\_weight='balanced'} eleva la Recall al \textbf{70.32\%--78.34\%}.
-    \item La rete \textbf{MLP} regolarizzata (L2 + \textit{early stopping}) eguaglia la baseline lineare ($\text{AUC}=0.8424$) e beneficia lievemente dell'integrazione del cluster raggiungendo la migliore \textbf{AUC-ROC assoluta ($0.8429$)}, ma per il Rasoio di Occam la Regressione Logistica resta il modello di riferimento.
+    \item La rete \textbf{MLP} regolarizzata (L2 + \textit{early stopping}) eguaglia la baseline lineare ($\text{AUC}=0.8424$) e beneficia lievemente dell'integrazione del cluster raggiungendo la migliore \textbf{AUC-ROC assoluta ($0.8429$)}, ma a parità di risultato la Regressione Logistica resta preferibile per semplicità, stabilità e minor rischio di overfitting.
     \item Il \textbf{Decision Tree CART} (\textit{Accuracy} 79.42\%) garantisce piena trasparenza \textit{White-Box}, individuando nei nuovi clienti in Fibra Ottica (\texttt{tenure <= 16.5}, \texttt{TotalCharges <= 120\,\texteuro}) il segmento all'85.5\% di churn (fino all'87.6\% senza \texttt{TechSupport}).
 \end{enumerate}
 

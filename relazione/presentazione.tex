@@ -153,7 +153,7 @@
         \end{column}
     \end{columns}
 
-    \note{Inquadriamo il problema secondo i quattro approcci alla definizione di IA di Russell e Norvig (Lezioni 01-02). Scegliamo l'Agire Razionalmente: l'agente seleziona azioni che massimizzano il valore atteso della misura di prestazione P sotto incertezza (senza onniscienza), usando una funzione di utilità per bilanciare churn evitato e costi delle offerte e apprendendo dai dati storici. Nel PEAS distinguiamo P (esito economico esterno nell'ambiente), E (parzialmente osservabile, nondeterministico/stocastico, multi-agente, continuo e sconosciuto a priori; sequenziale e dinamico nel ciclo reale, episodico e statico nella singola predizione batch), A (offerte e supporto) e S (log CRM).}
+    \note{Inquadriamo il problema secondo i quattro approcci alla definizione di IA di Russell e Norvig. Scegliamo l'Agire Razionalmente: l'agente seleziona azioni che massimizzano il valore atteso della misura di prestazione P sotto incertezza (senza onniscienza), usando una funzione di utilità per bilanciare churn evitato e costi delle offerte e apprendendo dai dati storici. Nel PEAS distinguiamo P (esito economico esterno nell'ambiente), E (parzialmente osservabile, nondeterministico/stocastico, multi-agente, continuo e sconosciuto a priori; sequenziale e dinamico nel ciclo reale, episodico e statico nella singola predizione batch), A (offerte e supporto) e S (log CRM).}
 \end{frame}
 
 % ==========================================
@@ -162,7 +162,7 @@
 \begin{frame}{Formulazione dei Task ML e Approccio Probabilistico}
     \centering
     \colorbox{LightBg}{\parbox{0.96\textwidth}{\centering
-        \small \color{PrimaryNavy}\textbf{Dal PEAS al Machine Learning (Lezione 03)}: Sistema \textit{Batch} e \textit{Model-Based} che integra apprendimento Supervisionato e Non Supervisionato.
+        \small \color{PrimaryNavy}\textbf{Dal PEAS al Machine Learning}: Sistema \textit{Batch} e \textit{Model-Based} che integra apprendimento Supervisionato e Non Supervisionato.
     }}
     \vspace{1.8mm}
 
@@ -211,7 +211,7 @@
         \small \color{DarkText} \textbf{Nota Teorica}: $P$ nel PEAS misura l'impatto economico nell'ambiente; $P$ in Mitchell misura la qualità predittiva del modello.
     }}
 
-    \note{Per mappare i Sensori S negli Attuatori A adottiamo un sistema ML Batch e Model-Based (Lezione 03) articolato su due task: 1) Task supervisionato secondo Mitchell <T, E, P> per stimare la probabilità di Churn con metriche robuste allo sbilanciamento; 2) Task non supervisionato (K-Means + PCA) per scoprire segmenti latenti senza usare l'etichetta Churn e verificarne l'impatto come feature. Rispetto alle regole if-then tradizionali, i classificatori probabilistici discriminativi offrono uno score continuo per ordinare il rischio e tarare la soglia decisionale.}
+    \note{Per mappare i Sensori S negli Attuatori A adottiamo un sistema ML Batch e Model-Based articolato su due task: 1) Task supervisionato secondo Mitchell <T, E, P> per stimare la probabilità di Churn con metriche robuste allo sbilanciamento; 2) Task non supervisionato (K-Means + PCA) per scoprire segmenti latenti senza usare l'etichetta Churn e verificarne l'impatto come feature. Rispetto alle regole if-then tradizionali, i classificatori probabilistici discriminativi offrono uno score continuo per ordinare il rischio e tarare la soglia decisionale.}
 \end{frame}
 
 % ==========================================
@@ -452,7 +452,7 @@
             \vspace{1.5mm}
             \colorbox{AccentHighlight!10}{\parbox{\textwidth}{
                 \small \color{DarkText}
-                \textbf{2. Trade-off Soglia (Lezione 04)}
+                \textbf{2. Trade-off Soglia}
                 \begin{itemize}
                     \scriptsize
                     \setlength{\itemsep}{1pt}

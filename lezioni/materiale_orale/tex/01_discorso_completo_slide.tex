@@ -1,0 +1,215 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{babel}
+\babelprovide[import,main]{italian}
+\usepackage[a4paper, left=17mm, right=17mm, top=16mm, bottom=15mm, headheight=14pt]{geometry}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs, tabularx}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{PrimaryNavy}{RGB}{20, 45, 85}
+\definecolor{SecondaryBlue}{RGB}{45, 95, 150}
+\definecolor{LightBg}{RGB}{244, 246, 250}
+\definecolor{CueBg}{RGB}{248, 244, 236}
+
+\titleformat{\section}{\large\bfseries\color{PrimaryNavy}}{}{0em}{}[\vspace{-2pt}\color{SecondaryBlue}\hrule height 1pt]
+\titlespacing*{\section}{0pt}{6pt plus 1pt minus 1pt}{3pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textbf{Foglio 1 --- Discorso Semplificato (Slide 1--10)}}
+\fancyhead[R]{\footnotesize M. Mantineo (541924) -- Laboratorio di IA}
+\fancyfoot[C]{\footnotesize Pagina \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\emergencystretch 1.5em
+
+\newcommand{\cue}[1]{%
+  \par\vspace{1pt}\noindent\colorbox{CueBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{\footnotesize\textit{\color{PrimaryNavy}\textbf{Indicazione visiva:} #1}}}\par\vspace{2pt}%
+}
+\newcommand{\transition}[1]{%
+  \par\vspace{1pt}\noindent\colorbox{LightBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{\small\textbf{\color{SecondaryBlue}Passaggio:} \textit{``#1''}}}\par\vspace{2pt}%
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \bfseries \color{PrimaryNavy} Foglio 1 --- Discorso Completo Semplificato}\\[4pt]
+    {\large Italiano Naturale, Zero Formule Recitate a Voce, 100\% Corretto (Slide 1--10)}\\[3pt]
+    {\small \textbf{Progetto:} Churn Prediction e Segmentazione Comportamentale \quad|\quad \textbf{Studente:} Massimo Mantineo (541924)}
+\end{center}
+
+\vspace{1.5mm}
+\noindent\colorbox{LightBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{
+\small\textbf{Regola d'oro (Durata $\approx$ 9--10 minuti):} Le formule sono già scritte sulle slide --- \textbf{non recitarle mai a voce}. Spiega a parole semplici \textit{cosa significano}: dimostri padronanza e parli in modo naturale. Fai 1--2 secondi di pausa a ogni cambio slide.
+}}
+
+\vspace{2mm}
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.13}
+\begin{tabularx}{\textwidth}{c l c >{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{PrimaryNavy}
+\color{white}\textbf{Slide} & \color{white}\textbf{Titolo} & \color{white}\textbf{Tempo} & \color{white}\textbf{Cosa far capire al professore} \\
+\midrule
+1 & Copertina & 0:25 & Presentazione chiara e i due obiettivi (raggruppare clienti + prevedere abbandoni). \\
+2 & IA \& Agente PEAS & 1:05 & Agire Razionalmente (no onniscienza), scelta conveniente sotto incertezza, PEAS. \\
+3 & Task ML \& Probabilità & 0:45 & 2 compiti offline (supervisionato + K-Means/PCA), probabilità 0--1 vs regole, due \textit{P}. \\
+4 & Dataset \& Preprocessing & 1:00 & 11 vuoti a 0\,\texteuro, split 80/20 prima di tutto (zero leakage), sbilanciamento e boxplot. \\
+5 & Clustering K-Means & 1:00 & Perché K-Means (\texttt{.predict()}), curva blu + curva arancione $\rightarrow$ 3 gruppi. \\
+6 & PCA \& Profili & 1:00 & 3 segmenti (Volatili 43,4\% confermato sul test) e cosa mostrano i 2 assi PCA. \\
+7 & Pipeline Supervisionata & 0:50 & Base (30 var.) vs +Cluster (32 var.), LogReg, CART non scalato, MLP frenata. \\
+8 & Confronto Prestazioni & 1:15 & LogReg vince (Rasoio di Occam), +Cluster aiuta solo MLP, soglia 35\%/\texttt{balanced}. \\
+9 & Spiegabilità CART & 1:00 & Gini (0 puro, 0,5 misto), regola: $\le$16,5 mesi + Fibra + $\le$120\,\texteuro{} (85,5\% $\rightarrow$ 87,6\%). \\
+10 & Conclusioni \& Sviluppi & 0:50 & Sintesi in 4 punti: ruolo clustering, CAC, limiti/GDPR, ensemble + soft clustering. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section*{Slide 1 --- Titolo e Copertina}
+\cue{Guarda il professore con tono calmo e sicuro.}
+\noindent <<Buongiorno professore, sono Massimo Mantineo e presento il mio progetto di Laboratorio di Intelligenza Artificiale: \textbf{``Churn Prediction e Segmentazione Comportamentale''}, svolto sul dataset pubblico \textbf{IBM Telco Customer Churn}.
+
+L'obiettivo del lavoro è unire le due tecniche principali viste a lezione: da una parte l'\textbf{apprendimento non supervisionato}, per dividere i clienti in gruppi simili in base al loro comportamento; dall'altra l'\textbf{apprendimento supervisionato}, per prevedere chi sta per abbandonare l'operatore --- il cosiddetto \textit{churn} --- e verificare se conoscere il gruppo di appartenenza migliora davvero le previsioni.>>
+\transition{Prima di passare ai dati, inquadriamo brevemente il problema dal punto di vista teorico dell'Intelligenza Artificiale.}
+
+\section*{Slide 2 --- Inquadramento Teorico: Definizione di IA e Agente PEAS}
+\cue{Indica prima i 4 riquadri a sinistra, poi i 4 punti PEAS e lo schema a destra.}
+\noindent <<Come abbiamo visto con Russell e Norvig, ci sono quattro modi storici di definire l'Intelligenza Artificiale, combinando \textit{pensiero} o \textit{comportamento} con \textit{modello umano} o \textit{razionalità}. Noi scegliamo l'\textbf{Agire Razionalmente}, evidenziato in basso a destra.
+
+Questo significa che non vogliamo imitare il ragionamento di una persona, ma costruire un \textbf{agente con apprendimento basato su utilità}: un sistema che impara dai dati e sceglie l'azione più conveniente in condizioni di incertezza. Qui è importante distinguere \textbf{razionalità} da \textbf{onniscienza}: l'agente non può sapere con certezza il futuro di ogni cliente, ma sceglie l'azione migliore con le informazioni che ha, bilanciando il vantaggio di trattenere un cliente con il costo delle promozioni.
+
+Descrivendolo con il modello \textbf{PEAS}:
+\begin{itemize}
+    \item \textbf{Performance (P):} è l'obiettivo aziendale esterno, cioè ridurre gli abbandoni tenendo i costi delle offerte ben al di sotto del \textbf{CAC}, il costo per acquisire un cliente nuovo;
+    \item \textbf{Environment (E):} è l'insieme dei clienti Telco. È \textbf{parzialmente osservabile}, perché dai log non vediamo le offerte della concorrenza; è \textbf{non deterministico}, quindi lo gestiamo con le probabilità; è \textbf{multi-agente}, \textbf{continuo} su mesi e importi, e \textbf{sconosciuto} a priori finché non lo impariamo dai dati. Inoltre, nelle campagne reali è \textbf{dinamico e sequenziale} perché un'offerta oggi cambia le scelte future, mentre nella singola previsione sul nostro dataset è \textbf{statico ed episodico};
+    \item \textbf{Actuators (A):} sono le azioni del CRM, cioè offerte mirate, sconti e supporto tecnico prioritario;
+    \item \textbf{Sensors (S):} sono i dati raccolti dal CRM su fatturazione, mesi di permanenza, contratti e servizi attivi.>>
+\end{itemize}
+\transition{Vediamo ora come l'agente impara a collegare i dati dei sensori alle decisioni.}
+
+\section*{Slide 3 --- Formulazione dei Task ML e Approccio Probabilistico}
+\cue{Segui con lo sguardo: prima colonna sinistra, poi destra, infine la riga in basso.}
+\noindent <<In questa slide traduciamo l'agente in due compiti di Machine Learning, addestrati offline sui dati storici (quindi un sistema \textbf{Batch} e \textbf{Model-Based}):
+\begin{itemize}
+    \item Prima il compito \textbf{supervisionato}, formalizzato secondo Mitchell: usiamo \textbf{5.634 clienti} di cui conosciamo già l'esito per insegnare al modello a prevedere chi abbandonerà, e lo valutiamo con metriche adatte ai dati sbilanciati come \textbf{Recall, Precision, F1 e AUC-ROC}.
+    \item Poi il compito \textbf{non supervisionato}: usiamo \textbf{K-Means} per raggruppare i clienti simili senza mai guardare chi ha abbandonato, li visualizziamo in 2D con la \textbf{PCA}, e controlliamo se sapere il gruppo aiuta i classificatori.
+\end{itemize}
+Sulla destra spiego perché usiamo il Machine Learning invece di regole scritte a mano: con 30 caratteristiche del cliente, delle regole fisse \textit{if-then} diventano fragili, non si adattano ai cambi di mercato e danno solo un sì o un no secco. I nostri modelli invece stimano per ogni cliente una \textbf{probabilità di abbandono da 0 a 1}, così possiamo ordinarli dal più a rischio al meno a rischio e decidere da quale soglia in su intervenire rispetto al costo di acquisizione.
+
+Chiudo con una precisazione: la \textit{P} del PEAS guarda al risultato economico in azienda, mentre la \textit{P} di Mitchell qui guarda solo a quanto prevede bene il modello.>>
+\transition{Passiamo ora ai dati veri e a come li abbiamo preparati.}
+
+\section*{Slide 4 --- Dataset Telco: Preprocessing e Sbilanciamento del Target}
+\cue{Indica prima i 4 punti a sinistra, poi i due boxplot a destra.}
+\noindent <<Il dataset IBM Telco contiene \textbf{7.043 clienti} e \textbf{21 colonne}: togliamo subito l'identificativo \texttt{customerID}, restano 19 caratteristiche utili (3 numeriche e 16 categoriali) più la colonna target \texttt{Churn}.
+
+Per preparare i dati in modo pulito abbiamo seguito quattro passaggi:
+\begin{enumerate}
+    \item \textbf{Pulizia dati:} nella colonna della spesa totale (\texttt{TotalCharges}) c'erano \textbf{11 valori vuoti}. Controllandoli, abbiamo visto che erano tutti clienti appena arrivati, con \textbf{0 mesi di permanenza}, quindi non avevano ancora la prima bolletta: li abbiamo messi coerentemente a \textbf{0 euro}, senza buttare dati né falsarli con la media.
+    \item \textbf{Zero Data Leakage:} per non contaminare la valutazione, abbiamo diviso subito i dati in \textbf{80\% training e 20\% test} --- 5.634 clienti per addestrare e 1.409 per testare, con la stessa quota di abbandoni in entrambi --- \textbf{prima} di fare qualsiasi calcolo di scaling o clustering.
+    \item \textbf{Standardizzazione e codifica:} solo sul training portiamo le 3 variabili numeriche sulla stessa scala con la standardizzazione (così gli importi in migliaia di euro non sovrastano i mesi di permanenza) e trasformiamo le categorie in colonne binarie con One-Hot Encoding (\texttt{drop='first'}), arrivando a \textbf{30 variabili}.
+    \item \textbf{Sbilanciamento:} solo il \textbf{26,54\%} dei clienti abbandona. Questo rende l'Accuracy da sola ingannevole: un modello pigro che risponde sempre ``resta'' avrebbe comunque il \textbf{73,46\% di Accuracy}, ma \textbf{Recall allo 0\%}, cioè non salverebbe nessun cliente.
+\end{enumerate}
+Guardando i grafici a destra --- verde chi resta, rosso chi abbandona, linea nera la mediana --- il segnale è chiarissimo: chi abbandona ha una permanenza mediana di soli \textbf{10 mesi contro 38}, e una spesa mensile più alta, quasi \textbf{80 euro contro 64}. Quindi il rischio si concentra sui \textbf{clienti nuovi che pagano tanto}.>>
+\transition{Sulle 30 variabili del solo training set, passiamo ora alla segmentazione con K-Means.}
+
+\section*{Slide 5 --- Apprendimento Non Supervisionato: Clustering K-Means}
+\cue{Indica i punti a sinistra e poi le due curve blu e arancione nel grafico a destra.}
+\noindent <<Qui vogliamo dividere i \textbf{5.634 clienti del training set} in gruppi omogenei \textbf{senza mai usare l'etichetta Churn}, basandoci solo sul loro profilo.
+
+Abbiamo scelto \textbf{K-Means} invece di DBSCAN per tre motivi pratici: è veloce, produce profili medi facili da capire per il marketing, e soprattutto ha il metodo \textbf{\texttt{.predict()}} che ci permette di assegnare i clienti nuovi del test set ai gruppi già trovati \textbf{senza ri-addestrare e senza data leakage} --- cosa che DBSCAN non fa nativamente.
+
+Per scegliere quanti gruppi creare, abbiamo provato da 2 a 6 cluster guardando due curve insieme nel grafico a destra:
+\begin{itemize}
+    \item la \textbf{linea blu} (Inerzia) misura quanto i clienti sono vicini al centro del proprio gruppo: scende sempre aggiungendo gruppi, quindi cerchiamo il punto in cui piega, il ``gomito'';
+    \item la \textbf{linea arancione} (Silhouette) misura se i gruppi sono compatti al loro interno e ben separati tra loro.
+\end{itemize}
+Con \textbf{2 gruppi} la divisione è banale, separa solo chi ha internet da chi non ce l'ha; con \textbf{3 gruppi} abbiamo il gomito netto della linea blu e la Silhouette resta praticamente invariata a \textbf{0,282} --- un valore moderato ma normale con 30 variabili miste; da \textbf{4 gruppi in su} la Silhouette crolla nettamente per troppa frammentazione. Per questo scegliamo \textbf{K = 3}.>>
+\transition{Vediamo subito che caratteristiche hanno questi tre gruppi e come appaiono nel grafico.}
+
+\section*{Slide 6 --- Segmentazione PCA e Profilo dei Segmenti}
+\cue{Indica le tre righe della tabella in alto, poi le tre nuvole colorate nel grafico a destra.}
+\noindent <<Solo dopo aver costruito i 3 gruppi sul training set abbiamo guardato il loro tasso di abbandono per capire chi c'è dentro, ottenendo tre profili aziendali molto netti:
+\begin{itemize}
+    \item \textbf{Cluster 0 --- i Volatili:} 2.557 clienti con anzianità breve (circa \textbf{15 mesi}), spesa medio-alta (\textbf{68 euro al mese}) e un tasso di abbandono critico del \textbf{43,4\%}. Aspetto molto importante: applicando il modello al test set, questo segmento mantiene quasi lo stesso abbandono (\textbf{43,3\%}), segno che i gruppi sono stabili;
+    \item \textbf{Cluster 1 --- i Fedeli High-Value:} 1.863 clienti storici (quasi \textbf{58 mesi}), spesa alta (\textbf{89 euro al mese}), ma churn contenuto al \textbf{15,9\%};
+    \item \textbf{Cluster 2 --- i Low-Cost:} 1.214 clienti con spesa molto bassa (\textbf{21 euro al mese}, servizi base senza internet) che quasi non abbandonano (\textbf{7,2\%}).
+\end{itemize}
+Per vedere questi gruppi in due dimensioni abbiamo usato la \textbf{PCA}, che riassume quasi il \textbf{58\%} dell'informazione delle 30 variabili originali: sull'asse orizzontale ($PC_1$, 39,4\%) si distribuiscono \textbf{spesa e servizi} --- infatti i Low-Cost verdi sono isolati a sinistra --- mentre sull'asse verticale ($PC_2$, 18,5\%) conta l'\textbf{anzianità del contratto}, che separa in basso i Volatili blu dai Fedeli arancioni in alto a destra. Preciso che la PCA l'abbiamo usata solo per visualizzare i gruppi, non per addestrare i modelli.>>
+\transition{Adesso vediamo come abbiamo impostato i modelli supervisionati per prevedere il Churn.}
+
+\section*{Slide 7 --- Pipeline Sperimentale Supervisionata}
+\cue{Indica lo schema a sinistra dall'alto in basso, poi i 3 modelli a destra.}
+\noindent <<Lo schema a sinistra riassume la nostra pipeline senza \textit{data leakage}: prima dividiamo 80\% training e 20\% test, poi solo sul training facciamo preprocessing e K-Means, ottenendo due versioni parallele dei dati da confrontare: la versione \textbf{Base} con 30 variabili e la versione \textbf{+Cluster} con 32 variabili (aggiungendo il gruppo di appartenenza).
+
+Su entrambe le versioni confrontiamo tre modelli di complessità crescente:
+\begin{enumerate}
+    \item \textbf{Regressione Logistica:} il nostro modello lineare di riferimento, semplice e veloce, utile per capire quanto il problema sia già separabile in modo lineare.
+    \item \textbf{Albero Decisionale CART} con profondità massima 5: il nostro modello trasparente (\textit{White-Box}). L'abbiamo addestrato apposta sui dati numerici \textbf{non scalati}, perché gli alberi non risentono della scala dei numeri e in questo modo possiamo leggere le regole direttamente in mesi ed euro.
+    \item \textbf{Rete Neurale MLP} con due strati nascosti da \textbf{64 e 32 neuroni}, attivazione ReLU, uscita sigmoidea e ottimizzatore Adam. Per evitare l'overfitting tipico delle reti su dati tabellari, come visto nelle Lezioni 7 e 8, abbiamo aggiunto due freni: la \textbf{regolarizzazione L2} e l'\textbf{early stopping}, che ferma l'addestramento appena le prestazioni su una quota interna di validazione smettono di migliorare.>>
+\end{enumerate}
+\transition{Vediamo ora i numeri ottenuti sul test set.}
+
+\section*{Slide 8 --- Confronto delle Prestazioni Sperimentali}
+\cue{Indica le barre a sinistra, poi la tabella e i due riquadri a destra.}
+\noindent <<Qui confrontiamo i tre modelli sui \textbf{1.409 clienti del test set} (di cui 374 in abbandono): le barre blu sono il modello Base, quelle rosse il modello con il Cluster, usando inizialmente la soglia standard del 50\%. Ricordo che l'\textbf{AUC-ROC} misura quanto il modello è bravo a mettere un cliente a rischio sopra un cliente fedele.
+
+I risultati ci dicono tre cose molto interessanti:
+\begin{itemize}
+    \item la \textbf{Regressione Logistica} base è la migliore su Accuracy (\textbf{80,6\%}), Recall (\textbf{55,9\%}) e F1 (\textbf{0,605}), con AUC \textbf{0,842}. Aggiungendo il cluster cala leggermente (Recall 55,1\%): è normale, perché i cluster sono ricavati dalle stesse variabili che la Logistica usa già, quindi creano una leggera ridondanza;
+    \item l'\textbf{Albero CART} resta \textbf{identico} con o senza cluster (Recall 54\%, AUC 0,827), perché i tagli diretti su mesi e Fibra Ottica sono già più informativi dell'etichetta di gruppo;
+    \item la \textbf{Rete Neurale MLP}, grazie a regolarizzazione L2 ed \textit{early stopping} --- che la ferma intorno alla 17\textsuperscript{a}--19\textsuperscript{a} epoca evitando l'overfitting --- raggiunge la Logistica ed è l'\textbf{unico modello che migliora leggermente con il cluster} su tutte le metriche, arrivando alla migliore AUC (\textbf{0,843}).
+\end{itemize}
+Da qui traiamo due conclusioni pratiche. Primo, il \textbf{Rasoio di Occam}: visto che Regressione Logistica e Rete Neurale hanno praticamente la stessa capacità di distinguere i clienti (0,842 contro 0,843), conviene scegliere la \textbf{Regressione Logistica}, molto più semplice e facile da gestire; il valore principale del clustering resta quindi quello di descrivere i segmenti. Secondo, la \textbf{calibrazione della soglia}: con la soglia al 50\% la Logistica intercetta solo il 55,9\% dei clienti in fuga. Siccome perdere un cliente costa caro (CAC), spostando la soglia al \textbf{35\%} --- verificata in cross-validation solo sul training --- oppure bilanciando il peso delle classi (\texttt{class\_weight='balanced'}), la Recall sale al \textbf{70,3\%} e fino al \textbf{78,3\%}, migliorando persino l'F1 fino a \textbf{0,614}.>>
+\transition{Ora vediamo invece il punto di forza dell'albero CART: la sua spiegabilità immediata per l'azienda.}
+
+\section*{Slide 9 --- Spiegabilità Business: Regole dell'Albero Decisionale (CART)}
+\cue{Indica prima i box 1 e 2 in basso, poi segui col dito il percorso dalla cima fino al riquadro blu scuro.}
+\noindent <<In questa slide vediamo i primi tre livelli dell'albero decisionale addestrato sui \textbf{5.634 clienti del training non scalato}.
+
+Per leggerlo bastano due regole: l'\textbf{indice di Gini} misura quanto un gruppo è misto --- \textbf{0} vuol dire puro al 100\% con colore intenso, \textbf{0,5} vuol dire metà e metà con colore chiaro; i riquadri \textbf{arancioni} indicano prevalenza di clienti rimasti, quelli \textbf{blu} prevalenza di abbandoni.
+
+Seguendo il percorso dalla cima leggiamo subito una regola chiarissima per il business:
+\begin{itemize}
+    \item il primo taglio è \textbf{permanenza fino a 16 mesi e mezzo}: chi è cliente da più tempo (a destra) tende quasi sempre a restare;
+    \item tra i clienti più recenti (a sinistra), chi ha la \textbf{Fibra Ottica} finisce subito in un nodo blu con il \textbf{68,3\% di abbandoni} (593 su 868);
+    \item scendendo ancora su chi ha speso finora \textbf{meno di 120 euro in totale} --- cioè i neo-abbonati in Fibra nei primissimi uno o due mesi --- arriviamo al nodo blu scuro con l'\textbf{85,5\% di abbandoni} (165 su 193); e applicando il taglio successivo visibile su quel nodo, se manca anche il \textbf{supporto tecnico}, si sale addirittura all'\textbf{87,6\%}.
+\end{itemize}
+Per l'azienda l'indicazione è immediata: offrire accoglienza e supporto tecnico prioritario ai nuovi clienti in Fibra fin dalle prime settimane.>>
+\transition{Concludo riassumendo i risultati principali, i limiti del lavoro e i possibili sviluppi futuri.}
+
+\section*{Slide 10 --- Discussione Critica, Conclusioni \& Sviluppi Futuri}
+\cue{Indica il banner in alto e scorri i 4 riquadri, poi chiudi guardando il professore.}
+\noindent <<Per riassumere, nel nostro sistema ogni strumento ha un compito chiaro: \textbf{K-Means} per capire i segmenti di clienti, \textbf{Regressione Logistica} per ordinare chi è più a rischio, \textbf{Albero CART} per spiegare le cause al management e \textbf{calibrazione della soglia} per proteggere il margine aziendale.
+
+I quattro punti finali sono:
+\begin{enumerate}
+    \item \textbf{Ruolo del clustering:} è utilissimo soprattutto a livello strategico, perché isola il segmento dei \textit{Volatili} con il 43,4\% di churn; come variabile extra nei modelli porta invece solo un piccolo miglioramento alla rete neurale.
+    \item \textbf{Soglia e costi (CAC):} siccome perdere un cliente costa molto più di un'offerta promozionale, tarare la soglia permette di salire dal 55,9\% fino al \textbf{78,3\% di Recall}.
+    \item \textbf{Scelta del modello e limiti:} la Regressione Logistica vince per semplicità (Rasoio di Occam). Come limiti dobbiamo tenere conto che K-Means assume gruppi di forma sferica, il dataset è una fotografia statica senza lo storico dei reclami e, in produzione reale, servono conformità al \textbf{GDPR} e controlli di \textbf{fairness} per evitare discriminazioni su età o genere.
+    \item \textbf{Sviluppi futuri:} si potrebbero provare modelli \textit{ensemble} come \textbf{Random Forest e XGBoost}, passare ai modelli le distanze continue dai centroidi invece del semplice numero di cluster (\textbf{Soft Clustering} con \texttt{transform()}), e introdurre \textbf{SMOTE} e funzioni di costo espresse direttamente in euro sul CAC reale.
+\end{enumerate}
+Grazie per l'attenzione, sono a disposizione per eventuali domande.>>
+
+\vspace{3mm}
+\noindent\colorbox{LightBg}{\parbox{\dimexpr\linewidth-2\fboxsep}{
+\footnotesize
+\textbf{\color{PrimaryNavy}Promemoria Lampo (solo i numeri essenziali):}
+\textbf{Dataset:} 7.043 clienti (26,5\% churn), 11 vuoti \texttt{TotalCharges} a 0\,\texteuro, split 80/20 (5.634 train / 1.409 test), \textbf{30 var.} (32 con cluster).
+\textbf{Boxplot:} mediana \textbf{10 mesi} (vs 38) e \textbf{$\sim$80\,\texteuro} (vs 64\,\texteuro).
+\textbf{K-Means ($K=3$, Silh.\ 0,282):} Volatili \textbf{43,4\%} (Test 43,3\%), High-Value \textbf{15,9\%}, Low-Cost \textbf{7,2\%}; PCA \textbf{57,9\%}.
+\textbf{Test Set:} LogReg Base (\textbf{80,6\%} Acc, \textbf{55,9\%} Rec, \textbf{0,605} F1, \textbf{0,842} AUC) $|$ CART (\textbf{79,4\%} Acc, \textbf{54,0\%} Rec, \textbf{0,827} AUC) $|$ MLP +Clust (\textbf{80,3\%} Acc, \textbf{52,1\%} Rec, \textbf{0,585} F1, \textbf{0,843} AUC).
+\textbf{Soglia LogReg:} 35\% $\rightarrow$ \textbf{70,3\%} Rec (F1 0,614); \texttt{balanced} $\rightarrow$ \textbf{78,3\%} Rec (F1 0,614).
+\textbf{CART:} $\le$16,5 mesi $\rightarrow$ Fibra (\textbf{68,3\%}) $\rightarrow$ $\le$120\,\texteuro{} (\textbf{85,5\%}, 165/193) $\rightarrow$ senza \texttt{TechSupport} (\textbf{87,6\%}, 162/185).
+}}
+
+\end{document}

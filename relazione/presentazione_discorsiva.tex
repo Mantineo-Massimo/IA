@@ -1,0 +1,450 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+% --- Pacchetti Fondamentali ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{babel}
+\babelprovide[import,main]{italian}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[table]{xcolor}
+\usepackage{microtype}
+
+% --- Tavolozza Colori Riposante e ad Alto Contrasto (DSA-Friendly) ---
+\definecolor{PrimaryNavy}{RGB}{20, 48, 88}
+\definecolor{SecondaryBlue}{RGB}{40, 95, 155}
+\definecolor{DarkText}{RGB}{25, 30, 38}
+\definecolor{SoftCream}{RGB}{251, 251, 253}
+\definecolor{CardBlue}{RGB}{235, 243, 252}
+\definecolor{CardGreen}{RGB}{234, 246, 237}
+\definecolor{CardAmber}{RGB}{253, 244, 230}
+\definecolor{CardRed}{RGB}{252, 237, 237}
+\definecolor{CardPurple}{RGB}{241, 237, 250}
+\definecolor{CardGray}{RGB}{241, 243, 246}
+\definecolor{AccentGreen}{RGB}{32, 115, 62}
+\definecolor{AccentAmber}{RGB}{180, 102, 12}
+\definecolor{AccentRed}{RGB}{175, 42, 42}
+\definecolor{AccentPurple}{RGB}{82, 50, 130}
+
+% --- Tema Beamer Pulito e Arioso ---
+\usetheme{default}
+\setbeamercolor{background canvas}{bg=SoftCream}
+\setbeamercolor{frametitle}{bg=PrimaryNavy, fg=white}
+\setbeamercolor{normal text}{fg=DarkText}
+\setbeamercolor{item}{fg=SecondaryBlue}
+\setbeamerfont{frametitle}{series=\bfseries, size=\large}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamersize{text margin left=0.68cm, text margin right=0.68cm}
+
+\setbeamertemplate{frametitle}{%
+    \nointerlineskip
+    \begin{beamercolorbox}[wd=\paperwidth, ht=2.5ex, dp=1.0ex, leftskip=0.68cm]{frametitle}
+        \usebeamerfont{frametitle}\insertframetitle
+    \end{beamercolorbox}
+}
+\setbeamertemplate{footline}{%
+    \hfill{\footnotesize\color{DarkText!60}\insertframenumber\,/\,\inserttotalframenumber}\hspace*{1.5em}\vspace*{0.5ex}%
+}
+
+% Interlinea ariosa e allineamento a sinistra (piu' leggibile per DSA)
+\linespread{1.13}
+\raggedright
+
+% Comandi helper per box puliti
+\newcommand{\card}[3]{%
+    \colorbox{#1}{\parbox{\dimexpr#2-2\fboxsep\relax}{\raggedright #3}}%
+}
+
+\begin{document}
+
+% ==========================================
+% SLIDE 1: COPERTINA
+% ==========================================
+\begin{frame}[plain]
+    \centering
+    \vfill
+    \includegraphics[height=1.45cm]{images/logo_unime_orizontale.png}
+
+    \vspace{0.35cm}
+    {\small \color{DarkText!85} Dipartimento MIFT -- Corso di Laurea in Informatica (L-31)}\\[2mm]
+    {\normalsize \textbf{\color{SecondaryBlue} Laboratorio di Intelligenza Artificiale -- Progetto 1}}
+
+    \vspace{0.42cm}
+    {\LARGE \textbf{\color{PrimaryNavy} Prevedere l'Abbandono dei Clienti (Churn)}}\\[2mm]
+    {\LARGE \textbf{\color{PrimaryNavy} e Capire i Loro Profili}}\\[2.5mm]
+    {\small \color{DarkText!80} Dataset IBM Telco (7.043 clienti) -- Telecomunicazioni}\\[2.5mm]
+    {\color{SecondaryBlue}\rule{0.52\textwidth}{1.5pt}}
+
+    \vspace{0.35cm}
+    \card{CardBlue}{0.86\textwidth}{\footnotesize \centering
+        \textbf{\color{PrimaryNavy} Due fasi integrate:}
+        \textbf{Non supervisionato} (dividere i clienti in gruppi simili senza sapere chi abbandona)
+        $+$ \textbf{Supervisionato} (usare esempi passati con esito noto per prevedere chi se ne andrà).
+    }
+
+    \vspace{0.42cm}
+    {\normalsize \textbf{Massimo Mantineo} \quad (Matricola: 541924)}\\[1.5mm]
+    {\small \color{DarkText!75} Anno Accademico 2025/2026}
+    \vfill
+\end{frame}
+
+% ==========================================
+% SLIDE 2: IL PROBLEMA E L'AGENTE RAZIONALE
+% ==========================================
+\begin{frame}{Il Problema e l'Agente Razionale (PEAS)}
+    \begin{columns}[T, onlytextwidth]
+        \begin{column}{0.45\textwidth}
+            \raggedright
+            \textbf{\color{PrimaryNavy} Perché progettiamo un Agente Razionale}
+            \vspace{1.8mm}
+
+            \begin{itemize}
+                \setlength{\itemsep}{4.5pt}
+                \footnotesize
+                \item Acquisire un cliente nuovo costa molto più che trattenere un cliente attuale (\textbf{CAC}).
+                \item Tra i \textbf{4 approcci di Russell e Norvig} (pensare/agire come umani, pensare/agire razionalmente) scegliamo l'\textbf{Agire Razionalmente}.
+                \item \textbf{Razionalità $\neq$ onniscienza:} l'agente non prevede con certezza il futuro, sceglie l'azione più conveniente nell'incertezza.
+                \item Impara dai dati storici per bilanciare \textbf{clienti salvati} e \textbf{costo delle offerte}.
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.52\textwidth}
+            \raggedright
+            \textbf{\color{PrimaryNavy} I 4 elementi dell'Agente (Modello PEAS)}
+            \vspace{1.8mm}
+
+            \card{CardBlue}{\linewidth}{\footnotesize
+                \textbf{\color{PrimaryNavy} Obiettivo (P -- Performance):} ridurre gli abbandoni spendendo meno del \textbf{CAC} (costo per acquisire un nuovo cliente).
+            }\\[2mm]
+            \card{CardAmber}{\linewidth}{\footnotesize
+                \textbf{\color{AccentAmber} Ambiente (E -- Environment):} clientela Telco -- \textbf{parzialmente osservabile} (non vediamo la concorrenza), \textbf{incerto} (probabilità), \textbf{cambia nel tempo} nelle campagne reali (fisso nella singola previsione).
+            }\\[2mm]
+            \card{CardGreen}{\linewidth}{\footnotesize
+                \textbf{\color{AccentGreen} Azioni (A -- Actuators):} interventi aziendali -- offerte mirate, sconti e supporto tecnico prioritario.
+            }\\[2mm]
+            \card{CardBlue}{\linewidth}{\footnotesize
+                \textbf{\color{PrimaryNavy} Dati in ingresso (S -- Sensors):} dati del gestionale clienti (\textbf{CRM}) su durata del contratto, bollette e servizi attivi.
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==========================================
+% SLIDE 3: COME IMPARA L'AGENTE
+% ==========================================
+\begin{frame}{Come Impara l'Agente: Due Compiti di Machine Learning}
+    \begin{columns}[T, onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \raggedright
+            \textbf{\color{PrimaryNavy} Due compiti addestrati offline sullo storico}
+            \vspace{1.8mm}
+
+            \card{CardBlue}{\linewidth}{\footnotesize
+                \textbf{\color{PrimaryNavy}\small 1. Compito Supervisionato (Mitchell: T, E, P)}\\[2pt]
+                Usa l'\textbf{Esperienza (E)} di \textbf{5.634 clienti passati} per migliorare sul \textbf{Compito (T)} di prevedere chi abbandonerà.\\[2pt]
+                \textbf{Prestazione (P):} \textbf{Recall}, \textbf{Precision}, \textbf{F1} e \textbf{AUC-ROC}.
+            }\\[2.5mm]
+
+            \card{CardGreen}{\linewidth}{\footnotesize
+                \textbf{\color{AccentGreen}\small 2. Compito Non Supervisionato}\\[2pt]
+                Raggruppa i clienti simili con \textbf{K-Means} senza mai guardare chi ha abbandonato.\\[2pt]
+                Li visualizza in 2D con la \textbf{PCA} (riassume 30 variabili in 2 assi) e verifica se i gruppi aiutano le previsioni.
+            }
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \raggedright
+            \textbf{\color{PrimaryNavy} Perché Machine Learning e non regole fisse?}
+            \vspace{1.8mm}
+
+            \begin{itemize}
+                \setlength{\itemsep}{5pt}
+                \small
+                \item Con \textbf{30 caratteristiche}, scrivere regole manuali è fragile e non si adatta ai cambi di mercato.
+                \item Una regola fissa risponde solo \textbf{sì o no}.
+                \item Il Machine Learning stima una \textbf{probabilità di abbandono da 0 a 1}.
+                \item Così ordiniamo i clienti dal più a rischio al meno a rischio e scegliamo da quale soglia intervenire.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+
+    \vspace{2.6mm}
+    \card{CardAmber}{\textwidth}{\footnotesize
+        \textbf{\color{PrimaryNavy} Distinzione fondamentale (PEAS vs Mitchell):} nel \textbf{PEAS} la misura di prestazione è il \textbf{guadagno economico reale} in azienda; nel \textbf{Machine Learning (Mitchell)} misura invece \textbf{quanto prevede bene il modello} sui dati.
+    }
+\end{frame}
+
+% ==========================================
+% SLIDE 4: DATI, PREPROCESSING E BOXPLOT SPIEGATO
+% ==========================================
+\begin{frame}{I Dati, il Preprocessing e il Boxplot}
+    \begin{columns}[c, onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \raggedright
+            \textbf{\color{PrimaryNavy}\small Dataset IBM Telco: 7.043 clienti (26,5\% churn)}
+            \vspace{1.2mm}
+
+            \begin{itemize}
+                \setlength{\itemsep}{2.4pt}
+                \scriptsize
+                \item \textbf{Pulizia:} tolto il codice cliente (non aiuta a generalizzare); 11 spese vuote messe a \textbf{0 euro} (clienti nuovi a 0 mesi).
+                \item \textbf{Split stratificato 80/20 (Zero Data Leakage):} dividiamo \textbf{prima} di tutto in 80\% \textbf{training} (5.634) e 20\% \textbf{test} (1.409 nascosti). \textbf{Stratificato} = stesso 26,5\% di abbandoni in entrambi; \textbf{zero leakage} = niente dati del test nel training.
+                \item \textbf{Standardizzazione:} i mesi arrivano a 72, la spesa supera 8.000\,\texteuro; a ogni valore \textbf{togliamo la media e dividiamo per la deviazione standard} (solo sul training) per avere lo stesso metro (0 = media, $+$ sopra, $-$ sotto).
+                \item \textbf{One-Hot Encoding:} trasforma le \textbf{16 variabili testuali} in \textbf{27 colonne 0/1} (togliendo 1 categoria ridondante per variabile) $\rightarrow$ \textbf{30 variabili finali}.
+                \item \textbf{Sbilanciamento:} dire sempre ``resta'' darebbe 73,5\% di accuratezza ma \textbf{Recall 0\%}.
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth, height=0.40\textheight, keepaspectratio]{images/boxplot_permanenza_costi.png}
+
+            \vspace{1.5mm}
+            \card{CardRed}{\linewidth}{\scriptsize
+                \textbf{\color{AccentRed} Come si legge il Boxplot (Verde = Rimasti, Rosso = Abbandoni):}\\[1.5pt]
+                -- \textbf{Linea nera} = \textbf{mediana} (dati in ordine dal piccolo al grande: il valore centrale, o media dei 2 centrali se pari).\\
+                -- \textbf{Scatola} = 50\% centrale (dal 25\textdegree{} al 75\textdegree{} percentile); \textbf{baffi/pallini} = estremi e casi anomali (\textbf{outlier}).\\[1.5pt]
+                -- \textbf{Esito:} chi abbandona resta poco (\textbf{10 mesi} vs \textbf{38}) e paga di più (\textbf{80\,\texteuro} vs \textbf{64\,\texteuro}).
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==========================================
+% SLIDE 5: DIVIDERE I CLIENTI IN GRUPPI (K-MEANS)
+% ==========================================
+\begin{frame}{Dividere i Clienti in Gruppi con K-Means}
+    \begin{columns}[c, onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \raggedright
+            \card{CardBlue}{\linewidth}{\scriptsize
+                \textbf{\color{PrimaryNavy}\small Clustering: come funziona K-Means (e perché non DBSCAN)}\\[2pt]
+                Raggruppiamo i \textbf{5.634 clienti di training} senza guardare gli abbandoni: sceglie \textbf{K centri}, assegna ogni cliente al centro più vicino e ricalcola i centri come \textbf{media} finché non si fermano.\\[2pt]
+                \textbf{Scelto vs DBSCAN:} crea profili medi chiari e assegna ogni \textbf{nuovo cliente del test} al centro più vicino senza ricalcolare tutto.
+            }
+
+            \vspace{1.8mm}
+            \textbf{\color{PrimaryNavy}\small Confronto del numero di gruppi (K):}\\[1.4mm]
+
+            \card{CardGray}{\linewidth}{\footnotesize
+                \textbf{K = 2:} troppo semplice (separa solo chi ha internet da chi no).
+            }\\[1.3mm]
+            \card{CardGreen}{\linewidth}{\footnotesize
+                \textbf{\color{AccentGreen} K = 3 (SCELTO):} gomito netto e buona compattezza (Silhouette \textbf{0,282}, normale con 30 variabili miste).
+            }\\[1.3mm]
+            \card{CardRed}{\linewidth}{\footnotesize
+                \textbf{\color{AccentRed} K $\ge$ 4:} i gruppi si spezzettano troppo e la Silhouette crolla.
+            }
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+            \centering
+            \includegraphics[width=\linewidth, height=0.43\textheight, keepaspectratio]{images/clustering_scelta_k.png}
+
+            \vspace{1.6mm}
+            \card{CardBlue}{\linewidth}{\scriptsize
+                \textbf{\color{PrimaryNavy}\small Come si calcolano le due curve del grafico:}\\[2pt]
+                -- \textbf{Linea blu (Inerzia):} somma delle distanze al quadrato tra ogni cliente e il centro del suo gruppo; scende sempre $\rightarrow$ cerchiamo il \textbf{gomito a K = 3}.\\[2pt]
+                -- \textbf{Linea arancione (Silhouette, da $-$1 a $+$1):} confronta la distanza dai compagni del proprio gruppo rispetto al gruppo vicino più prossimo (più è alta, meglio è).
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==========================================
+% SLIDE 6: I TRE TIPI DI CLIENTI + PCA SPIEGATA
+% ==========================================
+\begin{frame}{I Tre Tipi di Clienti Scoperti e la Mappa PCA}
+    \begin{columns}[c, onlytextwidth]
+        \begin{column}{0.44\textwidth}
+            \raggedright
+            \card{CardBlue}{\linewidth}{\footnotesize
+                \textbf{\color{SecondaryBlue}\small Gruppo 0 -- Volatili (2.557, Blu)}\\[2pt]
+                Clienti recenti (\textbf{15 mesi}), spesa media (\textbf{68\,\texteuro}).\\
+                \textbf{\color{AccentRed} 43,4\% di abbandoni} (confermato al \textbf{43,3\%} sul test: gruppi stabili).
+            }\\[2mm]
+
+            \card{CardAmber}{\linewidth}{\footnotesize
+                \textbf{\color{AccentAmber}\small Gruppo 1 -- Fedeli High-Value (1.863, Arancione)}\\[2pt]
+                Clienti storici (\textbf{58 mesi}), spesa alta (\textbf{89\,\texteuro}).\\
+                Abbandoni contenuti: \textbf{15,9\%} (13,3\% sul test).
+            }\\[2mm]
+
+            \card{CardGreen}{\linewidth}{\footnotesize
+                \textbf{\color{AccentGreen}\small Gruppo 2 -- Low-Cost (1.214, Verde)}\\[2pt]
+                Servizi base senza internet (\textbf{21\,\texteuro/mese}).\\
+                Abbandoni minimi: \textbf{7,2\%} (8,0\% sul test).
+            }
+        \end{column}
+
+        \begin{column}{0.54\textwidth}
+            \centering
+            \includegraphics[width=\linewidth, height=0.46\textheight, keepaspectratio]{images/clustering_visualizzazione_pca.png}
+
+            \vspace{1.4mm}
+            \card{CardPurple}{\linewidth}{\scriptsize
+                \textbf{\color{AccentPurple}\small Cos'è e come funziona la PCA (solo per il grafico):}\\[1.5pt]
+                Riassume \textbf{30 variabili in 2 assi} scegliendo le direzioni dove i clienti \textbf{variano di più} (massima varianza, \textbf{58\%} dell'informazione). I modelli usano invece tutte le 30 variabili.\\[1.5pt]
+                -- \textbf{PC1 (orizzontale, 39\%):} spesa e servizi (i verdi \textbf{Low-Cost} a sinistra).\\
+                -- \textbf{PC2 (verticale, 19\%, perpendicolare):} anzianità (i blu \textbf{Volatili} in basso, gli arancioni \textbf{Fedeli} in alto a destra).
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==========================================
+% SLIDE 7: I TRE MODELLI A CONFRONTO
+% ==========================================
+\begin{frame}{Come Prevediamo l'Abbandono: I Tre Modelli}
+    \card{CardBlue}{\textwidth}{\footnotesize
+        \textbf{\color{PrimaryNavy} Esperimento pulito (Zero Leakage):} dopo lo split 80/20 confrontiamo \textbf{3 modelli} sia sui dati \textbf{Base (30 variabili)} sia aggiungendo \textbf{2 colonne 0/1 del Gruppo K-Means (32 variabili)}.
+    }
+
+    \vspace{2.6mm}
+    \begin{columns}[T, onlytextwidth]
+        \begin{column}{0.315\textwidth}
+            \card{CardBlue}{\linewidth}{\scriptsize
+                \textbf{\color{PrimaryNavy}\small 1. Regressione Logistica}\\[3pt]
+                Dà un \textbf{peso} a ogni dato del cliente (es. Fibra alza il rischio, tanti mesi lo abbassano), li somma e passa il totale nella curva \textbf{sigmoide} per ottenere una \textbf{probabilità da 0\% a 100\%}.\\[3pt]
+                Semplice, veloce e stabile: è il nostro \textbf{punto di riferimento}.
+            }
+        \end{column}
+
+        \begin{column}{0.315\textwidth}
+            \card{CardGreen}{\linewidth}{\scriptsize
+                \textbf{\color{AccentGreen}\small 2. Albero CART}\\[3pt]
+                Fa una \textbf{catena di domande sì/no} (scegliendo ogni volta quella che abbassa di più l'\textbf{indice di Gini}), fino a max \textbf{5 livelli} per non imparare a memoria.\\[3pt]
+                Addestrato \textbf{senza standardizzazione}: leggiamo subito \textbf{mesi ed euro veri}.
+            }
+        \end{column}
+
+        \begin{column}{0.315\textwidth}
+            \card{CardAmber}{\linewidth}{\scriptsize
+                \textbf{\color{AccentAmber}\small 3. Rete Neurale MLP}\\[3pt]
+                Due livelli collegati (\textbf{64 poi 32 neuroni}) che incrociano più indizi per legami complessi:\\[2pt]
+                -- \textbf{ReLU:} lascia passare solo i segnali utili.\\
+                -- \textbf{Adam:} aggiusta i pesi rapidamente.\\
+                -- Contro l'\textbf{overfitting} (imparare a memoria): \textbf{L2} (pesi equilibrati) + \textbf{early stopping} (si ferma appena non migliora).
+            }
+        \end{column}
+    \end{columns}
+
+    \vspace{2.8mm}
+    \card{CardPurple}{\textwidth}{\footnotesize
+        \textbf{\color{AccentPurple} Scopo del confronto:} capire quale modello prevede meglio sui clienti nuovi e se aggiungere il gruppo K-Means porta un vero vantaggio.
+    }
+\end{frame}
+
+% ==========================================
+% SLIDE 8: RISULTATI SPIEGATI PASSO PASSO
+% ==========================================
+\begin{frame}{I Risultati sul Test Set e la Soglia di Allarme}
+    \begin{columns}[c, onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth, height=0.41\textheight, keepaspectratio]{images/confronto_prestazioni_barre.png}
+
+            \vspace{1.4mm}
+            \card{CardBlue}{\linewidth}{\scriptsize
+                \textbf{\color{PrimaryNavy} Come si calcolano le metriche (1.409 clienti di test):}\\[1.5pt]
+                \textbf{\color{SecondaryBlue} Blu} = Base (30 var.) \quad|\quad \textbf{\color{AccentRed} Rosso} = con Gruppo K-Means (32 var.).\\[1.5pt]
+                -- \textbf{Recall:} abbandoni beccati / tutti gli abbandoni veri (soglia 50\%).\\
+                -- \textbf{Precision:} abbandoni beccati / tutti i segnalati; \textbf{F1} = media armonica tra le due; \textbf{Accuracy} = risposte giuste / tutti i clienti.\\
+                -- \textbf{AUC-ROC:} area sotto la curva Recall vs falsi allarmi (\textbf{0,5} caso -- \textbf{1} perfetto).
+            }
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+            \raggedright
+            \card{CardGreen}{\linewidth}{\scriptsize
+                \textbf{\color{AccentGreen}\small 1. Chi vince? La Regressione Logistica}\\[1.5pt]
+                Miglior Recall (\textbf{55,9\%}), Accuracy \textbf{80,6\%}, F1 \textbf{0,605}, AUC \textbf{0,842} --- stessa forza della Rete Neurale (\textbf{0,843}).\\[1.5pt]
+                \textbf{A parità di risultato vince il modello più semplice:} meno parametri, più stabile e meno rischio di overfitting.
+            }\\[1.8mm]
+
+            \card{CardAmber}{\linewidth}{\scriptsize
+                \textbf{\color{AccentAmber}\small 2. Il Gruppo K-Means (barre rosse) aiuta?}\\[1.5pt]
+                Quasi no: sale di pochissimo solo nella Rete Neurale; cala un filo sulla Logistica (ridondanza: informazioni già presenti); identico sull'Albero.
+            }\\[1.8mm]
+
+            \card{CardRed}{\linewidth}{\scriptsize
+                \textbf{\color{AccentRed}\small 3. Come intercettare più clienti in fuga?}\\[1.5pt]
+                Abbassando l'allarme al \textbf{35\%} (verificato con \textbf{5-fold cross-validation} sul solo training: 4 fette studiano e 1 verifica a turno) o con \textbf{pesi bilanciati} (errore su abbandono pesa $\sim$3 volte di più), la Recall sale al \textbf{70\%--78\%} (F1 \textbf{0,614}).
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==========================================
+% SLIDE 9: ALBERO DECISIONALE A 3 PASSI
+% ==========================================
+\begin{frame}{Cosa Ci Insegna l'Albero Decisionale (Regole Chiare)}
+    \centering
+    \includegraphics[width=\textwidth, height=0.46\textheight, keepaspectratio]{images/albero_decisionale.png}
+
+    \vspace{1.8mm}
+    \begin{columns}[T, onlytextwidth]
+        \begin{column}{0.40\textwidth}
+            \card{CardBlue}{\linewidth}{\scriptsize
+                \textbf{\color{PrimaryNavy}\small Come si legge il grafico}\\[2pt]
+                -- \textbf{\color{AccentAmber} Arancione} = prevalenza Rimasti.\\
+                -- \textbf{\color{SecondaryBlue} Blu} = prevalenza Abbandoni.\\[2pt]
+                -- \textbf{Indice di Gini} (quanto un gruppo è misto):\\
+                \textbf{Calcolo:} $1 - (\text{quota rimasti}^2 + \text{quota abbandoni}^2)$.\\
+                Con \textbf{2 classi} va da \textbf{0} (puro, \textbf{scuro}) a \textbf{0,5} (metà e metà, \textbf{chiaro}).
+            }
+        \end{column}
+
+        \begin{column}{0.57\textwidth}
+            \card{CardRed}{\linewidth}{\scriptsize
+                \textbf{\color{AccentRed}\small Il percorso più rischioso (seguendo le frecce blu):}\\[2pt]
+                \textbf{1.} Cliente recente (\textbf{meno di 16,5 mesi}) + \textbf{Fibra Ottica} $\rightarrow$ abbandona già il \textbf{68,3\%} (593 su 868).\\[1.5pt]
+                \textbf{2.} In più ha speso \textbf{meno di 120\,\texteuro} (primi 1--2 mesi) $\rightarrow$ riquadro blu scuro con l'\textbf{85,5\%} di abbandoni (165 su 193).\\[1.5pt]
+                \textbf{3.} Al passo successivo, senza \textbf{supporto tecnico}, sale all'\textbf{87,6\%}.\\[2pt]
+                \textbf{\color{PrimaryNavy} Azione aziendale:} offrire supporto tecnico gratuito ai nuovi clienti in Fibra fin dai primi mesi.
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==========================================
+% SLIDE 10: CONCLUSIONI E SVILUPPI FUTURI
+% ==========================================
+\begin{frame}{Conclusioni, Limiti e Sviluppi Futuri}
+    \card{CardBlue}{\textwidth}{\footnotesize
+        \textbf{\color{PrimaryNavy} In sintesi:} \textbf{K-Means} per capire i profili, \textbf{Regressione Logistica} per fare le previsioni, \textbf{Albero CART} per spiegare il perché e \textbf{soglia calibrata} per proteggere i costi.
+    }
+
+    \vspace{2.4mm}
+    \begin{columns}[T, onlytextwidth]
+        \begin{column}{0.43\textwidth}
+            \card{CardGreen}{\linewidth}{\footnotesize
+                \textbf{\color{AccentGreen}\small Cosa portiamo a casa}\\[3pt]
+                -- Il clustering ha valore \textbf{strategico}: isola i Volatili (\textbf{43,4\%} di abbandoni).\\[3pt]
+                -- La \textbf{Regressione Logistica} è la scelta migliore per semplicità e solidità.\\[3pt]
+                -- Adattare la soglia al \textbf{CAC} porta la Recall fino al \textbf{78,3\%}.
+            }
+        \end{column}
+
+        \begin{column}{0.54\textwidth}
+            \card{CardAmber}{\linewidth}{\scriptsize
+                \textbf{\color{AccentAmber}\small Limiti e sviluppi futuri}\\[2.2pt]
+                -- \textbf{Limiti tecnici:} K-Means taglia gruppi ``a sfera'' (distanza in linea retta) e i dati sono statici (manca lo storico dei reclami).\\[2.2pt]
+                -- \textbf{Etica e affidabilità:} garantire \textbf{privacy}, \textbf{trasparenza} sulle decisioni e \textbf{fairness} (evitare discriminazioni su età o genere).\\[2.2pt]
+                -- \textbf{Modelli futuri:} \textbf{Random Forest} (tanti alberi in parallelo che votano a maggioranza) e \textbf{XGBoost} (alberi in sequenza che correggono gli errori precedenti).\\[2.2pt]
+                -- \textbf{Miglioramenti:} \textbf{soft clustering} (distanze continue dai centri), analisi con \textbf{curva Precision-Recall} (dati sbilanciati) e costi in euro sul CAC.
+            }
+        \end{column}
+    \end{columns}
+
+    \vspace{3mm}
+    \centering
+    \colorbox{PrimaryNavy}{\parbox{0.98\textwidth}{\centering\vspace{1.5pt}
+        \normalsize \color{white} \textbf{Grazie per l'attenzione!}
+    \vspace{1.5pt}}}
+\end{frame}
+
+\end{document}
